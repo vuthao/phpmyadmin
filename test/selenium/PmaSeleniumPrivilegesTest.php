@@ -3,32 +3,58 @@
 /**
  * Selenium TestCase for privilege related tests
  *
- * @package PhpMyAdmin-test
- * @group Selenium
+ * @package    PhpMyAdmin-test
+ * @subpackage Selenium
  */
 
 require_once 'PmaSeleniumTestCase.php';
+require_once 'Helper.php';
 
-
-class PmaSeleniumPrivilegesTest extends PmaSeleniumTestCase
+/**
+ * PmaSeleniumPrivilegesTest class
+ *
+ * @package    PhpMyAdmin-test
+ * @subpackage Selenium
+ */
+class PmaSeleniumPrivilegesTest extends PHPUnit_Extensions_SeleniumTestCase
 {
+    /**
+     * Setup the browser environment to run the selenium test case
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        $helper = new Helper();
+        $this->setBrowser(Helper::getBrowserString());
+        $this->setBrowserUrl(TESTSUITE_PHPMYADMIN_HOST . TESTSUITE_PHPMYADMIN_URL);
+    }
+
+    /**
+     * Tests the changing of the password
+     *
+     * @return void
+     */
     public function testChangePassword()
     {
-        $this->doLogin();
-        $this->selectFrame("frame_content");
+        $log = new PmaSeleniumTestCase($this);
+        $log->login(TESTSUITE_USER, TESTSUITE_PASSWORD);
         $this->click("link=Change password");
-        $this->waitForPageToLoad("30000");
+        $this->waitForElementPresent("id=change_password_anchor");
         try {
+            $this->waitForElementPresent("id=text_pma_pw");
             $this->assertEquals("", $this->getValue("text_pma_pw"));
         } catch (PHPUnit_Framework_AssertionFailedError $e) {
             array_push($this->verificationErrors, $e->toString());
         }
         try {
+            $this->waitForElementPresent("id=text_pma_pw2");
             $this->assertEquals("", $this->getValue("text_pma_pw2"));
         } catch (PHPUnit_Framework_AssertionFailedError $e) {
             array_push($this->verificationErrors, $e->toString());
         }
         try {
+            $this->waitForElementPresent("id=generated_pw");
             $this->assertEquals("", $this->getValue("generated_pw"));
         } catch (PHPUnit_Framework_AssertionFailedError $e) {
             array_push($this->verificationErrors, $e->toString());
@@ -37,12 +63,19 @@ class PmaSeleniumPrivilegesTest extends PmaSeleniumTestCase
         $this->assertNotEquals("", $this->getValue("text_pma_pw"));
         $this->assertNotEquals("", $this->getValue("text_pma_pw2"));
         $this->assertNotEquals("", $this->getValue("generated_pw"));
-        $this->type("text_pma_pw", $this->cfg['Test']['testuser']['password']);
-        $this->type("text_pma_pw2", $this->cfg['Test']['testuser']['password']);
-        $this->click("change_pw");
-        $this->waitForPageToLoad("30000");
-        $this->assertTrue($this->isTextPresent(""));
-        $this->assertTrue($this->isTextPresent(""));
-    }
+
+        if (TESTSUITE_PASSWORD != "") {
+            $this->type("text_pma_pw", TESTSUITE_PASSWORD);
+            $this->type("text_pma_pw2", TESTSUITE_PASSWORD);
+            $this->click("css=button:contains('Go')");
+        } else {
+            $this->click("id=nopass_1");
+            $this->click("css=button:contains('Go')");
+        }		 		 
+
+        $this->waitForElementPresent("id=result_query");
+        $this->assertTrue($this->isTextPresent("The profile has been updated."));
+    } 
 }
+
 ?>

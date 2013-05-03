@@ -12,9 +12,20 @@
  * Actions ajaxified here:
  * Table Search
  */
-$(document).ready(function() {
+
+/**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('tbl_select.js', function() {
+    $('#togglesearchformlink').unbind('click');
+    $("#tbl_search_form.ajax").die('submit');
+    $('select.geom_func').unbind('change');
+    $('span.open_search_gis_editor').die('click');
+});
+
+AJAX.registerOnload('tbl_select.js', function() {
     /**
-     * Prepare a div containing a link, otherwise it's incorrectly displayed 
+     * Prepare a div containing a link, otherwise it's incorrectly displayed
      * after a couple of clicks
      */
     $('<div id="togglesearchformdiv"><a id="togglesearchformlink"></a></div>')
@@ -38,18 +49,14 @@ $(document).ready(function() {
 
     /**
      * Ajax event handler for Table Search
-     * 
-     * (see $GLOBALS['cfg']['AjaxEnable'])
-     * @uses    PMA_ajaxShowMessage()
      */
     $("#tbl_search_form.ajax").live('submit', function(event) {
-
         var unaryFunctions = [
             'IS NULL', 
             'IS NOT NULL',
             "= ''",
             "!= ''"];
-
+            
         // jQuery object to reuse
         $search_form = $(this);
         event.preventDefault();
@@ -71,67 +78,63 @@ $(document).ready(function() {
                 values[this.name] = $input.val();
             }
         });
-        var columnCount = $('select[name="param[]"] option').length;
-        // Submit values only for the columns that have unary column operator or a search criteria
+        var columnCount = $('select[name="columnsToDisplay[]"] option').length;
+        // Submit values only for the columns that have unary column operator or a search criteria 
         for (var a = 0; a < columnCount; a++) {
-
-            if ($.inArray(values['func[' + a + ']'], unaryFunctions) >= 0) {
+            if ($.inArray(values['criteriaColumnOperators[' + a + ']'], unaryFunctions) >= 0) {
                 continue;
             }
-            if (values['fields[' + a + ']'] == '' || values['fields[' + a + ']'] == null) {
-                delete values['fields[' + a + ']'];
-                delete values['func[' + a + ']'];
-                delete values['names[' + a + ']'];
-                delete values['types[' + a + ']'];
-                delete values['collations[' + a + ']'];
+            
+            if (values['criteriaValues[' + a + ']'] == '' || values['criteriaValues[' + a + ']'] == null) {
+                delete values['criteriaValues[' + a + ']'];
+                delete values['criteriaColumnOperators[' + a + ']'];
+                delete values['criteriaColumnNames[' + a + ']'];
+                delete values['criteriaColumnTypes[' + a + ']'];
+                delete values['criteriaColumnCollations[' + a + ']'];
             }
         }
         // If all columns are selected, use a single parameter to indicate that
-        if (values['param[]'] != null) {
-            if (values['param[]'].length == columnCount) {
-                delete values['param[]'];
+        if (values['columnsToDisplay[]'] != null) {
+            if (values['columnsToDisplay[]'].length == columnCount) {
+                delete values['columnsToDisplay[]'];
                 values['displayAllColumns'] = true;
             }
         } else {
             values['displayAllColumns'] = true;
         }
 
-        $.post($search_form.attr('action'), values, function(response) {
+        $.post($search_form.attr('action'), values, function(data) {
             PMA_ajaxRemoveMessage($msgbox);
-            if (typeof response == 'string') {
-                // found results
-                $("#sqlqueryresults").html(response);
-                $("#sqlqueryresults").trigger('makegrid');
+            if (data.success == true) {
+                if (data.sql_query != null) { // zero rows
+                    $("#sqlqueryresults").html(data.sql_query);
+                } else { // results found
+                    $("#sqlqueryresults").html(data.message);
+                    $("#sqlqueryresults").trigger('makegrid');
+                }
                 $('#tbl_search_form')
                 // workaround for bug #3168569 - Issue on toggling the "Hide search criteria" in chrome.
-                 .slideToggle()    
+                 .slideToggle()
                  .hide();
                 $('#togglesearchformlink')
                  // always start with the Show message
-                 .text(PMA_messages['strShowSearchCriteria'])
+                 .text(PMA_messages['strShowSearchCriteria']);
                 $('#togglesearchformdiv')
-                 // now it's time to show the div containing the link 
+                 // now it's time to show the div containing the link
                  .show();
                  // needed for the display options slider in the results
                  PMA_init_slider();
             } else {
-                // error message (zero rows)
-                if (response.message != undefined) {
-                    $("#sqlqueryresults").html(response['sql_query']);
-                }
-                // other error (syntax error?)
-                if (response.error != undefined) {
-                    $("#sqlqueryresults").html(response['error']);
-                }
+                $("#sqlqueryresults").html(data.error);
             }
-        }) // end $.post()
-    })
+        }); // end $.post()
+    });
 
     // Following section is related to the 'function based search' for geometry data types.
     // Initialy hide all the open_gis_editor spans
-    $('.open_search_gis_editor').hide();
+    $('span.open_search_gis_editor').hide();
 
-    $('.geom_func').bind('change', function() {
+    $('select.geom_func').bind('change', function() {
         var $geomFuncSelector = $(this);
 
         var binaryFunctions = [
@@ -173,22 +176,22 @@ $(document).ready(function() {
         // If the chosen function takes two geomerty objects as parameters
         var $operator = $geomFuncSelector.parents('tr').find('td:nth-child(5)').find('select');
         if ($.inArray($geomFuncSelector.val(), binaryFunctions) >= 0){
-            $operator.attr('readonly', true);
+            $operator.prop('readonly', true);
         } else {
-            $operator.attr('readonly', false);
+            $operator.prop('readonly', false);
         }
 
         // if the chosen function's output is a geometry, enable GIS editor
-        var $editorSpan = $geomFuncSelector.parents('tr').find('.open_search_gis_editor');
+        var $editorSpan = $geomFuncSelector.parents('tr').find('span.open_search_gis_editor');
         if ($.inArray($geomFuncSelector.val(), outputGeomFunctions) >= 0){
             $editorSpan.show();
         } else {
             $editorSpan.hide();
         }
-        
+
     });
 
-    $('.open_search_gis_editor').live('click', function(event) {
+    $('span.open_search_gis_editor').live('click', function(event) {
         event.preventDefault();
 
         var $span = $(this);
@@ -218,4 +221,4 @@ $(document).ready(function() {
         }
     });
 
-}, 'top.frame_content'); // end $(document).ready()
+});

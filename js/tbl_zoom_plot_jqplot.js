@@ -12,10 +12,7 @@
  **  Display Help/Info
  **/
 function displayHelp() {
-    var msgbox = PMA_ajaxShowMessage(PMA_messages['strDisplayHelp'], 10000);
-    msgbox.click(function() {
-        PMA_ajaxRemoveMessage(msgbox);
-    });
+    PMA_ajaxShowMessage(PMA_messages['strDisplayHelp'], 10000);
 }
 
 /**
@@ -61,7 +58,7 @@ function isEmpty(obj) {
  **/
 function getTimeStamp(val, type) {
     if (type.toString().search(/datetime/i) != -1 || type.toString().search(/timestamp/i) != -1) {
-        return getDateFromFormat(val, 'yyyy-MM-dd HH:mm:ss', val);
+        return getDateFromFormat(val, 'yyyy-MM-dd HH:mm:ss');
     }
     else if (type.toString().search(/time/i) != -1) {
         return getDateFromFormat('1970-01-01 ' + val, 'yyyy-MM-dd HH:mm:ss');
@@ -90,7 +87,7 @@ function getType(field) {
  ** @param array categorical values array
  **/
 function getCord(arr) {
-    var newCord = new Array();
+    var newCord = [];
     var original = $.extend(true, [], arr);
     var arr = jQuery.unique(arr).sort();
     $.each(original, function(index, value) {
@@ -107,12 +104,29 @@ function scrollToChart() {
    $('html,body').animate({scrollTop: x}, 500);
 }
 
-$(document).ready(function() {
+/**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('tbl_zoom_plot_jqplot.js', function() {
+    $('#tableid_0').unbind('change');
+    $('#tableid_1').unbind('change');
+    $('#tableid_2').unbind('change');
+    $('#tableid_3').unbind('change');
+    $('#inputFormSubmitId').unbind('click');
+    $('#togglesearchformlink').unbind('click');
+    $("#dataDisplay").find(':input').die('keydown');
+    $('button.button-reset').unbind('click');
+    $('div#resizer').unbind('resizestop');
+    $('div#querychart').unbind('jqplotDataClick');
+});
+
+AJAX.registerOnload('tbl_zoom_plot_jqplot.js', function() {
     var cursorMode = ($("input[name='mode']:checked").val() == 'edit') ? 'crosshair' : 'pointer';
     var currentChart = null;
     var searchedDataKey = null;
     var xLabel = $('#tableid_0').val();
     var yLabel = $('#tableid_1').val();
+    // will be updated via Ajax
     var xType = $('#types_0').val();
     var yType = $('#types_1').val();
     var dataLabel = $('#dataLabel').val();
@@ -127,20 +141,95 @@ $(document).ready(function() {
     /**
      ** Input form submit on field change
      **/
+
+    // first column choice corresponds to the X axis
     $('#tableid_0').change(function() {
-          $('#zoom_search_form').submit();
+        //AJAX request for field type, collation, operators, and value field
+        $.post('tbl_zoom_select.php',{
+            'ajax_request' : true,
+            'change_tbl_info' : true,
+            'db' : PMA_commonParams.get('db'),
+            'table' : PMA_commonParams.get('table'),
+            'field' : $('#tableid_0').val(),
+            'it' : 0,
+            'token' : PMA_commonParams.get('token')
+        },function(data) {
+            $('#tableFieldsId tr:eq(1) td:eq(0)').html(data.field_type);
+            $('#tableFieldsId tr:eq(1) td:eq(1)').html(data.field_collation);
+            $('#tableFieldsId tr:eq(1) td:eq(2)').html(data.field_operators);
+            $('#tableFieldsId tr:eq(1) td:eq(3)').html(data.field_value);
+        xLabel = $('#tableid_0').val();
+        $('#types_0').val(data.field_type);
+        xType = data.field_type;
+        $('#collations_0').val(data.field_collations);
+        addDateTimePicker();
+        });
     });
 
+    // second column choice corresponds to the Y axis
     $('#tableid_1').change(function() {
-          $('#zoom_search_form').submit();
+        //AJAX request for field type, collation, operators, and value field
+    $.post('tbl_zoom_select.php',{
+            'ajax_request' : true,
+            'change_tbl_info' : true,
+            'db' : PMA_commonParams.get('db'),
+            'table' : PMA_commonParams.get('table'),
+            'field' : $('#tableid_1').val(),
+            'it' : 1,
+            'token' : PMA_commonParams.get('token')
+        },function(data) {
+            $('#tableFieldsId tr:eq(3) td:eq(0)').html(data.field_type);
+            $('#tableFieldsId tr:eq(3) td:eq(1)').html(data.field_collation);
+            $('#tableFieldsId tr:eq(3) td:eq(2)').html(data.field_operators);
+            $('#tableFieldsId tr:eq(3) td:eq(3)').html(data.field_value);
+        yLabel = $('#tableid_1').val();
+        $('#types_1').val(data.field_type);
+        yType = data.field_type;
+        $('#collations_1').val(data.field_collations);
+        addDateTimePicker();
+        });
     });
 
     $('#tableid_2').change(function() {
-          $('#zoom_search_form').submit();
+        //AJAX request for field type, collation, operators, and value field
+    $.post('tbl_zoom_select.php',{
+            'ajax_request' : true,
+            'change_tbl_info' : true,
+            'db' : PMA_commonParams.get('db'),
+            'table' : PMA_commonParams.get('table'),
+            'field' : $('#tableid_2').val(),
+            'it' : 2,
+            'token' : PMA_commonParams.get('token')
+        },function(data) {
+            $('#tableFieldsId tr:eq(6) td:eq(0)').html(data.field_type);
+            $('#tableFieldsId tr:eq(6) td:eq(1)').html(data.field_collation);
+            $('#tableFieldsId tr:eq(6) td:eq(2)').html(data.field_operators);
+            $('#tableFieldsId tr:eq(6) td:eq(3)').html(data.field_value);
+        $('#types_2').val(data.field_type);
+        $('#collations_2').val(data.field_collations);
+        addDateTimePicker();
+        });
     });
 
     $('#tableid_3').change(function() {
-          $('#zoom_search_form').submit();
+        //AJAX request for field type, collation, operators, and value field
+    $.post('tbl_zoom_select.php',{
+            'ajax_request' : true,
+            'change_tbl_info' : true,
+            'db' : PMA_commonParams.get('db'),
+            'table' : PMA_commonParams.get('table'),
+            'field' : $('#tableid_3').val(),
+            'it' : 3,
+            'token' : PMA_commonParams.get('token')
+        },function(data) {
+            $('#tableFieldsId tr:eq(8) td:eq(0)').html(data.field_type);
+            $('#tableFieldsId tr:eq(8) td:eq(1)').html(data.field_collation);
+            $('#tableFieldsId tr:eq(8) td:eq(2)').html(data.field_operators);
+            $('#tableFieldsId tr:eq(8) td:eq(3)').html(data.field_value);
+        $('#types_3').val(data.field_type);
+        $('#collations_3').val(data.field_collations);
+        addDateTimePicker();
+        });
     });
 
     /**
@@ -186,16 +275,17 @@ $(document).ready(function() {
      */
     buttonOptions[PMA_messages['strSave']] = function () {
         //Find changed values by comparing form values with selectedRow Object
-        var newValues = new Object();//Stores the values changed from original
-        var sqlTypes = new Object();
-        var it = 4;
+        var newValues = {};//Stores the values changed from original
+        var sqlTypes = {};
+        var it = 0;
         var xChange = false;
         var yChange = false;
+        var key;
         for (key in selectedRow) {
             var oldVal = selectedRow[key];
-            var newVal = ($('#fields_null_id_' + it).attr('checked')) ? null : $('#fieldID_' + it).val();
+            var newVal = ($('#edit_fields_null_id_' + it).prop('checked')) ? null : $('#edit_fieldID_' + it).val();
             if (newVal instanceof Array) { // when the column is of type SET
-                newVal =  $('#fieldID_' + it).map(function(){
+                newVal =  $('#edit_fieldID_' + it).map(function(){
                     return $(this).val();
                 }).get().join(",");
             }
@@ -210,7 +300,7 @@ $(document).ready(function() {
                     searchedData[searchedDataKey][yLabel] = newVal;
                 }
             }
-            var $input = $('#fieldID_' + it);
+            var $input = $('#edit_fieldID_' + it);
             if ($input.hasClass('bit')) {
                 sqlTypes[key] = 'bit';
             }
@@ -219,7 +309,7 @@ $(document).ready(function() {
 
         //Update the chart series and replot
         if (xChange || yChange) {
-            //Logic similar to plot generation, replot only if xAxis changes or yAxis changes. 
+            //Logic similar to plot generation, replot only if xAxis changes or yAxis changes.
             //Code includes a lot of checks so as to replot only when necessary
             if (xChange) {
                 xCord[searchedDataKey] = selectedRow[xLabel];
@@ -227,7 +317,7 @@ $(document).ready(function() {
                 if (xType == 'numeric') {
                     series[0][searchedDataKey][0] = selectedRow[xLabel];
                 } else if (xType == 'time') {
-                    series[0][searchedDataKey][0] = 
+                    series[0][searchedDataKey][0] =
                         getTimeStamp(selectedRow[xLabel], $('#types_0').val());
                 } else {
                     // todo: text values
@@ -243,7 +333,7 @@ $(document).ready(function() {
                 if (yType == 'numeric') {
                     series[0][searchedDataKey][1] = selectedRow[yLabel];
                 } else if (yType == 'time') {
-                    series[0][searchedDataKey][1] = 
+                    series[0][searchedDataKey][1] =
                         getTimeStamp(selectedRow[yLabel], $('#types_1').val());
                 } else {
                     // todo: text values
@@ -256,7 +346,7 @@ $(document).ready(function() {
 
         //Generate SQL query for update
         if (!isEmpty(newValues)) {
-            var sql_query = 'UPDATE `' + window.parent.table + '` SET ';
+            var sql_query = 'UPDATE `' + PMA_commonParams.get('table') + '` SET ';
             for (key in newValues) {
                 sql_query += '`' + key + '`=' ;
                 var value = newValues[key];
@@ -291,8 +381,8 @@ $(document).ready(function() {
 
             //Post SQL query to sql.php
             $.post('sql.php', {
-                    'token' : window.parent.token,
-                    'db' : window.parent.db,
+                    'token' : PMA_commonParams.get('token'),
+                    'db' : PMA_commonParams.get('db'),
                     'ajax_request' : true,
                     'sql_query' : sql_query,
                     'inline_edit' : false
@@ -336,7 +426,7 @@ $(document).ready(function() {
 
 
     /*
-     * Generate plot using jqplot 
+     * Generate plot using jqplot
      */
 
     if (searchedData != null) {
@@ -348,9 +438,9 @@ $(document).ready(function() {
         $('#togglesearchformdiv').show();
         var selectedRow;
         var colorCodes = ['#FF0000', '#00FFFF', '#0000FF', '#0000A0', '#FF0080', '#800080', '#FFFF00', '#00FF00', '#FF00FF'];
-        var series = new Array();
-        var xCord = new Array();
-        var yCord = new Array();
+        var series = [];
+        var xCord = [];
+        var yCord = [];
         var tempX, tempY;
         var it = 0;
         var xMax; // xAxis extreme max
@@ -371,11 +461,11 @@ $(document).ready(function() {
             axes: {
                 xaxis: {
                     label: $('#tableid_0').val(),
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer 
+                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer
                 },
                 yaxis: {
                     label: $('#tableid_1').val(),
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer 
+                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer
                 }
             },
             highlighter: {
@@ -390,7 +480,7 @@ $(document).ready(function() {
                 zoom: true,
                 showTooltip: false
             }
-        }
+        };
 
         // If data label is not set, do not show tooltips
         if (dataLabel == '') {
@@ -402,13 +492,14 @@ $(document).ready(function() {
         yType = getType(yType);
 
         // could have multiple series but we'll have just one
-        series[0] = new Array();
+        series[0] = [];
 
         if (xType == 'time') {
-            originalXType = $('#types_0').val();
+            var originalXType = $('#types_0').val();
+            var format;
             if (originalXType == 'date') {
                 format = '%Y-%m-%d';
-            } 
+            }
             // todo: does not seem to work
             //else if (originalXType == 'time') {
               //  format = '%H:%M';
@@ -418,23 +509,24 @@ $(document).ready(function() {
             $.extend(options.axes.xaxis, {
                 renderer:$.jqplot.DateAxisRenderer,
                 tickOptions: {
-                    formatString: format 
+                    formatString: format
                 }
             });
         }
         if (yType == 'time') {
-            originalYType = $('#types_1').val();
+            var originalYType = $('#types_1').val();
+            var format;
             if (originalYType == 'date') {
                 format = '%Y-%m-%d';
-            } 
+            }
             $.extend(options.axes.yaxis, {
                 renderer:$.jqplot.DateAxisRenderer,
                 tickOptions: {
-                    formatString: format 
+                    formatString: format
                 }
             });
         }
-        
+
         $.each(searchedData, function(key, value) {
             if (xType == 'numeric') {
                 var xVal = parseFloat(value[xLabel]);
@@ -449,8 +541,8 @@ $(document).ready(function() {
                 var yVal = getTimeStamp(value[yLabel], originalYType);
             }
             series[0].push([
-                xVal, 
-                yVal, 
+                xVal,
+                yVal,
                 // extra Y values
                 value[dataLabel], // for highlighter
                                   // (may set an undefined value)
@@ -459,10 +551,11 @@ $(document).ready(function() {
             ]);
         });
 
-        // under IE 8, the initial display is mangled; after a manual 
+        // under IE 8, the initial display is mangled; after a manual
         // resizing, it's ok
         // under IE 9, everything is fine
         currentChart = $.jqplot('querychart', series, options);
+        currentChart.resetZoom();
 
         $('button.button-reset').click(function(event) {
             event.preventDefault();
@@ -480,27 +573,28 @@ $(document).ready(function() {
         $('div#querychart').bind('jqplotDataClick',
             function(event, seriesIndex, pointIndex, data) {
                 searchedDataKey = data[4]; // key from searchedData (global)
-                var field_id = 4;
+                var field_id = 0;
                 var post_params = {
                     'ajax_request' : true,
                     'get_data_row' : true,
-                    'db' : window.parent.db,
-                    'table' : window.parent.table,
+                    'db' : PMA_commonParams.get('db'),
+                    'table' : PMA_commonParams.get('table'),
                     'where_clause' : data[3],
-                    'token' : window.parent.token
+                    'token' : PMA_commonParams.get('token')
                 };
 
                 $.post('tbl_zoom_select.php', post_params, function(data) {
-                    // Row is contained in data.row_info, 
+                    // Row is contained in data.row_info,
                     // now fill the displayResultForm with row values
+                    var key;
                     for (key in data.row_info) {
-                        $field = $('#fieldID_' + field_id);
-                        $field_null = $('#fields_null_id_' + field_id);
+                        $field = $('#edit_fieldID_' + field_id);
+                        $field_null = $('#edit_fields_null_id_' + field_id);
                         if (data.row_info[key] == null) {
-                            $field_null.attr('checked', true);
+                            $field_null.prop('checked', true);
                             $field.val('');
                         } else {
-                            $field_null.attr('checked', false);
+                            $field_null.prop('checked', false);
                             if ($field.attr('multiple')) { // when the column is of type SET
                                 $field.val(data.row_info[key].split(','));
                             } else {
@@ -509,7 +603,7 @@ $(document).ready(function() {
                         }
                         field_id++;
                     }
-                    selectedRow = new Object();
+                    selectedRow = {};
                     selectedRow = data.row_info;
                 });
 

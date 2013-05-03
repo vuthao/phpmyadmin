@@ -1,17 +1,16 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
- * Test for PMA_generateHiddenMaxFileSize from common.lib.php
+ ** Test for PMA_Util::generateHiddenMaxFileSize from Util.class.php
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_generateHiddenMaxFileSize_test.php
  * @group common.lib-tests
  */
 
 /*
  * Include to test.
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 
 class PMA_generateHiddenMaxFileSize_test extends PHPUnit_Framework_TestCase
 {
@@ -19,7 +18,8 @@ class PMA_generateHiddenMaxFileSize_test extends PHPUnit_Framework_TestCase
     /*
      * Data provider for test
      */
-    public function dataProvider() {
+    public function dataProvider()
+    {
         return array(
             array(10),
             array("100"),
@@ -34,8 +34,11 @@ class PMA_generateHiddenMaxFileSize_test extends PHPUnit_Framework_TestCase
      * @dataProvider dataProvider
      * @return void
      */
-    function test_generateHiddenMaxFileSize($size){
-        $this->assertEquals(PMA_generateHiddenMaxFileSize($size),
-                            '<input type="hidden" name="MAX_FILE_SIZE" value="' .$size . '" />');
+    function test_generateHiddenMaxFileSize($size)
+    {
+        $this->assertEquals(
+            PMA_Util::generateHiddenMaxFileSize($size),
+            '<input type="hidden" name="MAX_FILE_SIZE" value="' . $size . '" />'
+        );
     }
 }

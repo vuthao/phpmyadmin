@@ -7,10 +7,11 @@
  */
 
 /*
- * Needed for PMA_backquote() and PMA_RTN_getQueryFromRequest()
+ * Needed for backquote() and PMA_RTN_getQueryFromRequest()
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 require_once 'libraries/php-gettext/gettext.inc';
+require_once './libraries/Types.class.php';
 
 /*
  * Include to test.
@@ -29,7 +30,7 @@ class PMA_RTN_getQueryFromRequest_test extends PHPUnit_Framework_TestCase
 
         $cfg['ShowFunctionFields'] = false;
 
-        include 'libraries/data_mysql.inc.php';
+        $GLOBALS['PMA_Types'] = new PMA_Types_MySQL();
 
         $errors = array();
         PMA_RTN_setGlobals();

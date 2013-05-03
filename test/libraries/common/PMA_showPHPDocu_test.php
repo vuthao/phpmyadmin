@@ -1,10 +1,9 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
- * Test for PMA_showPHPDocu from common.lib.php
+ ** Test for PMA_Util::showPHPDocu from Util.class.php
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_showPHPDocu_test.php
  * @group common.lib-tests
  */
 
@@ -12,8 +11,9 @@
  * Include to test.
  */
 require_once 'libraries/core.lib.php';
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 require_once 'libraries/Theme.class.php';
+require_once 'libraries/php-gettext/gettext.inc';
 
 class PMA_showPHPDocu_test extends PHPUnit_Framework_TestCase
 {
@@ -26,10 +26,8 @@ class PMA_showPHPDocu_test extends PHPUnit_Framework_TestCase
         $GLOBALS['cfg']['ServerDefault'] = 0;
     }
 
-    function testShwoPHPDocuReplaceHelpImg()
+    function testShowPHPDocu()
     {
-        $GLOBALS['cfg']['ReplaceHelpImg'] = true;
-
         $target = "docu";
         $lang = _pgettext('PHP documentation language', 'en');
         $expected = '<a href="./url.php?url=http%3A%2F%2Fphp.net%2Fmanual%2F' . $lang
@@ -37,21 +35,8 @@ class PMA_showPHPDocu_test extends PHPUnit_Framework_TestCase
             . '" target="documentation"><img src="themes/dot.gif" title="'
             . __('Documentation') . '" alt="' . __('Documentation') . '" class="icon ic_b_help" /></a>';
 
-        $this->assertEquals($expected, PMA_showPHPDocu($target));
+        $this->assertEquals(
+            $expected, PMA_Util::showPHPDocu($target)
+        );
     }
-
-    function testShwoPHPDocuNotReplaceHelpImg()
-    {
-        $GLOBALS['cfg']['ReplaceHelpImg'] = false;
-
-        $target = "docu";
-        $lang = _pgettext('PHP documentation language', 'en');
-        $expected = '[<a href="./url.php?url=http%3A%2F%2Fphp.net%2Fmanual%2F' . $lang
-            . '%2F' . $target . '&amp;server=99&amp;lang=en&amp;token=token'
-            . '" target="documentation">' . __('Documentation') . '</a>]';
-
-        $this->assertEquals($expected, PMA_showPHPDocu($target));
-    }
-
-
 }

@@ -1,17 +1,16 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
- * Test for PMA_getIcon() from common.lib.php
+ ** Test for PMA_Util::getIcon() from Util.class.php
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_getIcon_test.php
  * @group common.lib-tests
  */
 
 /*
  * Include to test.
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 require_once 'libraries/Theme.class.php';
 
 class PMA_getIcon_test extends PHPUnit_Framework_TestCase
@@ -21,48 +20,48 @@ class PMA_getIcon_test extends PHPUnit_Framework_TestCase
         $_SESSION['PMA_Theme'] = PMA_Theme::load('./themes/pmahomme');
     }
 
-    function testGetIconWithoutPropertiesIconic(){
-
+    function testGetIconWithoutPropertiesIconic()
+    {
         $GLOBALS['cfg']['PropertiesIconic'] = false;
 
         $this->assertEquals(
             '<span class="nowrap"></span>',
-            PMA_getIcon('b_comment.png')
-            );
+            PMA_Util::getIcon('b_comment.png')
+        );
     }
 
-    function testGetIconWithPropertiesIconic(){
-
+    function testGetIconWithPropertiesIconic()
+    {
         $GLOBALS['cfg']['PropertiesIconic'] = true;
 
         $this->assertEquals(
             '<span class="nowrap"><img src="themes/dot.gif" title="" alt="" class="icon ic_b_comment" /></span>',
-            PMA_getIcon('b_comment.png')
-            );
+            PMA_Util::getIcon('b_comment.png')
+        );
     }
 
-    function testGetIconAlternate(){
-
+    function testGetIconAlternate()
+    {
         $GLOBALS['cfg']['PropertiesIconic'] = true;
         $alternate_text = 'alt_str';
 
         $this->assertEquals(
             '<span class="nowrap"><img src="themes/dot.gif" title="' . $alternate_text . '" alt="' . $alternate_text
             . '" class="icon ic_b_comment" /></span>',
-            PMA_getIcon('b_comment.png', $alternate_text)
-            );
+            PMA_Util::getIcon('b_comment.png', $alternate_text)
+        );
     }
 
-    function testGetIconWithForceText(){
-
+    function testGetIconWithForceText()
+    {
         $GLOBALS['cfg']['PropertiesIconic'] = true;
         $alternate_text = 'alt_str';
 
         $this->assertEquals(
             '<span class="nowrap"><img src="themes/dot.gif" title="' . $alternate_text . '" alt="' . $alternate_text
             . '" class="icon ic_b_comment" /> ' . $alternate_text . '</span>',
-            PMA_getIcon('b_comment.png', $alternate_text, true)
-            );
+            PMA_Util::getIcon('b_comment.png', $alternate_text, true)
+        );
 
     }
 }

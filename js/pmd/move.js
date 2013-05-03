@@ -12,29 +12,57 @@
  var _staying = 0; //  variable to check if the user stayed after seeing the confirmation prompt.
  var show_relation_lines = true;
 
+AJAX.registerTeardown('pmd/move.js', function() {
+    if ($.FullScreen.supported) {
+        $(document).unbind($.FullScreen.prefix + 'fullscreenchange');
+    }
+});
+
+AJAX.registerOnload('pmd/move.js', function() {
+    $('#page_content').css({'margin-left': '3px'});
+    $('#exitFullscreen').hide();
+    if ($.FullScreen.supported) {
+        $(document).fullScreenChange(function() {
+            if (! $.FullScreen.isFullScreen()) {
+                $('#page_content').removeClass('content_fullscreen')
+                    .css({'width': 'auto', 'height': 'auto'});
+                $('#enterFullscreen').show();
+                $('#exitFullscreen').hide();
+                Top_menu_reposition($('#key_Left_Right')[0]);
+            }
+        });
+    } else {
+        $('#enterFullscreen').hide();
+    }
+});
+
 // Below is the function to bind onbeforeunload events with the content_frame as well as the top window.
 
- $(document).ready(function(){
-    $(window).bind('beforeunload', function(){        // onbeforeunload for the frame window.
-        if (_change == 1 && _staying == 0)
+/*
+FIXME: we can't register the beforeonload event because it will persist between pageloads
+
+AJAX.registerOnload('pmd/move.js', function(){
+    $(window).bind('beforeunload', function() {        // onbeforeunload for the frame window.
+        if (_change == 1 && _staying == 0) {
             return PMA_messages['strLeavingDesigner'];
-        else if (_change == 1 && _staying == 1)
+        } else if (_change == 1 && _staying == 1) {
             _staying = 0;
+        }
     });
-    $(window).unload(function(){
+    $(window).unload(function() {
         _change = 0;
     });
-    window.top.onbeforeunload = function(){     // onbeforeunload for the browser main window.
-        if (_change == 1 && _staying == 0){
+    window.top.onbeforeunload = function() {     // onbeforeunload for the browser main window.
+        if (_change == 1 && _staying == 0) {
             _staying = 1;                                                   //  Helps if the user stays on the page  as there
             setTimeout('make_zero();', 100);                    //   is no other way of knowing whether the user stayed or not.
             return PMA_messages['strLeavingDesigner'];
         }
     };
-});
+});*/
 
- function make_zero(){   // Function called if the user stays after seeing the confirmation prompt.
-      _staying = 0;
+function make_zero() {   // Function called if the user stays after seeing the confirmation prompt.
+    _staying = 0;
 }
 
 
@@ -217,7 +245,7 @@ function Rezize_osn_tab()
 {
     var max_X = 0;
     var max_Y = 0;
-    for (key in j_tabs) {
+    for (var key in j_tabs) {
         var k_x = parseInt(document.getElementById(key).style.left) + document.getElementById(key).offsetWidth;
         var k_y = parseInt(document.getElementById(key).style.top) + document.getElementById(key).offsetHeight;
         max_X = max_X < k_x ? k_x : max_X;
@@ -241,13 +269,19 @@ function Re_load()
     var n;
     var x1;
     var x2;
-    var a = new Array();
+    var a = [];
+    var K;
+    var key;
+    var key2;
+    var key3;
     Clear();
-    for (K in contr)
-        for (key in contr[K])                     // contr name
-            for (key2 in contr[K][key])           // table name
-                for (key3 in contr[K][key][key2]) // field name
-                {
+    for (K in contr) {
+        for (key in contr[K]) {
+            // contr name
+            for (key2 in contr[K][key]) {
+                // table name
+                for (key3 in contr[K][key][key2]) {
+                    // field name
                     if (!document.getElementById("check_vis_" + key2).checked ||
                         !document.getElementById("check_vis_" + contr[K][key][key2][key3][0]).checked) {
                         // if hide
@@ -323,6 +357,9 @@ function Re_load()
                     //alert(y1 + ' - ' + key2 + "." + key3);
                     Line0(x1 - sm_x, y1 - sm_y, x2 - sm_x, y2 - sm_y, getColorByTarget( contr[K][key][key2][key3][0]+'.'+contr[K][key][key2][key3][1] ) );
                 }
+            }
+        }
+    }
 }
 
 /**
@@ -452,24 +489,43 @@ function Rect(x1, y1, w, h, color)
     ctx.fillStyle = color;
     ctx.fillRect(x1, y1, w, h);
 }
+//--------------------------- FULLSCREEN -------------------------------------
+function Enter_fullscreen()
+{
+    if (! $.FullScreen.isFullScreen()) {        
+        $('#enterFullscreen').hide();
+        $('#exitFullscreen').show();
+        $('#page_content')
+            .addClass('content_fullscreen')
+            .css({'width': screen.width - 5, 'height': screen.height - 5})
+            .requestFullScreen();
+        Top_menu_reposition($('#key_Left_Right')[0]);
+    }
+}
 
+function Exit_fullscreen()
+{
+    if ($.FullScreen.isFullScreen()) {
+        $.FullScreen.cancelFullScreen();
+    }
+}
 //------------------------------ SAVE ------------------------------------------
 function Save(url) // (del?) no for pdf
 {
-    for (key in j_tabs) {
+    for (var key in j_tabs) {
         document.getElementById('t_x_' + key + '_').value = parseInt(document.getElementById(key).style.left);
         document.getElementById('t_y_' + key + '_').value = parseInt(document.getElementById(key).style.top);
         document.getElementById('t_v_' + key + '_').value = document.getElementById('id_tbody_' + key).style.display == 'none' ? 0 : 1;
         document.getElementById('t_h_' + key + '_').value = document.getElementById('check_vis_' + key).checked ? 1 : 0;
     }
     document.form1.action = url;
-    document.form1.submit();
+    $(document.form1).submit();
 }
 
 function Get_url_pos()
 {
     var poststr = '';
-    for (key in j_tabs) {
+    for (var key in j_tabs) {
         poststr += '&t_x[' + key + ']=' + parseInt(document.getElementById(key).style.left);
         poststr += '&t_y[' + key + ']=' + parseInt(document.getElementById(key).style.top);
         poststr += '&t_v[' + key + ']=' + (document.getElementById('id_tbody_' + key).style.display == 'none' ? 0 : 1);
@@ -552,7 +608,7 @@ function Click_field(T, f, PK) // table field
             }
             var left = Glob_X - (document.getElementById('layer_new_relation').offsetWidth>>1);
             document.getElementById('layer_new_relation').style.left = left + 'px';
-            var top = Glob_Y - document.getElementById('layer_new_relation').offsetHeight + 40;
+            var top = Glob_Y - document.getElementById('layer_new_relation').offsetHeight;
             document.getElementById('layer_new_relation').style.top  = top + 'px';
             document.getElementById('layer_new_relation').style.display = 'block';
             link_relation += '&T2=' + T + '&F2=' + f;
@@ -601,19 +657,21 @@ function New_relation()
 
 function Start_table_new()
 {
-    window.location.href = 'tbl_create.php?server=' + server + '&db=' + db + '&token=' + token;
+    PMA_commonParams.set('table', '');
+    PMA_commonActions.refreshMain('tbl_create.php');
 }
 
 function Start_tab_upd(table)
 {
-    window.location.href = 'tbl_structure.php?server=' + server + '&db=' + db + '&token=' + token + '&table=' + table;
+    PMA_commonParams.set('table', table);
+    PMA_commonActions.refreshMain('tbl_structure.php');
 }
 //--------------------------- hide tables --------------------------------------
 
 function Small_tab_all(id_this) // max/min all tables
 {
     if (id_this.alt == "v") {
-        for (key in j_tabs) {
+        for (var key in j_tabs) {
             if (document.getElementById('id_hide_tbody_'+key).innerHTML == "v") {
                 Small_tab(key, 0);
             }
@@ -621,7 +679,7 @@ function Small_tab_all(id_this) // max/min all tables
         id_this.alt = ">";
         id_this.src = pmaThemeImage + "pmd/rightarrow1.png";
     } else {
-        for (key in j_tabs) {
+        for (var key in j_tabs) {
             if (document.getElementById('id_hide_tbody_'+key).innerHTML != "v") {
                 Small_tab(key, 0);
             }
@@ -634,7 +692,7 @@ function Small_tab_all(id_this) // max/min all tables
 
 function Small_tab_invert() // invert max/min all tables
 {
-    for (key in j_tabs) {
+    for (var key in j_tabs) {
         Small_tab(key, 0);
     }
     Re_load();
@@ -648,7 +706,7 @@ function Relation_lines_invert()
 
 function Small_tab_refresh()
 {
-     for (key in j_tabs) {
+     for (var key in j_tabs) {
          if(document.getElementById('id_hide_tbody_'+key).innerHTML != "v") {
              Small_tab(key, 0);
              Small_tab(key, 0);
@@ -695,15 +753,20 @@ function Canvas_click(id)
     var n = 0;
     var relation_name = 0;
     var selected = 0;
-    var a = new Array();
+    var a = [];
     var Key0, Key1, Key2, Key3, Key, x1, x2;
+    var K, key, key2, key3;
+    var Local_X = $.FullScreen.isFullScreen() ? Glob_X : Glob_X - document.getElementById("canvas_outer").offsetLeft;
+    var Local_Y = Glob_Y - document.getElementById("canvas_outer").offsetTop;
     Clear();
-    for (K in contr)
-        for (key in contr[K])
-            for (key2 in contr[K][key])
+    for (K in contr) {
+        for (key in contr[K]) {
+            for (key2 in contr[K][key]) {
                 for (key3 in contr[K][key][key2]) {
-                    if (!document.getElementById("check_vis_"+key2).checked ||
-                        !document.getElementById("check_vis_"+contr[K][key][key2][key3][0]).checked) continue; // if hide
+                    if (!document.getElementById("check_vis_"+key2).checked
+                        || !document.getElementById("check_vis_"+contr[K][key][key2][key3][0]).checked) {
+                        continue; // if hide
+                    }
                     var x1_left  = document.getElementById(key2).offsetLeft + 1;//document.getElementById(key2+"."+key3).offsetLeft;
                     var x1_right = x1_left + document.getElementById(key2).offsetWidth;
                     var x2_left  = document.getElementById(contr[K][key][key2][key3][0]).offsetLeft;//+document.getElementById(contr[K][key2][key3][0]+"."+contr[K][key2][key3][1]).offsetLeft
@@ -746,7 +809,7 @@ function Canvas_click(id)
                     var y1 = document.getElementById(key2).offsetTop + document.getElementById(key2+"."+key3).offsetTop + height_field;
                     var y2 = document.getElementById(contr[K][key][key2][key3][0]).offsetTop +
                                      document.getElementById(contr[K][key][key2][key3][0]+"."+contr[K][key][key2][key3][1]).offsetTop + height_field;
-                    if (!selected && Glob_X > x1 - 10 && Glob_X < x1 + 10 && Glob_Y > y1 - 7 && Glob_Y < y1 + 7) {
+                    if (!selected && Local_X > x1 - 10 && Local_X < x1 + 10 && Local_Y > y1 - 7 && Local_Y < y1 + 7) {
                         Line0(x1 - sm_x, y1 - sm_y, x2 - sm_x, y2 - sm_y, "rgba(255,0,0,1)");
                         selected = 1; // Rect(x1-sm_x,y1-sm_y,10,10,"rgba(0,255,0,1)");
                         relation_name = key; //
@@ -758,6 +821,9 @@ function Canvas_click(id)
                         Line0(x1 - sm_x, y1 - sm_y, x2 - sm_x, y2 - sm_y, getColorByTarget( contr[K][key][key2][key3][0]+'.'+contr[K][key][key2][key3][1] ));
                     }
                 }
+            }
+        }
+    }
     if (selected) {
         // select relations
         //alert(Key0+' - '+Key1+' - '+Key2+' - '+Key3);
@@ -798,11 +864,11 @@ function Hide_tab_all(id_this) // max/min all tables
         id_this.src = pmaThemeImage + "pmd/downarrow1.png";
     }
     var E = document.form1;
-    for (i = 0; i < E.elements.length; i++) {
+    for (var i = 0; i < E.elements.length; i++) {
         if (E.elements[i].type == "checkbox" && E.elements[i].id.substring(0, 10) == 'check_vis_') {
             if (id_this.alt == 'v') {
                 E.elements[i].checked = true;
-                document.getElementById(E.elements[i].value).style.display = 'block';
+                document.getElementById(E.elements[i].value).style.display = '';
             } else {
                 E.elements[i].checked = false;
                 document.getElementById(E.elements[i].value).style.display = 'none';
@@ -815,7 +881,7 @@ function Hide_tab_all(id_this) // max/min all tables
 function in_array_k(x, m)
 {
     var b = 0;
-    for (u in m) {
+    for (var u in m) {
         if (x == u) {
             b=1;
             break;
@@ -826,13 +892,20 @@ function in_array_k(x, m)
 
 function No_have_constr(id_this)
 {
-    var a = new Array();
-    for (K in contr)
-        for (key in contr[K])                     // contr name
-            for (key2 in contr[K][key])           // table name
-                for (key3 in contr[K][key][key2]) // field name
+    var a = [];
+    var K, key, key2, key3;
+    for (K in contr) {
+        for (key in contr[K]) {
+            // contr name
+            for (key2 in contr[K][key]) {
+                // table name
+                for (key3 in contr[K][key][key2]) {
+                    // field name
                     a[key2] = a[contr[K][key][key2][key3][0]] = 1; // exist constr
-
+                }
+            }
+        }
+    }
 
     if (id_this.alt == 'v') {
         id_this.alt = '>';
@@ -842,16 +915,16 @@ function No_have_constr(id_this)
         id_this.src = pmaThemeImage + "pmd/downarrow2.png";
     }
     var E = document.form1;
-    for (i = 0; i < E.elements.length; i++) {
-        if (E.elements[i].type == "checkbox" && E.elements[i].id.substring(0, 10) == 'check_vis_')
-        {
-            if (!in_array_k(E.elements[i].value, a))
-            if (id_this.alt == 'v') {
-                E.elements[i].checked = true;
-                document.getElementById(E.elements[i].value).style.display = 'block';
-            } else {
-                E.elements[i].checked = false;
-                document.getElementById(E.elements[i].value).style.display = 'none';
+    for (var i = 0; i < E.elements.length; i++) {
+        if (E.elements[i].type == "checkbox" && E.elements[i].id.substring(0, 10) == 'check_vis_') {
+            if (!in_array_k(E.elements[i].value, a)) {
+                if (id_this.alt == 'v') {
+                    E.elements[i].checked = true;
+                    document.getElementById(E.elements[i].value).style.display = '';
+                } else {
+                    E.elements[i].checked = false;
+                    document.getElementById(E.elements[i].value).style.display = 'none';
+                }
             }
         }
     }
@@ -904,8 +977,7 @@ function Show_left_menu(id_this) // max/min all tables
     if (id_this.alt == "v") {
         var pos = $("#top_menu").offset();
         var height = $("#top_menu").height();
-        document.getElementById("layer_menu").style.top = (pos.top + height) + 'px';
-        document.getElementById("layer_menu").style.left = pos.left + 'px';
+        document.getElementById("layer_menu").style.top = '0px';
         document.getElementById("layer_menu").style.display = 'block';
         id_this.alt = ">";
         id_this.src = pmaThemeImage + "pmd/uparrow2_m.png";
@@ -923,12 +995,7 @@ function Show_left_menu(id_this) // max/min all tables
 function Top_menu_right(id_this)
 {
     if (id_this.alt == ">") {
-        var top_menu_width = 10;
-        $('#top_menu').children().each(function () {
-            top_menu_width += $(this).outerWidth(true);
-        });
-        var offset = parseInt(document.getElementById('top_menu').offsetWidth - top_menu_width, 10);
-        document.getElementById('top_menu').style.paddingLeft = offset + 'px';
+        moveTopMenuToRight(id_this);
         id_this.alt = "<";
         id_this.src = pmaThemeImage + "pmd/2leftarrow_m.png";
     } else {
@@ -936,6 +1003,23 @@ function Top_menu_right(id_this)
         id_this.alt = ">";
         id_this.src = pmaThemeImage + "pmd/2rightarrow_m.png";
     }
+}
+
+function Top_menu_reposition(id_this)
+{
+    if (id_this.alt == "<") {
+        moveTopMenuToRight(id_this);
+    }
+}
+
+function moveTopMenuToRight(id_this)
+{
+    var top_menu_width = 10;
+    $('#top_menu').children().each(function () {
+        top_menu_width += $(this).outerWidth(true);
+    });
+    var offset = parseInt(document.getElementById('canvas_outer').offsetWidth - top_menu_width, 10);
+    document.getElementById('top_menu').style.paddingLeft = offset + 'px';
 }
 //------------------------------------------------------------------------------
 function Start_display_field()
@@ -960,20 +1044,20 @@ function Start_display_field()
     }
 }
 //------------------------------------------------------------------------------
-var TargetColors = new Array();
+var TargetColors = [];
 function getColorByTarget( target )
 {
   var color = '';  //"rgba(0,100,150,1)";
 
-  for (i in TargetColors)
+  for (var i in TargetColors) {
    if (TargetColors[i][0]==target) {
     color = TargetColors[i][1];
     break;
    }
+  }
 
 
-  if (color.length==0)
-  {
+  if (color.length==0) {
    var i = TargetColors.length+1;
    var d = i % 6;
    var j = (i - d) / 6;
@@ -990,7 +1074,7 @@ function getColorByTarget( target )
     var a = color_case[d][0];
     var b = color_case[d][1];
     var c = color_case[d][2];
-    e = (1 - (j - 1) / 6);
+    var e = (1 - (j - 1) / 6);
 
     var r = Math.round(a * 200 * e);
     var g = Math.round(b * 200 * e);
@@ -1027,6 +1111,7 @@ function Select_all(id_this,owner)
     var parent= document.form1;
     downer =owner;
     var i;
+    var k;
     var tab = [];
     for (i = 0; i < parent.elements.length; i++) {
         if (parent.elements[i].type == "checkbox" && parent.elements[i].id.substring(0,(9 + id_this.length)) == 'select_' + id_this + '._') {
@@ -1041,7 +1126,7 @@ function Select_all(id_this,owner)
            }
         }
     }
-    if(document.getElementById('select_all_' + id_this).checked == true) {
+    if (document.getElementById('select_all_' + id_this).checked == true) {
         select_field.push('`' + id_this.substring(owner.length +1) + '`.*');
         tab = id_this.split(".");
         from_array.push(tab[1]);
@@ -1052,8 +1137,8 @@ function Select_all(id_this,owner)
                 select_field.splice(i,1);
             }
         }
-        for(k =0 ;k < from_array.length;k++){
-            if(from_array[k] == id_this){
+        for (k =0 ;k < from_array.length; k++){
+            if (from_array[k] == id_this){
                 from_array.splice(k,1);
                 break;
             }
@@ -1111,12 +1196,6 @@ function store_column(id_this,owner,col)
  * first it does a few checks on each object, then makes an object(where,rename,groupby,aggregate,orderby)
  * then a new history object is made and finally all these history objects are addded to history_array[]
  *
- * @uses where()
- * @uses history()
- * @uses aggregate()
- * @uses rename()
- * @uses panel()
- * @uses display()
 **/
 
 function add_object()
@@ -1176,8 +1255,7 @@ function add_object()
         document.getElementById('orderby').checked = false;
         //make orderby
     }
-    document.getElementById('pmd_hint').innerHTML = sum + "object created" ;
-    document.getElementById('pmd_hint').style.display = 'block';
+    PMA_ajaxShowMessage($.sprintf(PMA_messages['strObjectsCreated'], sum));
     //output sum new objects created
     var existingDiv = document.getElementById('ab');
     existingDiv.innerHTML = display(init,history_array.length);

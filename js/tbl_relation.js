@@ -3,25 +3,32 @@
  * for tbl_relation.php
  *
  */
-function show_hide_clauses(thisDropdown)
+function show_hide_clauses($thisDropdown)
 {
     // here, one span contains the label and the clause dropdown
     // and we have one span for ON DELETE and one for ON UPDATE
     //
-    if (thisDropdown.val() != '') {
-        thisDropdown.parent().next('span').show().next('span').show();
+    if ($thisDropdown.val() != '') {
+        $thisDropdown.parent().nextAll('span').show();
     } else {
-        thisDropdown.parent().next('span').hide().next('span').hide();
+        $thisDropdown.parent().nextAll('span').hide();
     }
 }
 
-$(document).ready(function() {
+/**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('tbl_relation.js', function() {
+    $('select.referenced_column_dropdown').unbind('change');
+});
+
+AJAX.registerOnload('tbl_relation.js', function() {
     // initial display
-    $('.referenced_column_dropdown').each(function(index, one_dropdown) {
+    $('select.referenced_column_dropdown').each(function(index, one_dropdown) {
         show_hide_clauses($(one_dropdown));
     });
     // change
-    $('.referenced_column_dropdown').change(function() {
+    $('select.referenced_column_dropdown').change(function() {
         show_hide_clauses($(this));
     });
 });

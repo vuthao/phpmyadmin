@@ -1,4 +1,5 @@
 <?php
+/* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
  * Test for PMA_GIS_Factory
  *
@@ -20,6 +21,8 @@ require_once 'libraries/gis/pma_gis_factory.php';
 
 /**
  * Test class for PMA_GIS_Factory
+ *
+ * @package PhpMyAdmin-test
  */
 class PMA_GIS_FactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -31,7 +34,7 @@ class PMA_GIS_FactoryTest extends PHPUnit_Framework_TestCase
      * @param object $geom geometry object
      *
      * @dataProvider providerForTestFactory
-     * @return nothing
+     * @return void
      */
     public function testFactory($type, $geom)
     {

@@ -1,22 +1,22 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
- * Test for PMA_convert_bit_default_value from common.lib
+ ** Test for PMA_Util::convertBitDefaultValue from common.lib
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_convert_bit_default_value_test.php
  * @group common.lib-tests
  */
 
 /*
  * Include to test.
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 
-class PMA_convert_bit_default_value_test extends PHPUnit_Framework_TestCase
+class PMA_ConvertBitDefaultValueTest extends PHPUnit_Framework_TestCase
 {
 
-    function dataProvider(){
+    function dataProvider()
+    {
         return array(
             array("b'",""),
             array("b'01'","01"),
@@ -27,8 +27,11 @@ class PMA_convert_bit_default_value_test extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProvider
      */
-    function testConvert_bit_default_value_test($bit, $val){
-        $this->assertEquals($val, PMA_convert_bit_default_value($bit));
+    function testConvert_bit_default_value_test($bit, $val)
+    {
+        $this->assertEquals(
+            $val, PMA_Util::convertBitDefaultValue($bit)
+        );
 
     }
 }

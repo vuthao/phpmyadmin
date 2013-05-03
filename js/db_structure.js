@@ -19,6 +19,18 @@
  */
 
 /**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('db_structure.js', function() {
+    $("span.fkc_switch").unbind('click');
+    $('#fkc_checkbox').unbind('change');
+    $("a.truncate_table_anchor.ajax").die('click');
+    $("a.drop_table_anchor.ajax").die('click');
+    $('a.drop_tracking_anchor.ajax').die('click');
+    $('#real_end_input').die('click');
+});
+
+/**
  * Adjust number of rows and total size in the summary
  * when truncating, creating, dropping or inserting into a table
  */
@@ -42,7 +54,7 @@ function PMA_adjustTotals() {
     var sizeSum = 0;
     var overheadSum = 0;
     var rowSumApproximated = false;
-    
+
     $allTr.each(function () {
         var $this = $(this);
         // Get the number of rows for this SQL table
@@ -117,150 +129,58 @@ function PMA_adjustTotals() {
     $summary.find('.tbl_overhead').text(overheadSum + " " + byteUnits[overhead_magnitude]);
 }
 
-$(document).ready(function() {
+AJAX.registerOnload('db_structure.js', function() {
     /**
-     * Ajax Event handler for 'Insert Table'
-     *
-     * @uses    PMA_ajaxShowMessage()
-     * @see     $cfg['AjaxEnable']
+     * Handler for the print view multisubmit.
+     * All other multi submits can be handled via ajax, but this one needs
+     * special treatment as the results need to open in another browser window
      */
-    var current_insert_table;
-    $("td.insert_table a.ajax").live('click', function(event){
-        event.preventDefault();
-        current_insert_table = $(this);
-        var $url = $(this).attr("href");
-        if ($url.substring(0, 15) == "tbl_change.php?") {
-            $url = $url.substring(15);
+    $('#tablesForm').submit(function (event) {
+        var $form = $(this);
+        if ($form.find('select[name=submit_mult]').val() === 'print') {
+            event.preventDefault();
+            event.stopPropagation();
+            $('form#clone').remove();
+            var $clone = $form
+                .clone()
+                .hide()
+                .appendTo('body');
+            $clone
+                .find('select[name=submit_mult]')
+                .val('print');
+            $clone
+                .attr('target', 'printview')
+                .attr('id', 'clone')
+                .submit();
         }
-
-        if ($("#insert_table_dialog").length > 0) {
-            $("#insert_table_dialog").remove();
-        }
-           var $div = $('<div id="insert_table_dialog"></div>');
-           var target = "tbl_change.php";
-
-        /**
-         *  @var    button_options  Object that stores the options passed to jQueryUI
-         *                          dialog
-         */
-        var button_options = {};
-        // in the following function we need to use $(this)
-        button_options[PMA_messages['strCancel']] = function() {$(this).dialog('close').remove();}
-
-        var button_options_error = {};
-        button_options_error[PMA_messages['strOK']] = function() {$(this).dialog('close').remove();}
-
-        var $msgbox = PMA_ajaxShowMessage();
-
-        $.get( target , $url+"&ajax_request=true" ,  function(data) {
-            //in the case of an error, show the error message returned.
-            if (data.success != undefined && data.success == false) {
-                $div
-                .append(data.error)
-                .dialog({
-                    title: PMA_messages['strInsertTable'],
-                    height: 230,
-                    width: 900,
-                    modal: true,
-                    open: PMA_verifyColumnsProperties,
-                    buttons : button_options_error
-                })// end dialog options
-            } else {
-                var $dialog = $div
-                    .append(data)
-                    .dialog({
-                        title: PMA_messages['strInsertTable'],
-                        height: 600,
-                        width: 900,
-                        modal: true,
-                        open: PMA_verifyColumnsProperties,
-                        buttons : button_options
-                    });// end dialog options
-                //Remove the top menu container from the dialog
-                $dialog.find("#topmenucontainer").hide();
-                //Adding the datetime pikers for the dialog
-                $dialog.find('.datefield, .datetimefield').each(function () {
-                    PMA_addDatepicker($(this));
-                });
-                $(".insertRowTable").addClass("ajax");
-                $("#buttonYes").addClass("ajax");
-                $div = $("#insert_table_dialog");
-                PMA_convertFootnotesToTooltips($div);
-            }
-            PMA_ajaxRemoveMessage($msgbox);
-        }) // end $.get()
-
     });
 
-    $("#insertForm .insertRowTable.ajax input[type=submit]").live('click', function(event) {
-        event.preventDefault();
-        /**
-         *  @var    the_form    object referring to the insert form
-         */
-        var $form = $("#insertForm");
-        $("#result_query").remove();
-        PMA_prepareForAjaxRequest($form);
-        //User wants to submit the form
-        $.post($form.attr('action'), $form.serialize() , function(data) {
-            if(data.success == true) {
-                PMA_ajaxShowMessage(data.message);
-            } else {
-                PMA_ajaxShowMessage(data.error, false);
-            }
-            if ($("#insert_table_dialog").length > 0) {
-                $("#insert_table_dialog").dialog("close").remove();
-            }
-            /**Update the row count at the tableForm*/
-            current_insert_table.closest('tr').find('.value.tbl_rows').html(data.row_count);
-            PMA_adjustTotals();
-        }) // end $.post()
-    }) // end insert table button "Go"
-
-    $("#buttonYes.ajax").live('click', function(event){
-        event.preventDefault();
-        /**
-         *  @var    the_form    object referring to the insert form
-         */
-        var $form = $("#insertForm");
-        /**Get the submit type and the after insert type in the form*/
-        var selected_submit_type = $("#insertForm").find("#actions_panel .control_at_footer option:selected").attr('value');
-        var selected_after_insert = $("#insertForm").find("#actions_panel select[name=after_insert] option:selected").attr('value');
-        $("#result_query").remove();
-        PMA_prepareForAjaxRequest($form);
-        //User wants to submit the form
-        $.post($form.attr('action'), $form.serialize() , function(data) {
-            if(data.success == true) {
-                PMA_ajaxShowMessage(data.message);
-                if (selected_submit_type == "showinsert") {
-                    $(data.sql_query).insertAfter("#floating_menubar");
-                    $("#result_query .notice").remove();
-                    $("#result_query").prepend((data.message));
-                }
-                if (selected_after_insert == "new_insert") {
-                    /**Trigger the insert dialog for new_insert option*/
-                    current_insert_table.trigger('click');
-                }
-
-            } else {
-                PMA_ajaxShowMessage(data.error, false);
-            }
-            if ($("#insert_table_dialog").length > 0) {
-                $("#insert_table_dialog").dialog("close").remove();
-            }
-            /**Update the row count at the tableForm*/
-            current_insert_table.closest('tr').find('.value.tbl_rows').html(data.row_count);
-            PMA_adjustTotals();
-        }) // end $.post()
+     /**
+     * Event handler for 'Foreign Key Checks' disabling option
+     * in the drop table confirmation form
+     */
+    $("span.fkc_switch").click(function(event){
+       if ($("#fkc_checkbox").prop('checked')) {
+           $("#fkc_checkbox").prop('checked', false);
+           $("#fkc_status").html(PMA_messages['strForeignKeyCheckDisabled']);
+           return;
+       }
+       $("#fkc_checkbox").prop('checked', true);
+       $("#fkc_status").html(PMA_messages['strForeignKeyCheckEnabled']);
     });
+
+    $('#fkc_checkbox').change(function () {
+        if ($(this).prop("checked")) {
+            $("#fkc_status").html(PMA_messages['strForeignKeyCheckEnabled']);
+            return;
+        }
+        $("#fkc_status").html(PMA_messages['strForeignKeyCheckDisabled']);
+    }); // End of event handler for 'Foreign Key Check'
 
     /**
      * Ajax Event handler for 'Truncate Table'
-     *
-     * @uses    $.PMA_confirm()
-     * @uses    PMA_ajaxShowMessage()
-     * @see     $cfg['AjaxEnable']
      */
-    $(".truncate_table_anchor").live('click', function(event) {
+    $("a.truncate_table_anchor.ajax").live('click', function(event) {
         event.preventDefault();
 
         /**
@@ -276,7 +196,9 @@ $(document).ready(function() {
         /**
          * @var question    String containing the question to be asked for confirmation
          */
-        var question = 'TRUNCATE ' + escapeHtml(curr_table_name);
+        var question =
+            PMA_messages.strTruncateTableStrongWarning + ' '
+            + $.sprintf(PMA_messages.strDoYouReally, 'TRUNCATE ' + escapeHtml(curr_table_name));
 
         $this_anchor.PMA_confirm(question, $this_anchor.attr('href'), function(url) {
 
@@ -301,18 +223,14 @@ $(document).ready(function() {
                 } else {
                     PMA_ajaxShowMessage(PMA_messages['strErrorProcessingRequest'] + " : " + data.error, false);
                 }
-            }) // end $.get()
-        }) //end $.PMA_confirm()
+            }); // end $.get()
+        }); //end $.PMA_confirm()
     }); //end of Truncate Table Ajax action
 
     /**
      * Ajax Event handler for 'Drop Table' or 'Drop View'
-     *
-     * @uses    $.PMA_confirm()
-     * @uses    PMA_ajaxShowMessage()
-     * @see     $cfg['AjaxEnable']
      */
-    $(".drop_table_anchor").live('click', function(event) {
+    $("a.drop_table_anchor.ajax").live('click', function(event) {
         event.preventDefault();
 
         var $this_anchor = $(this);
@@ -327,19 +245,25 @@ $(document).ready(function() {
          */
         var curr_table_name = $curr_row.children('th').children('a').text();
         /**
+         * @var is_view Boolean telling if we have a view
+         */
+        var is_view = $curr_row.hasClass('is_view') || $this_anchor.hasClass('view');
+        /**
          * @var question    String containing the question to be asked for confirmation
          */
-        var question = 'DROP ';
-        if ($this_anchor.hasClass('view')) {
-            question += 'VIEW';
+        var question;
+        if (! is_view) {
+            question =
+                PMA_messages.strDropTableStrongWarning + ' '
+                + $.sprintf(PMA_messages.strDoYouReally, 'DROP TABLE ' + escapeHtml(curr_table_name));
         } else {
-            question += 'TABLE';
+            question =
+                $.sprintf(PMA_messages.strDoYouReally, 'DROP VIEW ' + escapeHtml(curr_table_name));
         }
-        question += ' ' + escapeHtml(curr_table_name);
 
         $this_anchor.PMA_confirm(question, $this_anchor.attr('href'), function(url) {
 
-            PMA_ajaxShowMessage(PMA_messages['strProcessingRequest']);
+            var $msg = PMA_ajaxShowMessage(PMA_messages['strProcessingRequest']);
 
             $.get(url, {'is_js_confirmed' : 1, 'ajax_request' : true}, function(data) {
                 if (data.success == true) {
@@ -347,10 +271,8 @@ $(document).ready(function() {
                     toggleRowColors($curr_row.next());
                     $curr_row.hide("medium").remove();
                     PMA_adjustTotals();
-
-                    if (window.parent && window.parent.frame_navigation) {
-                        window.parent.frame_navigation.location.reload();
-                    }
+                    PMA_reloadNavigation();
+                    PMA_ajaxRemoveMessage($msg);
                 } else {
                     PMA_ajaxShowMessage(PMA_messages['strErrorProcessingRequest'] + " : " + data.error, false);
                 }
@@ -360,12 +282,8 @@ $(document).ready(function() {
 
     /**
      * Ajax Event handler for 'Drop tracking'
-     *
-     * @uses    $.PMA_confirm()
-     * @uses    PMA_ajaxShowMessage()
-     * @see     $cfg['AjaxEnable']
      */
-    $('.drop_tracking_anchor').live('click', function(event) {
+    $('a.drop_tracking_anchor.ajax').live('click', function(event) {
         event.preventDefault();
 
         var $anchor = $(this);
@@ -384,7 +302,7 @@ $(document).ready(function() {
             PMA_ajaxShowMessage(PMA_messages['strDeletingTrackingData']);
 
             $.get(url, {'is_js_confirmed': 1, 'ajax_request': true}, function(data) {
-                if(data.success == true) {
+                if (data.success == true) {
                     var $tracked_table = $curr_tracking_row.parents('table');
                     var table_name = $curr_tracking_row.find('td:nth-child(2)').text();
 
@@ -401,7 +319,7 @@ $(document).ready(function() {
                     }
 
                     // Make the removed table visible in the list of 'Untracked tables'.
-                    $untracked_table = $('table#noversions');
+                    var $untracked_table = $('table#noversions');
 
                     // This won't work if no untracked tables are there.
                     if ($untracked_table.length > 0) {
@@ -450,7 +368,6 @@ $(document).ready(function() {
     /**
      * Ajax Event handler for calculatig the real end for a InnoDB table
      *
-     * @uses    $.PMA_confirm
      */
     $('#real_end_input').live('click', function(event) {
         event.preventDefault();
@@ -462,8 +379,8 @@ $(document).ready(function() {
 
         $(this).PMA_confirm(question, '', function() {
             return true;
-        })
+        });
         return false;
-    }) //end Calculate Real End for InnoDB
+    }); //end Calculate Real End for InnoDB
 
-}, 'top.frame_content'); // end $(document).ready()
+}); // end $()

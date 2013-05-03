@@ -11,12 +11,12 @@
  */
 function changePluginOpts()
 {
-    $(".format_specific_options").each(function() {
+    $("#format_specific_opts div.format_specific_options").each(function() {
         $(this).hide();
     });
-    var selected_plugin_name = $("#plugins option:selected").attr("value");
+    var selected_plugin_name = $("#plugins option:selected").val();
     $("#" + selected_plugin_name + "_options").fadeIn('slow');
-    if(selected_plugin_name == "csv") {
+    if (selected_plugin_name == "csv") {
         $("#import_notification").text(PMA_messages['strImportCSV']);
     } else {
         $("#import_notification").text("");
@@ -37,14 +37,25 @@ function matchFile(fname)
             len--;
         }
         // Only toggle if the format of the file can be imported
-        if($("select[name='format'] option").filterByValue(fname_array[len - 1]).length == 1) {
-            $("#plugins option:selected").removeAttr("selected");
-            $("select[name='format'] option").filterByValue(fname_array[len - 1]).attr('selected', 'selected');
+        if ($("select[name='format'] option").filterByValue(fname_array[len - 1]).length == 1) {
+            $("select[name='format'] option").filterByValue(fname_array[len - 1]).prop('selected', true);
             changePluginOpts();
         }
     }
 }
-$(document).ready(function() {
+
+/**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('import.js', function() {
+    $("#plugins").unbind('change');
+    $("#input_import_file").unbind('change');
+    $("#select_local_import_file").unbind('change');
+    $("#input_import_file").unbind('change').unbind('focus');
+    $("#select_local_import_file").unbind('focus');
+});
+
+AJAX.registerOnload('import.js', function() {
     // Initially display the options for the selected plugin
     changePluginOpts();
 
@@ -54,24 +65,24 @@ $(document).ready(function() {
     });
 
     $("#input_import_file").change(function() {
-        matchFile($(this).attr("value"));
+        matchFile($(this).val());
     });
 
     $("#select_local_import_file").change(function() {
-        matchFile($(this).attr("value"));
+        matchFile($(this).val());
     });
 
     /*
      * When the "Browse the server" form is clicked or the "Select from the web server upload directory"
      * form is clicked, the radio button beside it becomes selected and the other form becomes disabled.
      */
-    $("#input_import_file").focus(function() {
-         $("#radio_import_file").attr('checked', 'checked');
-         $("#radio_local_import_file").removeAttr('checked');
+    $("#input_import_file").bind("focus change", function() {
+         $("#radio_import_file").prop('checked', true);
+         $("#radio_local_import_file").prop('checked', false);
     });
     $("#select_local_import_file").focus(function() {
-         $("#radio_local_import_file").attr('checked', 'checked');
-         $("#radio_import_file").removeAttr('checked');
+         $("#radio_local_import_file").prop('checked', true);
+         $("#radio_import_file").prop('checked', false);
     });
 
     /**
@@ -79,6 +90,13 @@ $(document).ready(function() {
      *  Javascript-disabled browsers
      */
     $("#scroll_to_options_msg").hide();
-    $(".format_specific_options").css({ "border": 0, "margin": 0, "padding": 0 });
-    $(".format_specific_options h3").remove();
+    $("#format_specific_opts div.format_specific_options")
+    .css({
+        "border": 0,
+        "margin": 0,
+        "padding": 0
+    })
+    .find("h3")
+    .remove();
+    //$("form[name=import] *").unwrap();
 });

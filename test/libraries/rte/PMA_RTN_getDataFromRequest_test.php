@@ -6,8 +6,9 @@
  * @package PhpMyAdmin-test
  */
 
-require_once 'libraries/common.lib.php';
-
+require_once 'libraries/Util.class.php';
+require_once 'libraries/php-gettext/gettext.inc';
+require_once './libraries/Types.class.php';
 
 /*
  * Include to test.
@@ -21,7 +22,8 @@ class PMA_RTN_getDataFromRequest_test extends PHPUnit_Framework_TestCase
         global $cfg;
 
         $cfg['ShowFunctionFields'] = false;
-        include 'libraries/data_mysql.inc.php';
+
+        $GLOBALS['PMA_Types'] = new PMA_Types_MySQL();
     }
 
     /**

@@ -3,69 +3,115 @@
 /**
  * Selenium parent class for TestCases
  *
- * @package PhpMyAdmin-test
- * @group Selenium
+ * @package    PhpMyAdmin-test
+ * @subpackage Selenium
  */
 
-// Optionally add the php-client-driver to your include path
-//set_include_path(get_include_path() . PATH_SEPARATOR . '/opt/selenium-remote-control-1.0.1/selenium-php-client-driver-1.0.1/PEAR/');
-
-// Include the main phpMyAdmin user config
-// currently only $cfg['Test'] is used
-require_once 'config.sample.inc.php';
-
-
-
-class PmaSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase
+/**
+ * PmaSeleniumTestCase class
+ *
+ * @package    PhpMyAdmin-test
+ * @subpackage Selenium
+ */
+class PmaSeleniumTestCase
 {
-    protected $selenium;
-    protected $cfg;
+    /**
+     * Username of the user
+     *
+     * @access private
+     * @var string
+     */
+    private $_txtUsername;
 
-    protected $captureScreenshotOnFailure = true;
-    protected $screenshotPath = '/var/www/screenshots';
-    protected $screenshotUrl = 'http://localhost/screenshots';
+    /**
+     * Password for the user
+     *
+     * @access private
+     * @var string
+     */
+    private $_txtPassword;
 
-    public function setUp()
+    /**
+     * id of the login button
+     *
+     * @access private
+     * @var string
+     */
+    private $_btnLogin;
+
+    /**
+     * Selenium Context
+     *
+     * @access private
+     * @var object
+     */
+    private $_selenium;
+
+    /**
+     * Configuration Instance
+     *
+     * @access private
+     * @var object
+     */
+    private $_config;
+
+    /**
+     * constructor
+     *
+     * @param object $selenium Selenium Context
+     */
+    public function __construct($selenium)
     {
-        global $cfg;
-        $this->cfg =& $cfg;
-        //PHPUnit_Extensions_SeleniumTestCase::$browsers = $this->cfg['Test']['broswers'];
-
-        $this->setBrowserUrl(TESTSUITE_PHPMYADMIN_HOST . TESTSUITE_PHPMYADMIN_URL);
-
-        $this->start();
-    }
-
-    public function tearDown()
-    {
-        $this->stop();
+        $this->_txtUsername = 'input_username';
+        $this->_txtPassword = 'input_password';
+        $this->_btnLogin = 'input_go';
+        $this->_config = new TestConfig();
+        $this->_selenium = $selenium;
     }
 
     /**
      * perform a login
+     *
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * @return void
      */
-    public function doLogin()
+    public function login($username, $password)
     {
-        $this->open(TESTSUITE_PHPMYADMIN_URL);
-        // Somehow selenium does not like the language selection on the cookie login page, forced English in the config for now.
-        //$this->select("lang", "label=English");
-
-        $this->waitForPageToLoad("30000");
-        $this->type("input_username", TESTSUITE_USER);
-        $this->type("input_password", TESTSUITE_PASSWORD);
-        $this->click("input_go");
-        $this->waitForPageToLoad("30001");
+        $this->_selenium->open($this->_config->getLoginURL());
+        $this->_selenium->type($this->_txtUsername, $username);
+        $this->_selenium->type($this->_txtPassword, $password);
+        $this->_selenium->click($this->_btnLogin);
+        $this->_selenium->waitForPageToLoad($this->_config->getTimeoutValue());
     }
 
-    /*
-     * Just a dummy to show some example statements
+    /**
+     * Checks whether the login is successful
      *
-     public function mockTest()
-     {
-         // Slow down the testing speed, ideal for debugging
-         //$this->setSpeed(4000);
-}
+     * @return boolean
      */
-}
+    public function isSuccessLogin()
+    {
+        if ($this->_selenium->isElementPresent("//*[@id=\"serverinfo\"]")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    /**
+    * Checks whether the login is unsuccessful
+    *
+    * @return boolean
+    */
+    public function isUnsuccessLogin()
+    {
+        if ($this->_selenium->isElementPresent("css=div.error")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 ?>

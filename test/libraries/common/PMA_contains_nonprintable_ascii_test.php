@@ -1,22 +1,22 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
- * Test for PMA_contains_nonprintable_ascii from common.lib
+ ** Test for PMA_Util::containsNonPrintableAscii from common.lib
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_contains_nonprintable_ascii.php
  * @group common.lib-tests
  */
 
 /*
  * Include to test.
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 
-class PMA_contains_nonprintable_ascii extends PHPUnit_Framework_TestCase
+class PMA_ContainsNonPrintableAsciiTest extends PHPUnit_Framework_TestCase
 {
 
-    function dataProvider(){
+    function dataProvider()
+    {
         return array(
             array("normal string", 0),
             array("new\nline", 1),
@@ -29,10 +29,11 @@ class PMA_contains_nonprintable_ascii extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProvider
      */
-    function testContainsNonPrintableAscii($str, $res){
-        $this->assertEquals($res, PMA_contains_nonprintable_ascii($str));
+    function testContainsNonPrintableAscii($str, $res)
+    {
+        $this->assertEquals(
+            $res, PMA_Util::containsNonPrintableAscii($str)
+        );
     }
 
 }
-
-// PMA_contains_nonprintable_ascii

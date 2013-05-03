@@ -7,9 +7,9 @@
  */
 
 /*
- * Needed for PMA_backquote()
+ * Needed for backquote()
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 
 /*
  * Needed by PMA_TRI_getQueryFromRequest()
@@ -20,18 +20,15 @@ require_once 'libraries/php-gettext/gettext.inc';
  * Include to test.
  */
 require_once 'libraries/rte/rte_triggers.lib.php';
+require_once 'libraries/database_interface.lib.php';
+require_once 'libraries/Tracker.class.php';
 
 
 class PMA_TRI_getQueryFromRequest_test extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        if (! function_exists('PMA_DBI_get_tables')) {
-            function PMA_DBI_get_tables($db)
-            {
-                return array('table1', 'table`2');
-            }
-        }
+        $GLOBALS['db'] = 'pma_test';
     }
 
     /**
@@ -74,8 +71,8 @@ class PMA_TRI_getQueryFromRequest_test extends PHPUnit_Framework_TestCase
                 'INSERT',
                 'table`2',
                 'SET @A=NULL',
-                'CREATE TRIGGER `trigger` BEFORE INSERT ON `table``2` FOR EACH ROW SET @A=NULL',
-                1
+                'CREATE TRIGGER `trigger` BEFORE INSERT ON  FOR EACH ROW SET @A=NULL',
+                2
             ),
             array(
                 'foo`s@host',

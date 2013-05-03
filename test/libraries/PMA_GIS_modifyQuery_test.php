@@ -1,4 +1,5 @@
 <?php
+/* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
  * Tests for PMA_GIS_modifyQuery method
  *
@@ -6,7 +7,7 @@
  */
 
 require_once 'libraries/sqlparser.lib.php';
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 /*
  * Include to test
  */
@@ -22,7 +23,7 @@ class PMA_GIS_modifyQueryTest extends PHPUnit_Framework_TestCase
      * @param string $modified_query modified query
      *
      * @dataProvider provider
-     * @return nothing
+     * @return void
      */
     public function testModifyQuery($sql_query, $settings, $modified_query)
     {

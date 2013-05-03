@@ -7,7 +7,7 @@
  */
 require_once 'libraries/php-gettext/gettext.inc';
 require_once 'libraries/url_generating.lib.php';
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 /*
  * Include to test.
  */
@@ -17,12 +17,6 @@ class PMA_EVN_getEditorForm_test extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        if (! function_exists('PMA_DBI_get_tables')) {
-            function PMA_DBI_get_tables($db)
-            {
-                return array('table1', 'table`2');
-            }
-        }
         $GLOBALS['tear_down']['token'] = false;
         $GLOBALS['tear_down']['server'] = false;
         if (! isset($_SESSION[' PMA_token '])) {

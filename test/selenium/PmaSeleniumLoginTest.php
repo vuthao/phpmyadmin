@@ -3,41 +3,56 @@
 /**
  * Selenium TestCase for login related tests
  *
- * @package PhpMyAdmin-test
- * @group Selenium
+ * @package    PhpMyAdmin-test
+ * @subpackage Selenium
  */
-
 require_once 'PmaSeleniumTestCase.php';
+require_once 'Helper.php';
 
-
-class PmaSeleniumLoginTest extends PmaSeleniumTestCase
+/**
+ * PmaSeleniumLoginTest class
+ *
+ * @package    PhpMyAdmin-test
+ * @subpackage Selenium
+ */
+class PmaSeleniumLoginTest extends PHPUnit_Extensions_SeleniumTestCase
 {
-    protected $captureScreenshotOnFailure = true;
-    protected $screenshotPath = '/var/www/screenshots';
-    protected $screenshotUrl = 'http://localhost/screenshots';
-
-    public function testLogin()
+    /**
+     * Setup the browser environment to run the selenium test case
+     *
+     * @return void
+     */
+    public function setUp()
     {
-        $this->doLogin();
+        $helper = new Helper();
+        $this->setBrowser(Helper::getBrowserString());
+        $this->setBrowserUrl(TESTSUITE_PHPMYADMIN_HOST . TESTSUITE_PHPMYADMIN_URL);
+    }
 
-        // Check if login error happend
-        if ($this->isElementPresent("//html/body/div/div[@class='error']")) {
-            $this->fail($this->getText("//html/body/div/div[@class='error']"));
-        }
+    /**
+     * Test for successful login
+     *
+     * @return void
+     */
+    public function testSuccessfulLogin()
+    {
+        $log = new PmaSeleniumTestCase($this);
+        $log->login(TESTSUITE_USER, TESTSUITE_PASSWORD);
+        $this->assertTrue($log->isSuccessLogin());
+        Helper::logOutIfLoggedIn($this);
+    }
 
-        // Check server info heder is present //*[@id="serverinfo"]
-        for ($second = 0;; $second++) {
-            if ($second >= 60)
-                $this->fail("Timeout waiting main page to load!");
-            try {
-                if ($this->isElementPresent("//*[@id=\"serverinfo\"]"))
-                    break;
-            } catch (Exception $e) {
-                $this->fail("Exception: ".$e->getMessage());
-            }
-            sleep(1);
-        }
-
+    /**
+     * Test for unsuccessful login
+     *
+     * @return void
+     */
+    public function testLoginWithWrongPassword()
+    {
+        $log = new PmaSeleniumTestCase($this);
+        $log->login("Admin", "Admin");
+        $this->assertTrue($log->isUnsuccessLogin());
+        Helper::logOutIfLoggedIn($this);
     }
 }
 ?>

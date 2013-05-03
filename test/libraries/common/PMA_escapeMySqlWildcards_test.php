@@ -4,19 +4,19 @@
  * Test for MySQL Wildcards escaping/unescaping
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_escapeMySqlWildcards_test.php
  * @group common.lib-tests
  */
 
 /*
  * Include to test.
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
 
-class PMA_escapeMySqlWildcards_test extends PHPUnit_Framework_TestCase
+class PMA_EscapeMySqlWildcardsTest extends PHPUnit_Framework_TestCase
 {
 
-    public function escapeDataProvider() {
+    public function escapeDataProvider()
+    {
         return array(
             array('\_test', '_test'),
             array('\_\\', '_\\'),
@@ -29,24 +29,28 @@ class PMA_escapeMySqlWildcards_test extends PHPUnit_Framework_TestCase
         );
     }
 
-    /** 
-     * PMA_escape_mysql_wildcards tests 
+    /**
+     * PMA_Util::escapeMysqlWildcards tests
      * @dataProvider escapeDataProvider
      */
 
     public function testEscape($a, $b)
     {
-        $this->assertEquals($a, PMA_escape_mysql_wildcards($b));
+        $this->assertEquals(
+            $a, PMA_Util::escapeMysqlWildcards($b)
+        );
     }
 
-    /** 
-     * PMA_unescape_mysql_wildcards tests 
+    /**
+     * PMA_Util::unescapeMysqlWildcards tests
      * @dataProvider escapeDataProvider
      */
 
     public function testUnEscape($a, $b)
     {
-        $this->assertEquals($b, PMA_unescape_mysql_wildcards($a));
+        $this->assertEquals(
+            $b, PMA_Util::unescapeMysqlWildcards($a)
+        );
     }
 }
 ?>

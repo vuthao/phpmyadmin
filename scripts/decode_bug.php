@@ -15,13 +15,13 @@
  * Displays the form
  */
 ?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" dir="ltr">
 
 <head>
-    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <meta charset="iso-8859-1" />
     <title>phpMyAdmin - Parser bug report decoder</title>
     <style type="text/css">
     <!--
@@ -61,7 +61,7 @@
 /**
  * Display the decoded bug report in ASCII format
  *
- * @param  string  the text data
+ * @param string  the text data
  *
  * @return string  the text enclosed by "<pre>...</pre>" tags
  *
@@ -86,9 +86,9 @@ if (!empty($bug_encoded) && is_string($bug_encoded)) {
     $bug_decoded     = base64_decode($bug_encoded);
     if (substr($bug_encoded, 0, 2) == 'eN') {
         if (function_exists('gzuncompress')) {
-                $result  = PMA_printDecodedBug(gzuncompress($bug_decoded));
-            } else {
-                $result  = 'Error: &quot;gzuncompress()&quot; is unavailable!' . "\n";
+            $result  = PMA_printDecodedBug(gzuncompress($bug_decoded));
+        } else {
+            $result  = 'Error: &quot;gzuncompress()&quot; is unavailable!' . "\n";
         }
     } else {
         $result  = PMA_printDecodedBug($bug_decoded);

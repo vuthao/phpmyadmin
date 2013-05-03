@@ -1,17 +1,17 @@
+/* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
  * Functions used in server plugins pages
  */
-
 var pma_theme_image; // filled in server_plugins.php
 
-$(function() {
+AJAX.registerOnload('server_plugins.js', function() {
     // Add tabs
     $('#pluginsTabs').tabs({
         // Tab persistence
         cookie: { name: 'pma_serverStatusTabs', expires: 1 },
         show: function(event, ui) {
             // Fixes line break in the menu bar when the page overflows and scrollbar appears
-            menuResize();
+            $('#topmenu').menuResizer('resize');
             // 'Plugins' tab is too high due to hiding of 'Modules' by negative left position,
             // hide tabs by changing display to fix it
             $(ui.panel).closest('.ui-tabs').find('> div').not(ui.panel).css('display', 'none');

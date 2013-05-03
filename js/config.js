@@ -3,18 +3,26 @@
  * Functions used in configuration forms and on user preferences pages
  */
 
+/**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('config.js', function() {
+    $('input[id], select[id], textarea[id]').unbind('change').unbind('keyup');
+    $('input[type=button][name=submit_reset]').unbind('click');
+    $('div.tabs_contents').undelegate();
+    $('#import_local_storage, #export_local_storage').unbind('click');
+    $('form.prefs-form').unbind('change').unbind('submit');
+    $('div.click-hide-message').die('click');
+    $('#prefs_autoload').find('a').unbind('click');
+});
+
+AJAX.registerOnload('config.js', function() {
+    $('#topmenu2').find('li.active a').attr('rel', 'samepage');
+    $('#topmenu2').find('li:not(.active) a').attr('rel', 'newpage');
+});
+
 // default values for fields
 var defaultValues = {};
-
-// language strings
-var PMA_messages = {};
-
-/**
- * Automatic form submission on change.
- */
-$('.autosubmit').live('change', function(e) {
-    e.target.form.submit();
-});
 
 /**
  * Returns field type
@@ -53,9 +61,11 @@ function setFieldValue(field, field_type, value)
     field = $(field);
     switch (field_type) {
         case 'text':
+            //TODO: replace to .val()
             field.attr('value', (value != undefined ? value : field.attr('defaultValue')));
             break;
         case 'checkbox':
+            //TODO: replace to .prop()
             field.attr('checked', (value != undefined ? value : field.attr('defaultChecked')));
             break;
         case 'select':
@@ -249,7 +259,7 @@ var validators = {
         if (isNaN(val)) {
             return true;
         }
-        return val <= max_value ? true : PMA_messages['error_value_lte'].replace('%s', max_value);
+        return val <= max_value ? true : $.sprintf(PMA_messages['error_value_lte'], max_value);
     },
     // field validators
     _field: {
@@ -281,8 +291,8 @@ function validateField(id, type, onKeyUp, params)
 /**
  * Returns valdiation functions associated with form field
  *
- * @param  {String}  field_id     form field id
- * @param  {boolean} onKeyUpOnly  see validateField
+ * @param {String}  field_id     form field id
+ * @param {boolean} onKeyUpOnly  see validateField
  * @type Array
  * @return array of [function, paramseters to be passed to function]
  */
@@ -459,7 +469,7 @@ function setRestoreDefaultBtn(field, display)
     el[display ? 'show' : 'hide']();
 }
 
-$(function() {
+AJAX.registerOnload('config.js', function() {
     // register validators and mark custom values
     var elements = $('input[id], select[id], textarea[id]');
     $('input[id], select[id], textarea[id]').each(function(){
@@ -518,14 +528,14 @@ $(function() {
  */
 function setTab(tab_id)
 {
-    $('.tabs li').removeClass('active').find('a[href=#' + tab_id + ']').parent().addClass('active');
-    $('.tabs_contents fieldset').hide().filter('#' + tab_id).show();
+    $('ul.tabs li').removeClass('active').find('a[href=#' + tab_id + ']').parent().addClass('active');
+    $('div.tabs_contents fieldset').hide().filter('#' + tab_id).show();
     location.hash = 'tab_' + tab_id;
-    $('.config-form input[name=tab_hash]').val(location.hash);
+    $('form.config-form input[name=tab_hash]').val(location.hash);
 }
 
-$(function() {
-    var tabs = $('.tabs');
+AJAX.registerOnload('config.js', function() {
+    var tabs = $('ul.tabs');
     if (!tabs.length) {
         return;
     }
@@ -538,7 +548,7 @@ $(function() {
         .filter(':first')
         .parent()
         .addClass('active');
-    $('.tabs_contents fieldset').hide().filter(':first').show();
+    $('div.tabs_contents fieldset').hide().filter(':first').show();
 
     // tab links handling, check each 200ms
     // (works with history in FF, further browser support here would be an overkill)
@@ -563,7 +573,7 @@ $(function() {
 // Form reset buttons
 //
 
-$(function() {
+AJAX.registerOnload('config.js', function() {
     $('input[type=button][name=submit_reset]').click(function() {
         var fields = $(this).closest('fieldset').find('input, select, textarea');
         for (var i = 0, imax = fields.length; i < imax; i++) {
@@ -594,8 +604,8 @@ function restoreField(field_id)
     setFieldValue(field, getFieldType(field), defaultValues[field_id]);
 }
 
-$(function() {
-    $('.tabs_contents')
+AJAX.registerOnload('config.js', function() {
+    $('div.tabs_contents')
         .delegate('.restore-default, .set-value', 'mouseenter', function(){$(this).css('opacity', 1)})
         .delegate('.restore-default, .set-value', 'mouseleave', function(){$(this).css('opacity', 0.25)})
         .delegate('.restore-default, .set-value', 'click', function(e) {
@@ -625,7 +635,7 @@ $(function() {
 // User preferences import/export
 //
 
-$(function() {
+AJAX.registerOnload('config.js', function() {
     offerPrefsAutoimport();
     var radios = $('#import_local_storage, #export_local_storage');
     if (!radios.length) {
@@ -634,22 +644,22 @@ $(function() {
 
     // enable JavaScript dependent fields
     radios
-        .attr('disabled', false)
+        .prop('disabled', false)
         .add('#export_text_file, #import_text_file')
         .click(function(){
             var enable_id = $(this).attr('id');
             var disable_id = enable_id.match(/local_storage$/)
                 ? enable_id.replace(/local_storage$/, 'text_file')
                 : enable_id.replace(/text_file$/, 'local_storage');
-            $('#opts_'+disable_id).addClass('disabled').find('input').attr('disabled', true);
-            $('#opts_'+enable_id).removeClass('disabled').find('input').attr('disabled', false);
+            $('#opts_'+disable_id).addClass('disabled').find('input').prop('disabled', true);
+            $('#opts_'+enable_id).removeClass('disabled').find('input').prop('disabled', false);
         });
 
     // detect localStorage state
     var ls_supported = window.localStorage || false;
     var ls_exists = ls_supported ? (window.localStorage['config'] || false) : false;
-    $('.localStorage-'+(ls_supported ? 'un' : '')+'supported').hide();
-    $('.localStorage-'+(ls_exists ? 'empty' : 'exists')).hide();
+    $('div.localStorage-'+(ls_supported ? 'un' : '')+'supported').hide();
+    $('div.localStorage-'+(ls_exists ? 'empty' : 'exists')).hide();
     if (ls_exists) {
         updatePrefsDate();
     }
@@ -657,12 +667,12 @@ $(function() {
         var form = $(this);
         var disabled = false;
         if (!ls_supported) {
-            disabled = form.find('input[type=radio][value$=local_storage]').attr('checked');
+            disabled = form.find('input[type=radio][value$=local_storage]').prop('checked');
         } else if (!ls_exists && form.attr('name') == 'prefs_import'
                 && $('#import_local_storage')[0].checked) {
             disabled = true;
         }
-        form.find('input[type=submit]').attr('disabled', disabled);
+        form.find('input[type=submit]').prop('disabled', disabled);
     }).submit(function(e) {
         var form = $(this);
         if (form.attr('name') == 'prefs_export' && $('#export_local_storage')[0].checked) {
@@ -675,10 +685,13 @@ $(function() {
         }
     });
 
-    $('.click-hide-message').live('click', function(){
-        var div = $(this);
-        div.hide().parent('.group').css('height', '');
-        div.next('form').show();
+    $('div.click-hide-message').live('click', function(){
+        $(this)
+        .hide()
+        .parent('.group')
+        .css('height', '')
+        .next('form')
+        .show();
     });
 });
 
@@ -691,12 +704,13 @@ function savePrefsToLocalStorage(form)
 {
     form = $(form);
     var submit = form.find('input[type=submit]');
-    submit.attr('disabled', true);
+    submit.prop('disabled', true);
     $.ajax({
         url: 'prefs_manage.php',
         cache: false,
         type: 'POST',
         data: {
+            ajax_request: true,
             token: form.find('input[name=token]').val(),
             submit_get_json: true
         },
@@ -705,15 +719,15 @@ function savePrefsToLocalStorage(form)
             window.localStorage['config_mtime'] = response.mtime;
             window.localStorage['config_mtime_local'] = (new Date()).toUTCString();
             updatePrefsDate();
-            $('.localStorage-empty').hide();
-            $('.localStorage-exists').show();
+            $('div.localStorage-empty').hide();
+            $('div.localStorage-exists').show();
             var group = form.parent('.group');
             group.css('height', group.height() + 'px');
             form.hide('fast');
             form.prev('.click-hide-message').show('fast');
         },
         complete: function() {
-            submit.attr('disabled', false);
+            submit.prop('disabled', false);
         }
     });
 }
@@ -725,7 +739,7 @@ function updatePrefsDate()
 {
     var d = new Date(window.localStorage['config_mtime_local']);
     var msg = PMA_messages['strSavedOn'].replace('@DATE@', formatDate(d));
-    $('#opts_import_local_storage .localStorage-exists').html(msg);
+    $('#opts_import_local_storage div.localStorage-exists').html(msg);
 }
 
 /**
@@ -757,7 +771,7 @@ function offerPrefsAutoimport()
         var a = $(this);
         if (a.attr('href') == '#no') {
             cnt.remove();
-            $.post('main.php', {
+            $.post('index.php', {
                 token: cnt.find('input[name=token]').val(),
                 prefs_autoload: 'hide'});
             return;

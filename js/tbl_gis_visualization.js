@@ -1,3 +1,4 @@
+/* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
  * @fileoverview    functions used for visualizing GIS data
  *
@@ -7,11 +8,16 @@
  * @requires    jquery/jquery.event.drag-2.0.js
  */
 
-var x = 0;
-var default_x = 0;
-var y = 0;
-var default_y = 0;
-var scale = 1;
+// Constants
+var zoomFactor = 1.5;
+var defaultX = 0;
+var defaultY = 0;
+
+// Variables
+var x;
+var y;
+var scale;
+
 var svg;
 
 /**
@@ -61,7 +67,6 @@ function selectVisualization() {
     } else {
         $('#placeholder').hide();
     }
-    $('.choice').show();
 }
 
 /**
@@ -100,7 +105,7 @@ function loadSVG() {
 function addZoomPanControllers() {
     var $placeholder = $('#placeholder');
     if ($("#placeholder svg").length > 0) {
-        var pmaThemeImage = $('#pmaThemeImage').attr('value');
+        var pmaThemeImage = $('#pmaThemeImage').val();
         // add panning arrows
         $('<img class="button" id="left_arrow" src="' + pmaThemeImage + 'west-mini.png">').appendTo($placeholder);
         $('<img class="button" id="right_arrow" src="' + pmaThemeImage + 'east-mini.png">').appendTo($placeholder);
@@ -118,24 +123,18 @@ function addZoomPanControllers() {
  */
 function resizeGISVisualization() {
     var $placeholder = $('#placeholder');
-
-    // Hide inputs for width and height
-    $("input[name='visualizationSettings[width]']").parents('tr').remove();
-    $("input[name='visualizationSettings[height]']").parents('tr').remove();
-
     var old_width = $placeholder.width();
-    var extraPadding = 100;
-    var leftWidth = $('.gis_table').width();
-    var windowWidth = document.documentElement.clientWidth;
-    var visWidth = windowWidth - extraPadding - leftWidth;
+    var visWidth = $('#div_view_options').width() - 48;
 
     // Assign new value for width
     $placeholder.width(visWidth);
     $('svg').attr('width', visWidth);
 
-    // Assign the offset created due to resizing to default_x and center the svg.
-    default_x = (visWidth - old_width) / 2;
-    x = default_x;
+    // Assign the offset created due to resizing to defaultX and center the svg.
+    defaultX = (visWidth - old_width) / 2;
+    x = defaultX;
+    y = 0;
+    scale = 1;
 }
 
 /**
@@ -157,6 +156,14 @@ function initGISVisualization() {
     zoomAndPan();
 }
 
+function getRelativeCoords(e) {
+    var position = $('#placeholder').offset();
+    return {
+        x : e.pageX - position.left,
+        y : e.pageY - position.top
+    };
+}
+
 /**
  * Ajax handlers for GIS visualization page
  *
@@ -169,13 +176,34 @@ function initGISVisualization() {
  * Panning on clicking the arrow buttons.
  * Displaying tooltips for GIS objects.
  */
-$(document).ready(function() {
+
+/**
+ * Unbind all event handlers before tearing down a page
+ */
+AJAX.registerTeardown('tbl_gis_visualization.js', function() {
+    $('#choice').die('click');
+    $('#placeholder').die('mousewheel');
+    $('svg').die('dragstart');
+    $('svg').die('mouseup');
+    $('svg').die('drag');
+    $('#placeholder').die('dblclick');
+    $('#zoom_in').die('click');
+    $('#zoom_world').die('click');
+    $('#zoom_out').die('click');
+    $('#left_arrow').die('click');
+    $('#right_arrow').die('click');
+    $('#up_arrow').die('click');
+    $('#down_arrow').die('click');
+    $('.vector').unbind('mousemove').unbind('mouseout');
+});
+
+AJAX.registerOnload('tbl_gis_visualization.js', function() {
 
     // If we are in GIS visualization, initialize it
-    if ($('.gis_table').length > 0) {
+    if ($('table.gis_table').length > 0) {
         initGISVisualization();
     }
-    
+
     $('#choice').live('click', function() {
         if ($(this).prop('checked') == false) {
             $('#placeholder').show();
@@ -185,21 +213,22 @@ $(document).ready(function() {
             $('#openlayersmap').show();
         }
     });
-    
+
     $('#placeholder').live('mousewheel', function(event, delta) {
+        var relCoords = getRelativeCoords(event);
         if (delta > 0) {
             //zoom in
-            scale *= 1.5;
-            // zooming in keeping the position under mouse pointer unmoved.
-            x = event.layerX - (event.layerX - x) * 1.5;
-            y = event.layerY - (event.layerY - y) * 1.5;
+            scale *= zoomFactor;
+            // zooming in keeping the position under mouse pointer unmoved.            
+            x = relCoords.x - (relCoords.x - x) * zoomFactor;
+            y = relCoords.y - (relCoords.y - y) * zoomFactor;
             zoomAndPan();
         } else {
             //zoom out
-            scale /= 1.5;
+            scale /= zoomFactor;
             // zooming out keeping the position under mouse pointer unmoved.
-            x = event.layerX - (event.layerX - x) / 1.5;
-            y = event.layerY - (event.layerY - y) / 1.5;
+            x = relCoords.x - (relCoords.x - x) / zoomFactor;
+            y = relCoords.y - (relCoords.y - y) / zoomFactor;
             zoomAndPan();
         }
         return true;
@@ -227,44 +256,45 @@ $(document).ready(function() {
     });
 
     $('#placeholder').live('dblclick', function(event) {
-        scale *= 1.5;
+        scale *= zoomFactor;
         // zooming in keeping the position under mouse pointer unmoved.
-        x = event.layerX - (event.layerX - x) * 1.5;
-        y = event.layerY - (event.layerY - y) * 1.5;
+        var relCoords = getRelativeCoords(event);
+        x = relCoords.x - (relCoords.x - x) * zoomFactor;
+        y = relCoords.y - (relCoords.y - y) * zoomFactor;
         zoomAndPan();
     });
 
     $('#zoom_in').live('click', function(e) {
         e.preventDefault();
         //zoom in
-        scale *= 1.5;
+        scale *= zoomFactor;
 
         width = $('#placeholder svg').attr('width');
         height = $('#placeholder svg').attr('height');
         // zooming in keeping the center unmoved.
-        x = width / 2 - (width / 2 - x) * 1.5;
-        y = height / 2 - (height / 2 - y) * 1.5;
+        x = width / 2 - (width / 2 - x) * zoomFactor;
+        y = height / 2 - (height / 2 - y) * zoomFactor;
         zoomAndPan();
     });
 
     $('#zoom_world').live('click', function(e) {
         e.preventDefault();
         scale = 1;
-        x = default_x;
-        y = default_y;
+        x = defaultX;
+        y = defaultY;
         zoomAndPan();
     });
 
     $('#zoom_out').live('click', function(e) {
         e.preventDefault();
         //zoom out
-        scale /= 1.5;
+        scale /= zoomFactor;
 
         width = $('#placeholder svg').attr('width');
         height = $('#placeholder svg').attr('height');
         // zooming out keeping the center unmoved.
-        x = width / 2 - (width / 2 - x) / 1.5;
-        y = height / 2 - (height / 2 - y) / 1.5;
+        x = width / 2 - (width / 2 - x) / zoomFactor;
+        y = height / 2 - (height / 2 - y) / zoomFactor;
         zoomAndPan();
     });
 
@@ -291,24 +321,22 @@ $(document).ready(function() {
         y -= 100;
         zoomAndPan();
     });
-
+    
     /**
      * Detect the mousemove event and show tooltips.
      */
-    $('.polygon, .multipolygon, .point, .multipoint, .linestring, .multilinestring, '
-            + '.geometrycollection').live('mousemove', function(event) {
-        contents = $.trim(escapeHtml($(this).attr('name')));
+    $('.vector').bind('mousemove', function(event) {
+        var contents = $.trim(escapeHtml($(this).attr('name')));
         $("#tooltip").remove();
         if (contents != '') {
             $('<div id="tooltip">' + contents + '</div>').css({
                 position : 'absolute',
-                display : 'none',
                 top : event.pageY + 10,
                 left : event.pageX + 10,
                 border : '1px solid #fdd',
                 padding : '2px',
                 'background-color' : '#fee',
-                opacity : 0.80
+                opacity : 0.90
             }).appendTo("body").fadeIn(200);
         }
     });
@@ -316,8 +344,7 @@ $(document).ready(function() {
     /**
      * Detect the mouseout event and hide tooltips.
      */
-    $('.polygon, .multipolygon, .point, .multipoint, .linestring, .multilinestring, '
-            + '.geometrycollection').live('mouseout', function(event) {
+    $('.vector').bind('mouseout', function(event) {
         $("#tooltip").remove();
     });
 });

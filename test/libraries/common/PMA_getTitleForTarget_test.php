@@ -1,22 +1,23 @@
 <?php
 /* vim: set expandtab sw=4 ts=4 sts=4: */
 /**
- * Test for PMA_getTitleForTarget from common.lib
+ ** Test for PMA_Util::getTitleForTarget from common.lib
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_getTitleForTarget_test.php
  * @group common.lib-tests
  */
 
 /*
  * Include to test.
  */
-require_once 'libraries/common.lib.php';
+require_once 'libraries/Util.class.php';
+require_once 'libraries/php-gettext/gettext.inc';
 
 class PMA_getTitleForTarget_test extends PHPUnit_Framework_TestCase
 {
 
-    function dataProvider(){
+    function dataProvider()
+    {
         return array(
             array('tbl_structure.php', __('Structure')),
             array('tbl_sql.php', __('SQL'),),
@@ -34,11 +35,11 @@ class PMA_getTitleForTarget_test extends PHPUnit_Framework_TestCase
      * @dataProvider dataProvider
      * @return void
      */
-    function testGetTitleForTarget($target, $result){
-
-        $this->assertEquals($result, PMA_getTitleForTarget($target));
+    function testGetTitleForTarget($target, $result)
+    {
+        $this->assertEquals(
+            $result, PMA_Util::getTitleForTarget($target)
+        );
     }
 
 }
-
-//PMA_getTitleForTarget

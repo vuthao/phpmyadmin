@@ -4,7 +4,6 @@
  * Test for PMA_langList from select_lang.lib.php
  *
  * @package PhpMyAdmin-test
- * @version $Id: PMA_langList_test.php
  * @group select_lang.lib-tests
  */
 
@@ -31,8 +30,9 @@ class PMA_langList_test extends PHPUnit_Framework_TestCase
         $expected = array('en' => PMA_langDetails('en'));
 
         $handle = @opendir($GLOBALS['lang_path']);
-        if ($handle === false)
+        if ($handle === false) {
             $this->markTestSkipped("Cannot open file with locales");
+        }
 
         while (false !== ($file = readdir($handle))) {
             if ($file != "." && $file != ".." && file_exists($GLOBALS['lang_path'] . '/' . $file . '/LC_MESSAGES/phpmyadmin.mo')) {
