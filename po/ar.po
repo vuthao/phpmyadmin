@@ -1,17 +1,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: phpMyAdmin 4.0.2-dev\n"
+"Project-Id-Version: phpMyAdmin 4.0.3-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-21 14:02+0200\n"
+"POT-Creation-Date: 2013-05-28 12:35-0400\n"
 "PO-Revision-Date: 2013-03-20 22:10+0200\n"
 "Last-Translator: mohamed amin boubaker <mohamed.amin.02@gmail.com>\n"
 "Language-Team: Arabic <http://l10n.cihar.com/projects/phpmyadmin/master/ar/"
 ">\n"
-"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 1.5-dev\n"
@@ -237,8 +237,8 @@ msgstr "تعليقات"
 #: libraries/server_privileges.lib.php:2145
 #: libraries/server_privileges.lib.php:2465
 #: libraries/server_privileges.lib.php:2479 libraries/structure.lib.php:1268
-#: libraries/user_preferences.lib.php:282 prefs_manage.php:131 sql.php:430
-#: sql.php:525 sql.php:526 tbl_printview.php:186 tbl_tracking.php:344
+#: libraries/user_preferences.lib.php:282 prefs_manage.php:131 sql.php:417
+#: sql.php:512 sql.php:513 tbl_printview.php:186 tbl_tracking.php:344
 #: tbl_tracking.php:398 tbl_tracking.php:403
 msgid "No"
 msgstr "لا"
@@ -265,7 +265,7 @@ msgstr "لا"
 #: libraries/server_privileges.lib.php:2462
 #: libraries/server_privileges.lib.php:2479 libraries/structure.lib.php:1268
 #: libraries/user_preferences.lib.php:280 prefs_manage.php:130
-#: server_databases.php:103 server_databases.php:110 sql.php:523 sql.php:524
+#: server_databases.php:103 server_databases.php:110 sql.php:510 sql.php:511
 #: tbl_printview.php:187 tbl_structure.php:84 tbl_tracking.php:344
 #: tbl_tracking.php:396 tbl_tracking.php:401
 msgid "Yes"
@@ -308,8 +308,8 @@ msgid ""
 "The phpMyAdmin configuration storage has been deactivated. To find out why "
 "click %shere%s."
 msgstr ""
-"تم تعطيل المزايا الإضافية للعمل بالجداول المترابطة. لمعرفة السبب اضغط %sهنا"
-"%s."
+"تم تعطيل المزايا الإضافية للعمل بالجداول المترابطة. لمعرفة السبب اضغط %sهنا%"
+"s."
 
 #: db_printview.php:99 db_tracking.php:79 db_tracking.php:198
 #: libraries/Menu.class.php:190 libraries/config/messages.inc.php:508
@@ -327,7 +327,7 @@ msgstr "الجدول"
 #: db_printview.php:100 libraries/Table.class.php:350
 #: libraries/build_html_for_db.lib.php:31 libraries/import.lib.php:181
 #: libraries/structure.lib.php:768 libraries/structure.lib.php:1708
-#: libraries/structure.lib.php:1893 sql.php:1131 tbl_printview.php:365
+#: libraries/structure.lib.php:1893 sql.php:1118 tbl_printview.php:365
 msgid "Rows"
 msgstr "صفوف"
 
@@ -386,7 +386,7 @@ msgstr "التحويل إلى %sالباني المرئي%s"
 
 #: db_search.php:30 libraries/plugins/auth/AuthenticationConfig.class.php:81
 #: libraries/plugins/auth/AuthenticationConfig.class.php:96
-#: libraries/plugins/auth/AuthenticationCookie.class.php:587
+#: libraries/plugins/auth/AuthenticationCookie.class.php:579
 #: libraries/plugins/auth/AuthenticationHttp.class.php:65
 #: libraries/plugins/auth/AuthenticationSignon.class.php:253
 msgid "Access denied"
@@ -412,7 +412,7 @@ msgstr "الجداول المتعقبة"
 #: libraries/server_privileges.lib.php:1971
 #: libraries/server_privileges.lib.php:2212
 #: libraries/server_privileges.lib.php:2855 server_databases.php:201
-#: server_status.php:324 sql.php:1122 tbl_tracking.php:761
+#: server_status.php:324 sql.php:1109 tbl_tracking.php:761
 msgid "Database"
 msgstr "قاعدة البيانات"
 
@@ -430,7 +430,7 @@ msgstr "محدث"
 
 #: db_tracking.php:83 js/messages.php:172 libraries/Menu.class.php:454
 #: libraries/rte/rte_events.lib.php:426 libraries/rte/rte_list.lib.php:78
-#: server_status.php:336 sql.php:1195 tbl_tracking.php:766
+#: server_status.php:336 sql.php:1182 tbl_tracking.php:766
 msgid "Status"
 msgstr "الحالة"
 
@@ -620,8 +620,8 @@ msgstr ""
 #: import.php:107
 #, php-format
 msgid ""
-"You probably tried to upload a file that is too large. Please refer to "
-"%sdocumentation%s for a workaround for this limit."
+"You probably tried to upload a file that is too large. Please refer to %"
+"sdocumentation%s for a workaround for this limit."
 msgstr ""
 "من المحتمل أنك قد حاولت رفع ملف كبير الحجم. الرجاء مراجعة %sdocumentation%s "
 "لإيجاد حلّ بديل لتغيير هذا الحد."
@@ -663,7 +663,7 @@ msgstr "لاتستطيع تغيير ترميز الملفات بدون مكتب�
 msgid "Could not load import plugins, please check your installation!"
 msgstr "لم أتمكن من تحميل قوابس الاستيراد، الرجاء فحص تثبيتك!"
 
-#: import.php:519 sql.php:395 sql.php:1268
+#: import.php:519 sql.php:382 sql.php:1255
 #, php-format
 msgid "Bookmark %s created"
 msgstr "تم إنشاء العلامة المرجعية %s"
@@ -875,8 +875,8 @@ msgid ""
 "The phpMyAdmin configuration storage is not completely configured, some "
 "extended features have been deactivated. To find out why click %shere%s."
 msgstr ""
-"تم تعطيل المزايا الإضافية للعمل بالجداول المترابطة. لمعرفة السبب اضغط %sهنا"
-"%s."
+"تم تعطيل المزايا الإضافية للعمل بالجداول المترابطة. لمعرفة السبب اضغط %sهنا%"
+"s."
 
 #: index.php:502
 #, php-format
@@ -892,7 +892,7 @@ msgid ""
 "issues."
 msgstr ""
 
-#: js/messages.php:27 libraries/import.lib.php:118 sql.php:355
+#: js/messages.php:27 libraries/import.lib.php:118 sql.php:342
 msgid "\"DROP DATABASE\" statements are disabled."
 msgstr "أمر \"حذف قاعدة البيانات\" معطل."
 
@@ -901,7 +901,7 @@ msgstr "أمر \"حذف قاعدة البيانات\" معطل."
 msgid "Do you really want to execute \"%s\"?"
 msgstr "هل تريد فعلاً تنفيذ  \"%s\"؟"
 
-#: js/messages.php:31 libraries/mult_submits.inc.php:316 sql.php:477
+#: js/messages.php:31 libraries/mult_submits.inc.php:316 sql.php:464
 msgid "You are about to DESTROY a complete database!"
 msgstr "أنت على وشك إزالة كامل قاعدة البيانات !"
 
@@ -1392,7 +1392,7 @@ msgstr "إشرح الخرج"
 #: libraries/plugins/export/ExportHtmlword.class.php:484
 #: libraries/plugins/export/ExportOdt.class.php:562
 #: libraries/plugins/export/ExportTexytext.class.php:435
-#: libraries/rte/rte_list.lib.php:68 server_status.php:332 sql.php:1200
+#: libraries/rte/rte_list.lib.php:68 server_status.php:332 sql.php:1187
 msgid "Time"
 msgstr "وقت"
 
@@ -2585,11 +2585,11 @@ msgstr "في الإستعلام"
 #: libraries/DisplayResults.class.php:4910 libraries/structure.lib.php:653
 #, php-format
 msgid ""
-"This view has at least this number of rows. Please refer to %sdocumentation"
-"%s."
+"This view has at least this number of rows. Please refer to %sdocumentation%"
+"s."
 msgstr ""
-"لدى هذا العرض على الأقل هذا العدد من الأسطر. الرجاء مراجعة الــ "
-"%sdocumentation%s."
+"لدى هذا العرض على الأقل هذا العدد من الأسطر. الرجاء مراجعة الــ %"
+"sdocumentation%s."
 
 #: libraries/DisplayResults.class.php:4923
 msgid "Showing rows"
@@ -2599,7 +2599,7 @@ msgstr "أظهر الصفوف"
 msgid "total"
 msgstr "المجموع"
 
-#: libraries/DisplayResults.class.php:4950 sql.php:954
+#: libraries/DisplayResults.class.php:4950 sql.php:941
 #, php-format
 msgid "Query took %01.4f sec"
 msgstr "استغرق الاستعلام %01.4f ثانية"
@@ -2728,12 +2728,7 @@ msgstr "إفتح نافذة phpMyAdmin جديدة"
 msgid "Click on the bar to scroll to top of page"
 msgstr ""
 
-#: libraries/Header.class.php:619
-#: libraries/plugins/auth/AuthenticationCookie.class.php:269
-msgid "Cookies must be enabled past this point."
-msgstr "يجب تفعيل دعم الكوكيز في هذه المرحلة."
-
-#: libraries/Header.class.php:624
+#: libraries/Header.class.php:618
 #: libraries/plugins/auth/AuthenticationCookie.class.php:172
 msgid "Javascript must be enabled past this point"
 msgstr "يجب تفعيل Javascript بعد هذه النقطة"
@@ -2976,7 +2971,7 @@ msgid "There are no recent tables"
 msgstr "لا يوجد جداول أخيرة"
 
 #: libraries/ServerStatusData.class.php:181 libraries/Util.class.php:677
-#: server_status.php:340 sql.php:1127
+#: server_status.php:340 sql.php:1114
 msgid "SQL query"
 msgstr "استعلام SQL"
 
@@ -3201,7 +3196,7 @@ msgid "Maximum rows to plot"
 msgstr "أقصى عدد الصفوف للرسم"
 
 #: libraries/TableSearch.class.php:888 libraries/TableSearch.class.php:1160
-#: sql.php:172 tbl_change.php:230
+#: sql.php:159 tbl_change.php:230
 msgid "Browse foreign values"
 msgstr "استعرض القيم الغريبة"
 
@@ -3300,14 +3295,14 @@ msgstr ""
 
 #: libraries/Types.class.php:308
 msgid ""
-"A small floating-point number, allowable values are -3.402823466E+38 to "
-"-1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
+"A small floating-point number, allowable values are -3.402823466E+38 to -"
+"1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
 msgstr ""
 
 #: libraries/Types.class.php:310
 msgid ""
-"A double-precision floating-point number, allowable values are "
-"-1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and "
+"A double-precision floating-point number, allowable values are -"
+"1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and "
 "2.2250738585072014E-308 to 1.7976931348623157E+308"
 msgstr ""
 
@@ -3598,7 +3593,7 @@ msgctxt "Inline edit query"
 msgid "Inline"
 msgstr "مضمن"
 
-#: libraries/Util.class.php:1435 sql.php:1191
+#: libraries/Util.class.php:1435 sql.php:1178
 msgid "Profiling"
 msgstr "جانبي"
 
@@ -3753,19 +3748,19 @@ msgstr "اسلوب مصادقة غير صحيح في الإعدادات:"
 msgid "You should upgrade to %s %s or later."
 msgstr "عليك الترقية إلى %s%s أو لاحقا."
 
-#: libraries/common.inc.php:1043
+#: libraries/common.inc.php:1058
 msgid "Error: Token mismatch"
 msgstr ""
 
-#: libraries/common.inc.php:1087
+#: libraries/common.inc.php:1102
 msgid "GLOBALS overwrite attempt"
 msgstr ""
 
-#: libraries/common.inc.php:1094
+#: libraries/common.inc.php:1109
 msgid "possible exploit"
 msgstr "إستغلال محتمل"
 
-#: libraries/common.inc.php:1103
+#: libraries/common.inc.php:1118
 msgid "numeric key detected"
 msgstr "الكشف عن مفتاح رقمي"
 
@@ -4542,10 +4537,6 @@ msgstr "الإطار الرئيسي"
 #: libraries/config/messages.inc.php:184
 msgid "Microsoft Office"
 msgstr "مايكروسوفت أوفيس"
-
-#: libraries/config/messages.inc.php:186
-msgid "Open Document"
-msgstr "مستند مفتوح"
 
 #: libraries/config/messages.inc.php:188
 msgid "Other core settings"
@@ -5971,8 +5962,10 @@ msgstr ""
 #: libraries/config/setup.forms.php:255 libraries/config/setup.forms.php:348
 #: libraries/config/user_preferences.forms.php:160
 #: libraries/config/user_preferences.forms.php:252
-msgid "Open Document Spreadsheet"
-msgstr ""
+#, fuzzy
+#| msgid "Open Document"
+msgid "OpenDocument Spreadsheet"
+msgstr "مستند مفتوح"
 
 #: libraries/config/setup.forms.php:262
 #: libraries/config/user_preferences.forms.php:167
@@ -6001,8 +5994,10 @@ msgstr ""
 
 #: libraries/config/setup.forms.php:352
 #: libraries/config/user_preferences.forms.php:256
-msgid "Open Document Text"
-msgstr ""
+#, fuzzy
+#| msgid "Open Document"
+msgid "OpenDocument Text"
+msgstr "مستند مفتوح"
 
 #: libraries/config/validate.lib.php:214
 msgid "Could not initialize Drizzle connection library"
@@ -6228,8 +6223,8 @@ msgstr ""
 #, php-format
 msgid ""
 "This value is interpreted using %1$sstrftime%2$s, so you can use time "
-"formatting strings. Additionally the following transformations will happen: "
-"%3$s. Other text will be kept as is. See the %4$sFAQ%5$s for details."
+"formatting strings. Additionally the following transformations will happen: %"
+"3$s. Other text will be kept as is. See the %4$sFAQ%5$s for details."
 msgstr ""
 
 #: libraries/display_export.lib.php:330
@@ -6702,8 +6697,8 @@ msgstr ""
 #: libraries/engines/pbxt.lib.php:131
 #, php-format
 msgid ""
-"Documentation and further information about PBXT can be found on the "
-"%sPrimeBase XT Home Page%s."
+"Documentation and further information about PBXT can be found on the %"
+"sPrimeBase XT Home Page%s."
 msgstr ""
 
 #: libraries/engines/pbxt.lib.php:133
@@ -6719,7 +6714,7 @@ msgid "No data found for GIS visualization."
 msgstr ""
 
 #: libraries/import.lib.php:187 libraries/insert_edit.lib.php:120
-#: libraries/rte/rte_routines.lib.php:1443 sql.php:949 tbl_get_field.php:55
+#: libraries/rte/rte_routines.lib.php:1443 sql.php:936 tbl_get_field.php:55
 msgid "MySQL returned an empty result set (i.e. zero rows)."
 msgstr "قام MySQL  بإرجاع نتيجة فارغة."
 
@@ -6841,11 +6836,11 @@ msgid ""
 "Use TAB key to move from value to value, or CTRL+arrows to move anywhere"
 msgstr ""
 
-#: libraries/insert_edit.lib.php:1912 sql.php:944
+#: libraries/insert_edit.lib.php:1912 sql.php:931
 msgid "Showing SQL query"
 msgstr ""
 
-#: libraries/insert_edit.lib.php:1937 sql.php:924
+#: libraries/insert_edit.lib.php:1937 sql.php:911
 #, php-format
 msgid "Inserted row id: %1$d"
 msgstr ""
@@ -6895,7 +6890,7 @@ msgstr ""
 msgid "Add prefix"
 msgstr "إضافة حقل جديد"
 
-#: libraries/mult_submits.inc.php:318 sql.php:517
+#: libraries/mult_submits.inc.php:318 sql.php:504
 #, fuzzy
 #| msgid "Do you really want to "
 msgid "Do you really want to execute the following query?"
@@ -7123,18 +7118,18 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: libraries/navigation/NavigationTree.class.php:1034
+#: libraries/navigation/NavigationTree.class.php:1035
 #, fuzzy
 #| msgid "table name"
 msgid "filter databases by name"
 msgstr "اسم الجدول"
 
-#: libraries/navigation/NavigationTree.class.php:1035
-#: libraries/navigation/NavigationTree.class.php:1061
+#: libraries/navigation/NavigationTree.class.php:1036
+#: libraries/navigation/NavigationTree.class.php:1062
 msgid "Clear Fast Filter"
 msgstr ""
 
-#: libraries/navigation/NavigationTree.class.php:1060
+#: libraries/navigation/NavigationTree.class.php:1061
 #, fuzzy
 #| msgid "table name"
 msgid "filter items by name"
@@ -7404,8 +7399,8 @@ msgstr "أهلا بك في %s"
 #: libraries/plugins/auth/AuthenticationConfig.class.php:102
 #, php-format
 msgid ""
-"You probably did not create a configuration file. You might want to use the "
-"%1$ssetup script%2$s to create one."
+"You probably did not create a configuration file. You might want to use the %"
+"1$ssetup script%2$s to create one."
 msgstr "يبدو انك لم تنشئ ملف الإعدادات.إستخدم %1$ssetup script%2$s لإنشائه."
 
 #: libraries/plugins/auth/AuthenticationConfig.class.php:122
@@ -7457,21 +7452,21 @@ msgstr "كلمة المرور:"
 msgid "Server Choice"
 msgstr "اختيار الخادم"
 
-#: libraries/plugins/auth/AuthenticationCookie.class.php:583
+#: libraries/plugins/auth/AuthenticationCookie.class.php:575
 #: libraries/plugins/auth/AuthenticationSignon.class.php:249
 msgid ""
 "Login without a password is forbidden by configuration (see AllowNoPassword)"
 msgstr ""
 "تم منع الدخول بدون كلمة مرور ممنوع في الإعدادات , إنظر قيمة (AllowNoPassword)"
 
-#: libraries/plugins/auth/AuthenticationCookie.class.php:590
+#: libraries/plugins/auth/AuthenticationCookie.class.php:582
 #: libraries/plugins/auth/AuthenticationSignon.class.php:256
 #, php-format
 msgid "No activity within %s seconds; please log in again"
 msgstr "لانشاط منذ %s ثواني , الرجاء تسجيل الدخول من جديد"
 
-#: libraries/plugins/auth/AuthenticationCookie.class.php:595
-#: libraries/plugins/auth/AuthenticationCookie.class.php:597
+#: libraries/plugins/auth/AuthenticationCookie.class.php:587
+#: libraries/plugins/auth/AuthenticationCookie.class.php:589
 #: libraries/plugins/auth/AuthenticationSignon.class.php:265
 msgid "Cannot log in to the MySQL server"
 msgstr "لا يمكن الدخول إلى خادم MySQL"
@@ -7667,13 +7662,13 @@ msgstr "أنواع MIME المتوفرة"
 #: libraries/server_privileges.lib.php:1081
 #: libraries/server_privileges.lib.php:1177
 #: libraries/server_privileges.lib.php:1567
-#: libraries/server_privileges.lib.php:2379 server_status.php:320 sql.php:1121
+#: libraries/server_privileges.lib.php:2379 server_status.php:320 sql.php:1108
 msgid "Host"
 msgstr "المزود"
 
 #: libraries/plugins/export/ExportLatex.class.php:223
 #: libraries/plugins/export/ExportSql.class.php:608
-#: libraries/plugins/export/ExportXml.class.php:196 sql.php:1124
+#: libraries/plugins/export/ExportXml.class.php:196 sql.php:1111
 msgid "Generation Time"
 msgstr "أنشئ في"
 
@@ -9360,8 +9355,8 @@ msgstr "معلومات المستخدم"
 msgid ""
 "Note: phpMyAdmin gets the users' privileges directly from MySQL's privilege "
 "tables. The content of these tables may differ from the privileges the "
-"server uses, if they have been changed manually. In this case, you should "
-"%sreload the privileges%s before you continue."
+"server uses, if they have been changed manually. In this case, you should %"
+"sreload the privileges%s before you continue."
 msgstr ""
 "ملاحظة: يقرأ phpMyAdmin صلاحيات المستخدمين من جداول الصلاحيات من خادم MySQL "
 "مباشرة. محتويات هذه الجداول قد تختلف عن الصلاحيات التي يستخدمها الخادم إذا "
@@ -9390,11 +9385,11 @@ msgstr "تنفيذ استعلام/استعلامات SQL على قاعدة بي�
 msgid "Clear"
 msgstr ""
 
-#: libraries/sql_query_form.lib.php:309 sql.php:1340 sql.php:1360
+#: libraries/sql_query_form.lib.php:309 sql.php:1327 sql.php:1347
 msgid "Bookmark this SQL query"
 msgstr "اجعل علامة مرجعية SQL-استعلام"
 
-#: libraries/sql_query_form.lib.php:315 sql.php:1352
+#: libraries/sql_query_form.lib.php:315 sql.php:1339
 msgid "Let every user access this bookmark"
 msgstr "اسمح لكل المستخدمين الوصول إلى هذه العلامة المرجعية"
 
@@ -10545,7 +10540,7 @@ msgid "Instructions/Setup"
 msgstr ""
 
 #: server_status_monitor.php:483
-msgid "Done rearranging/editing charts"
+msgid "Done dragging (rearranging) charts"
 msgstr ""
 
 #: server_status_monitor.php:489 server_status_monitor.php:606
@@ -10555,8 +10550,10 @@ msgid "Add chart"
 msgstr "إضافة حقل جديد"
 
 #: server_status_monitor.php:492
-msgid "Rearrange/edit charts"
-msgstr ""
+#, fuzzy
+#| msgid "Enable highlighting"
+msgid "Enable charts dragging"
+msgstr "تفعيل التوضيح (highlighting)"
 
 #: server_status_monitor.php:496
 #, fuzzy
@@ -11670,47 +11667,47 @@ msgstr ""
 msgid "Wrong data"
 msgstr "لايوجد بيانات"
 
-#: sql.php:317
+#: sql.php:304
 #, php-format
 msgid "Using bookmark \"%s\" as default browse query."
 msgstr ""
 
-#: sql.php:399
+#: sql.php:386
 #, fuzzy
 #| msgid "Bookmark %s created"
 msgid "Bookmark not created"
 msgstr "تم إنشاء العلامة المرجعية %s"
 
-#: sql.php:941
+#: sql.php:928
 msgid "Showing as PHP code"
 msgstr ""
 
-#: sql.php:946
+#: sql.php:933
 #, fuzzy
 #| msgid "Validate SQL"
 msgid "Validated SQL"
 msgstr "التحقق من استعلام SQL"
 
-#: sql.php:1119
+#: sql.php:1106
 msgid "SQL result"
 msgstr "ناتج استعلام SQL"
 
-#: sql.php:1126
+#: sql.php:1113
 msgid "Generated by"
 msgstr "أنشئ بواسطة"
 
-#: sql.php:1259
+#: sql.php:1246
 msgid ""
 "This table does not contain a unique column. Grid edit, checkbox, Edit, Copy "
 "and Delete features are not available."
 msgstr ""
 
-#: sql.php:1308
+#: sql.php:1295
 #, php-format
 msgid "Problems with indexes of table `%s`"
 msgstr ""
 
-#: sql.php:1344
+#: sql.php:1331
 msgid "Label"
 msgstr "علامة"
 
@@ -12492,8 +12489,8 @@ msgstr ""
 #: libraries/advisory_rules.txt:179
 #, php-format
 msgid ""
-"The current ratio of free query cache memory to total query cache size is %s"
-"%%. It should be above 80%%"
+"The current ratio of free query cache memory to total query cache size is %s%"
+"%. It should be above 80%%"
 msgstr ""
 
 #: libraries/advisory_rules.txt:181
@@ -12626,8 +12623,8 @@ msgstr ""
 #: libraries/advisory_rules.txt:216
 #, php-format
 msgid ""
-"%s%% of all sorts cause temporary tables, this value should be lower than "
-"10%%."
+"%s%% of all sorts cause temporary tables, this value should be lower than 10%"
+"%."
 msgstr ""
 
 #: libraries/advisory_rules.txt:218
@@ -13298,6 +13295,9 @@ msgstr ""
 msgid "concurrent_insert is set to 0"
 msgstr ""
 
+#~ msgid "Cookies must be enabled past this point."
+#~ msgstr "يجب تفعيل دعم الكوكيز في هذه المرحلة."
+
 #~ msgid "Table seems to be empty!"
 #~ msgstr "يبدو أنّ الجدول خالي من البيانات!"
 
@@ -13750,8 +13750,8 @@ msgstr ""
 #~ "The additional features for working with linked tables have been "
 #~ "deactivated. To find out why click %shere%s."
 #~ msgstr ""
-#~ "تم تعطيل المزايا الإضافية للعمل بالجداول المترابطة. لمعرفة السبب اضغط "
-#~ "%sهنا%s."
+#~ "تم تعطيل المزايا الإضافية للعمل بالجداول المترابطة. لمعرفة السبب اضغط %"
+#~ "sهنا%s."
 
 #~ msgid "Execute bookmarked query"
 #~ msgstr "نفذ استعلام محفوظ بعلامة مرجعية"

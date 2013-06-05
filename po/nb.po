@@ -1,17 +1,17 @@
 # Automatically generated <>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: phpMyAdmin 4.0.2-dev\n"
+"Project-Id-Version: phpMyAdmin 4.0.3-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-21 14:02+0200\n"
+"POT-Creation-Date: 2013-05-28 12:35-0400\n"
 "PO-Revision-Date: 2013-03-26 11:59+0200\n"
 "Last-Translator: Stian Berg <mail.to.stian@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <http://l10n.cihar.com/projects/phpmyadmin/"
 "master/nb/>\n"
-"Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: nb\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 1.5-dev\n"
 
@@ -236,8 +236,8 @@ msgstr "Kommentarer"
 #: libraries/server_privileges.lib.php:2145
 #: libraries/server_privileges.lib.php:2465
 #: libraries/server_privileges.lib.php:2479 libraries/structure.lib.php:1268
-#: libraries/user_preferences.lib.php:282 prefs_manage.php:131 sql.php:430
-#: sql.php:525 sql.php:526 tbl_printview.php:186 tbl_tracking.php:344
+#: libraries/user_preferences.lib.php:282 prefs_manage.php:131 sql.php:417
+#: sql.php:512 sql.php:513 tbl_printview.php:186 tbl_tracking.php:344
 #: tbl_tracking.php:398 tbl_tracking.php:403
 msgid "No"
 msgstr "Nei"
@@ -264,7 +264,7 @@ msgstr "Nei"
 #: libraries/server_privileges.lib.php:2462
 #: libraries/server_privileges.lib.php:2479 libraries/structure.lib.php:1268
 #: libraries/user_preferences.lib.php:280 prefs_manage.php:130
-#: server_databases.php:103 server_databases.php:110 sql.php:523 sql.php:524
+#: server_databases.php:103 server_databases.php:110 sql.php:510 sql.php:511
 #: tbl_printview.php:187 tbl_structure.php:84 tbl_tracking.php:344
 #: tbl_tracking.php:396 tbl_tracking.php:401
 msgid "Yes"
@@ -325,7 +325,7 @@ msgstr "Tabell"
 #: db_printview.php:100 libraries/Table.class.php:350
 #: libraries/build_html_for_db.lib.php:31 libraries/import.lib.php:181
 #: libraries/structure.lib.php:768 libraries/structure.lib.php:1708
-#: libraries/structure.lib.php:1893 sql.php:1131 tbl_printview.php:365
+#: libraries/structure.lib.php:1893 sql.php:1118 tbl_printview.php:365
 msgid "Rows"
 msgstr "Rader"
 
@@ -380,7 +380,7 @@ msgstr "Bytt til %svisuell bygger%s"
 
 #: db_search.php:30 libraries/plugins/auth/AuthenticationConfig.class.php:81
 #: libraries/plugins/auth/AuthenticationConfig.class.php:96
-#: libraries/plugins/auth/AuthenticationCookie.class.php:587
+#: libraries/plugins/auth/AuthenticationCookie.class.php:579
 #: libraries/plugins/auth/AuthenticationHttp.class.php:65
 #: libraries/plugins/auth/AuthenticationSignon.class.php:253
 msgid "Access denied"
@@ -406,7 +406,7 @@ msgstr "Overvåkede tabeller"
 #: libraries/server_privileges.lib.php:1971
 #: libraries/server_privileges.lib.php:2212
 #: libraries/server_privileges.lib.php:2855 server_databases.php:201
-#: server_status.php:324 sql.php:1122 tbl_tracking.php:761
+#: server_status.php:324 sql.php:1109 tbl_tracking.php:761
 msgid "Database"
 msgstr "Database"
 
@@ -424,7 +424,7 @@ msgstr "Oppdatert"
 
 #: db_tracking.php:83 js/messages.php:172 libraries/Menu.class.php:454
 #: libraries/rte/rte_events.lib.php:426 libraries/rte/rte_list.lib.php:78
-#: server_status.php:336 sql.php:1195 tbl_tracking.php:766
+#: server_status.php:336 sql.php:1182 tbl_tracking.php:766
 msgid "Status"
 msgstr "Status"
 
@@ -616,11 +616,11 @@ msgstr ""
 #: import.php:107
 #, php-format
 msgid ""
-"You probably tried to upload a file that is too large. Please refer to "
-"%sdocumentation%s for a workaround for this limit."
+"You probably tried to upload a file that is too large. Please refer to %"
+"sdocumentation%s for a workaround for this limit."
 msgstr ""
-"Du forsøkte sannsynligvis å laste opp en fil som var for stor. Sjekk "
-"%sdokumentasjonen%s for måter å omgå denne begrensningen på."
+"Du forsøkte sannsynligvis å laste opp en fil som var for stor. Sjekk %"
+"sdokumentasjonen%s for måter å omgå denne begrensningen på."
 
 #: import.php:250 import.php:516
 msgid "Showing bookmark"
@@ -666,7 +666,7 @@ msgid "Could not load import plugins, please check your installation!"
 msgstr ""
 "Kan ikke starte importeringsprogramtilleggene, kontroller din installasjon!"
 
-#: import.php:519 sql.php:395 sql.php:1268
+#: import.php:519 sql.php:382 sql.php:1255
 #, php-format
 msgid "Bookmark %s created"
 msgstr "Bokmerke %s opprettet"
@@ -903,7 +903,7 @@ msgstr ""
 "Tjeneren kjører med Suhosin. Sjekk %sdokumentasjonen%s for potensielle "
 "problemer."
 
-#: js/messages.php:27 libraries/import.lib.php:118 sql.php:355
+#: js/messages.php:27 libraries/import.lib.php:118 sql.php:342
 msgid "\"DROP DATABASE\" statements are disabled."
 msgstr "\"DROP DATABASE\"-uttrykk er avslått."
 
@@ -912,7 +912,7 @@ msgstr "\"DROP DATABASE\"-uttrykk er avslått."
 msgid "Do you really want to execute \"%s\"?"
 msgstr "Vil du virkelig utføre \"%s\"?"
 
-#: js/messages.php:31 libraries/mult_submits.inc.php:316 sql.php:477
+#: js/messages.php:31 libraries/mult_submits.inc.php:316 sql.php:464
 msgid "You are about to DESTROY a complete database!"
 msgstr "Du er i ferd med å SLETTE en komplett database!"
 
@@ -1416,7 +1416,7 @@ msgstr "Forklar utdata"
 #: libraries/plugins/export/ExportHtmlword.class.php:484
 #: libraries/plugins/export/ExportOdt.class.php:562
 #: libraries/plugins/export/ExportTexytext.class.php:435
-#: libraries/rte/rte_list.lib.php:68 server_status.php:332 sql.php:1200
+#: libraries/rte/rte_list.lib.php:68 server_status.php:332 sql.php:1187
 msgid "Time"
 msgstr "Tid"
 
@@ -2604,8 +2604,8 @@ msgstr "i spørring"
 #: libraries/DisplayResults.class.php:4910 libraries/structure.lib.php:653
 #, php-format
 msgid ""
-"This view has at least this number of rows. Please refer to %sdocumentation"
-"%s."
+"This view has at least this number of rows. Please refer to %sdocumentation%"
+"s."
 msgstr "Denne visningen har minst dette antall rader. Sjekk %sdocumentation%s."
 
 #: libraries/DisplayResults.class.php:4923
@@ -2616,7 +2616,7 @@ msgstr "Viser rader"
 msgid "total"
 msgstr "totalt"
 
-#: libraries/DisplayResults.class.php:4950 sql.php:954
+#: libraries/DisplayResults.class.php:4950 sql.php:941
 #, php-format
 msgid "Query took %01.4f sec"
 msgstr "Spørring tok %01.4f sek"
@@ -2729,8 +2729,8 @@ msgstr "Ukjent feil oppstod under filopplastingen."
 #: libraries/File.class.php:475
 msgid "Error moving the uploaded file, see [doc@faq1-11]FAQ 1.11[/doc]"
 msgstr ""
-"Feil oppstod under forsøk på flytting av den opplastede fila, se "
-"[doc@faq1-11]FAQ 1.11[/doc]"
+"Feil oppstod under forsøk på flytting av den opplastede fila, se [doc@faq1-"
+"11]FAQ 1.11[/doc]"
 
 #: libraries/File.class.php:493
 msgid "Error while moving uploaded file."
@@ -2749,12 +2749,7 @@ msgstr "Åpne nytt phpMyAdmin vindu"
 msgid "Click on the bar to scroll to top of page"
 msgstr ""
 
-#: libraries/Header.class.php:619
-#: libraries/plugins/auth/AuthenticationCookie.class.php:269
-msgid "Cookies must be enabled past this point."
-msgstr "Cookies må være slått på forbi dette punkt."
-
-#: libraries/Header.class.php:624
+#: libraries/Header.class.php:618
 #: libraries/plugins/auth/AuthenticationCookie.class.php:172
 msgid "Javascript must be enabled past this point"
 msgstr "JavaScript må være slått på forbi dette punktet"
@@ -2987,7 +2982,7 @@ msgid "There are no recent tables"
 msgstr "Det er ikke noen nylig brukte tabeller"
 
 #: libraries/ServerStatusData.class.php:181 libraries/Util.class.php:677
-#: server_status.php:340 sql.php:1127
+#: server_status.php:340 sql.php:1114
 msgid "SQL query"
 msgstr "SQL-spørring"
 
@@ -3221,7 +3216,7 @@ msgid "Maximum rows to plot"
 msgstr "Maks antall rader som kan framvises"
 
 #: libraries/TableSearch.class.php:888 libraries/TableSearch.class.php:1160
-#: sql.php:172 tbl_change.php:230
+#: sql.php:159 tbl_change.php:230
 msgid "Browse foreign values"
 msgstr "Se de eksterne verdiene"
 
@@ -3320,14 +3315,14 @@ msgstr ""
 
 #: libraries/Types.class.php:308
 msgid ""
-"A small floating-point number, allowable values are -3.402823466E+38 to "
-"-1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
+"A small floating-point number, allowable values are -3.402823466E+38 to -"
+"1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
 msgstr ""
 
 #: libraries/Types.class.php:310
 msgid ""
-"A double-precision floating-point number, allowable values are "
-"-1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and "
+"A double-precision floating-point number, allowable values are -"
+"1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and "
 "2.2250738585072014E-308 to 1.7976931348623157E+308"
 msgstr ""
 
@@ -3623,7 +3618,7 @@ msgctxt "Inline edit query"
 msgid "Inline"
 msgstr "Innebygd"
 
-#: libraries/Util.class.php:1435 sql.php:1191
+#: libraries/Util.class.php:1435 sql.php:1178
 msgid "Profiling"
 msgstr "Profilering"
 
@@ -3782,19 +3777,19 @@ msgstr "Ugyldig autentiseringsmetode satt opp i konfigureringen:"
 msgid "You should upgrade to %s %s or later."
 msgstr "Du burde oppgradere til %s %s eller nyere."
 
-#: libraries/common.inc.php:1043
+#: libraries/common.inc.php:1058
 msgid "Error: Token mismatch"
 msgstr ""
 
-#: libraries/common.inc.php:1087
+#: libraries/common.inc.php:1102
 msgid "GLOBALS overwrite attempt"
 msgstr ""
 
-#: libraries/common.inc.php:1094
+#: libraries/common.inc.php:1109
 msgid "possible exploit"
 msgstr "mulig sikkerhetshull"
 
-#: libraries/common.inc.php:1103
+#: libraries/common.inc.php:1118
 msgid "numeric key detected"
 msgstr "numerisk nøkkel oppdaget"
 
@@ -4591,10 +4586,6 @@ msgstr "Hovedramme"
 #: libraries/config/messages.inc.php:184
 msgid "Microsoft Office"
 msgstr "Microsoft Office"
-
-#: libraries/config/messages.inc.php:186
-msgid "Open Document"
-msgstr "Åpent Dokument"
 
 #: libraries/config/messages.inc.php:188
 msgid "Other core settings"
@@ -6216,7 +6207,9 @@ msgstr "CSV med LOAD DATA"
 #: libraries/config/setup.forms.php:255 libraries/config/setup.forms.php:348
 #: libraries/config/user_preferences.forms.php:160
 #: libraries/config/user_preferences.forms.php:252
-msgid "Open Document Spreadsheet"
+#, fuzzy
+#| msgid "Open Document Spreadsheet"
+msgid "OpenDocument Spreadsheet"
 msgstr "Open Document regneark"
 
 #: libraries/config/setup.forms.php:262
@@ -6246,7 +6239,9 @@ msgstr "Microsoft Word 2000"
 
 #: libraries/config/setup.forms.php:352
 #: libraries/config/user_preferences.forms.php:256
-msgid "Open Document Text"
+#, fuzzy
+#| msgid "Open Document Text"
+msgid "OpenDocument Text"
 msgstr "Open Document tekst"
 
 #: libraries/config/validate.lib.php:214
@@ -6480,8 +6475,8 @@ msgstr ", @TABLE@ vil bli tabellnavnet"
 #| "will be kept as is."
 msgid ""
 "This value is interpreted using %1$sstrftime%2$s, so you can use time "
-"formatting strings. Additionally the following transformations will happen: "
-"%3$s. Other text will be kept as is. See the %4$sFAQ%5$s for details."
+"formatting strings. Additionally the following transformations will happen: %"
+"3$s. Other text will be kept as is. See the %4$sFAQ%5$s for details."
 msgstr ""
 "Denne verdien blir tolket slik som %1$sstrftime%2$s, så du kan bruke "
 "tidformateringsstrenger. I tillegg vil følgende transformasjoner skje: %3$s. "
@@ -7009,8 +7004,8 @@ msgstr ""
 #: libraries/engines/pbxt.lib.php:131
 #, php-format
 msgid ""
-"Documentation and further information about PBXT can be found on the "
-"%sPrimeBase XT Home Page%s."
+"Documentation and further information about PBXT can be found on the %"
+"sPrimeBase XT Home Page%s."
 msgstr ""
 
 #: libraries/engines/pbxt.lib.php:133
@@ -7030,7 +7025,7 @@ msgid "No data found for GIS visualization."
 msgstr "Ingen data funnet for graf."
 
 #: libraries/import.lib.php:187 libraries/insert_edit.lib.php:120
-#: libraries/rte/rte_routines.lib.php:1443 sql.php:949 tbl_get_field.php:55
+#: libraries/rte/rte_routines.lib.php:1443 sql.php:936 tbl_get_field.php:55
 msgid "MySQL returned an empty result set (i.e. zero rows)."
 msgstr "MySQL returnerte ett tomt resultat (m.a.o. ingen rader)."
 
@@ -7163,11 +7158,11 @@ msgstr ""
 "Bruk TAB tasten for å flytte fra verdi til verdi, eller CTRL+piltastene for "
 "å bevege deg hvor som helst"
 
-#: libraries/insert_edit.lib.php:1912 sql.php:944
+#: libraries/insert_edit.lib.php:1912 sql.php:931
 msgid "Showing SQL query"
 msgstr "Viser SQL spørring"
 
-#: libraries/insert_edit.lib.php:1937 sql.php:924
+#: libraries/insert_edit.lib.php:1937 sql.php:911
 #, php-format
 msgid "Inserted row id: %1$d"
 msgstr "Insatt rad id: %1$d"
@@ -7215,7 +7210,7 @@ msgstr ""
 msgid "Add prefix"
 msgstr "Utfør indeks(er)"
 
-#: libraries/mult_submits.inc.php:318 sql.php:517
+#: libraries/mult_submits.inc.php:318 sql.php:504
 #, fuzzy
 #| msgid "Do you really want to "
 msgid "Do you really want to execute the following query?"
@@ -7439,18 +7434,18 @@ msgid_plural "%s other results found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: libraries/navigation/NavigationTree.class.php:1034
+#: libraries/navigation/NavigationTree.class.php:1035
 #, fuzzy
 #| msgid "Alter table order by"
 msgid "filter databases by name"
 msgstr "Endre tabellrekkefølge ved"
 
-#: libraries/navigation/NavigationTree.class.php:1035
-#: libraries/navigation/NavigationTree.class.php:1061
+#: libraries/navigation/NavigationTree.class.php:1036
+#: libraries/navigation/NavigationTree.class.php:1062
 msgid "Clear Fast Filter"
 msgstr ""
 
-#: libraries/navigation/NavigationTree.class.php:1060
+#: libraries/navigation/NavigationTree.class.php:1061
 #, fuzzy
 #| msgid "Alter table order by"
 msgid "filter items by name"
@@ -7722,8 +7717,8 @@ msgstr "Velkommen til %s"
 #: libraries/plugins/auth/AuthenticationConfig.class.php:102
 #, php-format
 msgid ""
-"You probably did not create a configuration file. You might want to use the "
-"%1$ssetup script%2$s to create one."
+"You probably did not create a configuration file. You might want to use the %"
+"1$ssetup script%2$s to create one."
 msgstr ""
 "En mulig årsak for dette er at du ikke opprettet konfigurasjonsfila. Du bør "
 "kanskje bruke %1$ssetup script%2$s for å opprette en."
@@ -7778,21 +7773,21 @@ msgstr "Passord:"
 msgid "Server Choice"
 msgstr "Tjenervalg"
 
-#: libraries/plugins/auth/AuthenticationCookie.class.php:583
+#: libraries/plugins/auth/AuthenticationCookie.class.php:575
 #: libraries/plugins/auth/AuthenticationSignon.class.php:249
 msgid ""
 "Login without a password is forbidden by configuration (see AllowNoPassword)"
 msgstr ""
 "Innlogging uten passord er forbudt av konfigurasjonen (see AllowNoPassword)"
 
-#: libraries/plugins/auth/AuthenticationCookie.class.php:590
+#: libraries/plugins/auth/AuthenticationCookie.class.php:582
 #: libraries/plugins/auth/AuthenticationSignon.class.php:256
 #, php-format
 msgid "No activity within %s seconds; please log in again"
 msgstr "Ingen aktivitet på %s sekunder eller mer, du må logge inn på nytt"
 
-#: libraries/plugins/auth/AuthenticationCookie.class.php:595
-#: libraries/plugins/auth/AuthenticationCookie.class.php:597
+#: libraries/plugins/auth/AuthenticationCookie.class.php:587
+#: libraries/plugins/auth/AuthenticationCookie.class.php:589
 #: libraries/plugins/auth/AuthenticationSignon.class.php:265
 msgid "Cannot log in to the MySQL server"
 msgstr "Kan ikke logge inn til MySQL tjeneren"
@@ -7982,13 +7977,13 @@ msgstr "Vis MIME-typer"
 #: libraries/server_privileges.lib.php:1081
 #: libraries/server_privileges.lib.php:1177
 #: libraries/server_privileges.lib.php:1567
-#: libraries/server_privileges.lib.php:2379 server_status.php:320 sql.php:1121
+#: libraries/server_privileges.lib.php:2379 server_status.php:320 sql.php:1108
 msgid "Host"
 msgstr "Vert"
 
 #: libraries/plugins/export/ExportLatex.class.php:223
 #: libraries/plugins/export/ExportSql.class.php:608
-#: libraries/plugins/export/ExportXml.class.php:196 sql.php:1124
+#: libraries/plugins/export/ExportXml.class.php:196 sql.php:1111
 msgid "Generation Time"
 msgstr "Generert den"
 
@@ -9705,8 +9700,8 @@ msgstr "Brukeroversikt"
 msgid ""
 "Note: phpMyAdmin gets the users' privileges directly from MySQL's privilege "
 "tables. The content of these tables may differ from the privileges the "
-"server uses, if they have been changed manually. In this case, you should "
-"%sreload the privileges%s before you continue."
+"server uses, if they have been changed manually. In this case, you should %"
+"sreload the privileges%s before you continue."
 msgstr ""
 "Merk: phpMyAdmin får brukerprivilegiene direkte fra MySQL "
 "privilegietabeller. Innholdet i disse tabellene kan være forskjellig fra de "
@@ -9735,11 +9730,11 @@ msgstr "Kjør SQL spørring/spørringer mot databasen %s"
 msgid "Clear"
 msgstr "Fjern"
 
-#: libraries/sql_query_form.lib.php:309 sql.php:1340 sql.php:1360
+#: libraries/sql_query_form.lib.php:309 sql.php:1327 sql.php:1347
 msgid "Bookmark this SQL query"
 msgstr "Lagre denne SQL-spørringen"
 
-#: libraries/sql_query_form.lib.php:315 sql.php:1352
+#: libraries/sql_query_form.lib.php:315 sql.php:1339
 msgid "Let every user access this bookmark"
 msgstr "La alle brukere ha adgang til dette bokmerket"
 
@@ -10088,8 +10083,8 @@ msgid ""
 "For a list of available transformation options and their MIME type "
 "transformations, click on %stransformation descriptions%s"
 msgstr ""
-"For en liste over tilgjengelige transformasjonsvalg, klikk på "
-"%stransformasjonsbeskrivelser%s"
+"For en liste over tilgjengelige transformasjonsvalg, klikk på %"
+"stransformasjonsbeskrivelser%s"
 
 #: libraries/tbl_columns_definition_form.inc.php:171
 msgid "Transformation options"
@@ -10921,7 +10916,7 @@ msgid "Instructions/Setup"
 msgstr ""
 
 #: server_status_monitor.php:483
-msgid "Done rearranging/editing charts"
+msgid "Done dragging (rearranging) charts"
 msgstr ""
 
 #: server_status_monitor.php:489 server_status_monitor.php:606
@@ -10931,8 +10926,10 @@ msgid "Add chart"
 msgstr "Utfør indeks(er)"
 
 #: server_status_monitor.php:492
-msgid "Rearrange/edit charts"
-msgstr ""
+#, fuzzy
+#| msgid "Enable highlighting"
+msgid "Enable charts dragging"
+msgstr "Aktiver utheving"
 
 #: server_status_monitor.php:496
 #, fuzzy
@@ -12172,8 +12169,8 @@ msgid ""
 "of users, including you, are connected to."
 msgstr ""
 "Hvis du føler at dette er nødvending, så bruk ekstra "
-"beskyttelsesinnstillinger - [a@?page=servers&amp;mode=edit&amp;id="
-"%1$d#tab_Server_config]vertsautentisering[/a] innstillinger og [a@?"
+"beskyttelsesinnstillinger - [a@?page=servers&amp;mode=edit&amp;id=%1"
+"$d#tab_Server_config]vertsautentisering[/a] innstillinger og [a@?"
 "page=form&amp;formset=features#tab_Security]godkjente mellomlagerliste[/a]. "
 "Merk at IP-basert beskyttelse ikke er så god hvis din IP tilhører en "
 "Internettilbyder som har tusenvis av brukere, inkludert deg, tilknyttet."
@@ -12257,45 +12254,45 @@ msgstr "Nøkkelen bør inneholde tall, bokstaver [em]og[/em] spesielle tegn"
 msgid "Wrong data"
 msgstr "Ingen databaser"
 
-#: sql.php:317
+#: sql.php:304
 #, php-format
 msgid "Using bookmark \"%s\" as default browse query."
 msgstr ""
 
-#: sql.php:399
+#: sql.php:386
 #, fuzzy
 #| msgid "Bookmark %s created"
 msgid "Bookmark not created"
 msgstr "Bokmerke %s opprettet"
 
-#: sql.php:941
+#: sql.php:928
 msgid "Showing as PHP code"
 msgstr "Viser som PHP kode"
 
-#: sql.php:946
+#: sql.php:933
 msgid "Validated SQL"
 msgstr "Validert SQL"
 
-#: sql.php:1119
+#: sql.php:1106
 msgid "SQL result"
 msgstr "SQL-resultat"
 
-#: sql.php:1126
+#: sql.php:1113
 msgid "Generated by"
 msgstr "Generert av"
 
-#: sql.php:1259
+#: sql.php:1246
 msgid ""
 "This table does not contain a unique column. Grid edit, checkbox, Edit, Copy "
 "and Delete features are not available."
 msgstr ""
 
-#: sql.php:1308
+#: sql.php:1295
 #, php-format
 msgid "Problems with indexes of table `%s`"
 msgstr "Problemer med indeksene i tabellen `%s`"
 
-#: sql.php:1344
+#: sql.php:1331
 msgid "Label"
 msgstr "Navn"
 
@@ -13096,8 +13093,8 @@ msgstr ""
 #: libraries/advisory_rules.txt:179
 #, php-format
 msgid ""
-"The current ratio of free query cache memory to total query cache size is %s"
-"%%. It should be above 80%%"
+"The current ratio of free query cache memory to total query cache size is %s%"
+"%. It should be above 80%%"
 msgstr ""
 
 #: libraries/advisory_rules.txt:181
@@ -13232,8 +13229,8 @@ msgstr ""
 #: libraries/advisory_rules.txt:216
 #, php-format
 msgid ""
-"%s%% of all sorts cause temporary tables, this value should be lower than "
-"10%%."
+"%s%% of all sorts cause temporary tables, this value should be lower than 10%"
+"%."
 msgstr ""
 
 #: libraries/advisory_rules.txt:218
@@ -13963,6 +13960,12 @@ msgstr ""
 msgid "concurrent_insert is set to 0"
 msgstr "maks. samtidige tilkoblinger"
 
+#~ msgid "Cookies must be enabled past this point."
+#~ msgstr "Cookies må være slått på forbi dette punkt."
+
+#~ msgid "Open Document"
+#~ msgstr "Åpent Dokument"
+
 #~ msgid "Table seems to be empty!"
 #~ msgstr "Tabellen ser ut til å være tom!"
 
@@ -14383,8 +14386,8 @@ msgstr "maks. samtidige tilkoblinger"
 #~ msgid ""
 #~ "Are you sure you want to disable all BLOB references for database %s?"
 #~ msgstr ""
-#~ "Er du sikker på at du ønsker å slå av alle BLOB referanser for databasen "
-#~ "%s?"
+#~ "Er du sikker på at du ønsker å slå av alle BLOB referanser for databasen %"
+#~ "s?"
 
 #, fuzzy
 #~ msgid "Unknown error while uploading."
