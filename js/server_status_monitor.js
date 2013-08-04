@@ -1189,6 +1189,19 @@ AJAX.registerOnload('server_status_monitor.js', function() {
             settings.axes.yaxis.tickOptions = {
                 formatter: $.jqplot.byteFormatter(1) // KiB
             };
+        } else if (settings.title === PMA_messages.strQuestions
+            || settings.title === PMA_messages.strConnections
+        ) {
+            settings.axes.yaxis.tickOptions = {
+                formatter: function(format, val) {
+                    if (Math.abs(val) >= 1000000)
+                        return $.jqplot.sprintf("%.3g M", val/1000000);
+                    else if (Math.abs(val) >= 1000)
+                        return $.jqplot.sprintf("%.3g k", val/1000);
+                    else
+                        return $.jqplot.sprintf("%d", val);
+                }
+            };
         }
 
         settings.series = chartObj.series;
@@ -1276,7 +1289,6 @@ AJAX.registerOnload('server_status_monitor.js', function() {
             );
         }
         $('#gridchart' + runtime.chartAI)
-            .css('overflow', 'hidden')
             .parent()
             .append($legend);
 
@@ -1410,9 +1422,9 @@ AJAX.registerOnload('server_status_monitor.js', function() {
 
     function PMA_getLogAnalyseDialog(min, max) {
         $('#logAnalyseDialog input[name="dateStart"]')
-            .val(formatDate(min, 'yyyy-MM-dd HH:mm:ss'));
+            .val(PMA_formatDateTime(min, true));
         $('#logAnalyseDialog input[name="dateEnd"]')
-            .val(formatDate(max, 'yyyy-MM-dd HH:mm:ss'));
+            .val(PMA_formatDateTime(max, true));
 
         var dlgBtns = { };
 
