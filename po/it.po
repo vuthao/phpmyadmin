@@ -1,9 +1,9 @@
 # Automatically generated <>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: phpMyAdmin 4.0.5-rc1\n"
+"Project-Id-Version: phpMyAdmin 4.0.6-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-29 15:05+0200\n"
+"POT-Creation-Date: 2013-07-29 15:07+0200\n"
 "PO-Revision-Date: 2013-05-17 12:45+0200\n"
 "Last-Translator: Andrea Falco <fox91fox@gmail.com>\n"
 "Language-Team: Italian <http://l10n.cihar.com/projects/phpmyadmin/4-0/it/>\n"

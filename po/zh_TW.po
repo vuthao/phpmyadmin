@@ -1,13 +1,13 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: phpMyAdmin 4.0.5-rc1\n"
+"Project-Id-Version: phpMyAdmin 4.0.6-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-29 15:05+0200\n"
-"PO-Revision-Date: 2013-06-25 11:10+0200\n"
+"POT-Creation-Date: 2013-07-29 15:07+0200\n"
+"PO-Revision-Date: 2013-07-31 01:40+0200\n"
 "Last-Translator: Tony Chen <tonychen@finenet.com.tw>\n"
-"Language-Team: Traditional Chinese <http://l10n.cihar.com/projects/"
-"phpmyadmin/4-0/zh_TW/>\n"
+"Language-Team: Traditional Chinese "
+"<http://l10n.cihar.com/projects/phpmyadmin/4-0/zh_TW/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2562,16 +2562,16 @@ msgid ""
 msgstr "這個檢視至少需包含這個數目的資料，請參考%sdocumentation%s。"
 
 #: libraries/DisplayResults.class.php:4927
-#, fuzzy, php-format
+#, php-format
 #| msgid "Showing rows"
 msgid "Showing rows %1s - %2s"
-msgstr "顯示行"
+msgstr "顯示行 %1s-%2s"
 
 #: libraries/DisplayResults.class.php:4939
-#, fuzzy, php-format
+#, php-format
 #| msgid "total"
 msgid "%d total"
-msgstr "總計"
+msgstr "總數 %d"
 
 #: libraries/DisplayResults.class.php:4951 sql.php:945
 #, php-format
@@ -4998,7 +4998,7 @@ msgstr "內存限制"
 
 #: libraries/config/messages.inc.php:299
 msgid "Show logo in navigation panel"
-msgstr "在左側面板中顯示 logo"
+msgstr "在導覽面板中顯示 logo"
 
 #: libraries/config/messages.inc.php:300
 msgid "Display logo"
@@ -5024,7 +5024,7 @@ msgstr "Logo 連結目標"
 
 #: libraries/config/messages.inc.php:305
 msgid "Display server choice at the top of the navigation panel"
-msgstr "在左側面板頂部顯示伺服器選擇"
+msgstr "在導覽面板頂部顯示伺服器選擇"
 
 #: libraries/config/messages.inc.php:306
 msgid "Display servers selection"
@@ -5117,7 +5117,7 @@ msgstr "僅使用圖示、文字或都使用"
 
 #: libraries/config/messages.inc.php:327
 msgid "Table navigation bar"
-msgstr "資料表導航欄"
+msgstr "資料表導覽欄"
 
 #: libraries/config/messages.inc.php:328
 msgid "use GZip output buffering for increased speed in HTTP transfers"
@@ -5605,7 +5605,7 @@ msgstr "描述顯示欄位的表，不使用請留空，建議值：[kbd]pma__ta
 
 #: libraries/config/messages.inc.php:436
 msgid "Display columns table"
-msgstr "顯示字段表"
+msgstr "顯示欄位表"
 
 #: libraries/config/messages.inc.php:437
 msgid ""
@@ -5771,7 +5771,7 @@ msgstr "定義在編輯/插入模式中是否顯示欄位類型一列"
 
 #: libraries/config/messages.inc.php:471
 msgid "Show field types"
-msgstr "顯示字段類型"
+msgstr "顯示欄位類型"
 
 #: libraries/config/messages.inc.php:472
 msgid "Display the function fields in edit/insert mode"
@@ -7144,7 +7144,7 @@ msgstr "未知"
 
 #: libraries/navigation/Navigation.class.php:61
 msgid "An error has occured while loading the navigation tree"
-msgstr "載入導航樹時出錯"
+msgstr "載入導覽樹時出錯"
 
 #: libraries/navigation/NavigationHeader.class.php:183
 msgid "Home"
@@ -7160,7 +7160,7 @@ msgstr "phpMyAdmin 檔案"
 
 #: libraries/navigation/NavigationHeader.class.php:243
 msgid "Reload navigation frame"
-msgstr "重新整理導覽框架"
+msgstr "重新整理導覽區"
 
 #: libraries/navigation/NavigationTree.class.php:712
 #, php-format
@@ -9473,7 +9473,7 @@ msgstr "規劃表結構"
 #: libraries/structure.lib.php:1545
 #: libraries/tbl_columns_definition_form.inc.php:758
 msgid "You have to add at least one column."
-msgstr "至少要增加一個字段。"
+msgstr "至少要增加一個欄位。"
 
 #: libraries/structure.lib.php:1560
 msgid "Add column"
@@ -9483,7 +9483,7 @@ msgstr "新增欄位"
 #: libraries/tbl_columns_definition_form.inc.php:748
 #, php-format
 msgid "Add %s column(s)"
-msgstr "增加 %s 個字段"
+msgstr "增加 %s 個欄位"
 
 #: libraries/structure.lib.php:1582
 msgid "At End of Table"
@@ -9703,7 +9703,7 @@ msgstr "ZIP 包中有錯誤:"
 
 #: navigation.php:23
 msgid "Fatal error: The navigation can only be accessed via AJAX"
-msgstr "錯誤: 只能經由 AJAX 使用導航"
+msgstr "錯誤: 只能經由 AJAX 使用導覽"
 
 #: pmd_display_field.php:60 pmd_save_pos.php:81
 msgid "Modifications have been saved"
