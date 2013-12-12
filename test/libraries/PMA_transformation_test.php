@@ -11,7 +11,7 @@
  */
 require_once 'libraries/transformations.lib.php';
 require_once 'libraries/Util.class.php';
-require_once 'libraries/database_interface.lib.php';
+require_once 'libraries/database_interface.inc.php';
 require_once 'libraries/Tracker.class.php';
 require_once 'libraries/relation.lib.php';
 require_once 'libraries/Theme.class.php';
@@ -34,9 +34,7 @@ class PMA_Transformation_Test extends PHPUnit_Framework_TestCase
         $GLOBALS['table'] = 'table';
         $GLOBALS['db'] = 'db';
         $_SESSION['PMA_Theme'] = PMA_Theme::load('./themes/pmahomme');
-        $_SESSION[' PMA_token '] = 'token';
         $GLOBALS['cfg'] = array(
-            'MySQLManualType' => 'none',
             'ServerDefault' => 1,
             'ActionLinksMode' => 'icons',
         );
@@ -68,7 +66,7 @@ class PMA_Transformation_Test extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $expected,
-            PMA_transformation_getOptions($input)
+            PMA_Transformation_getOptions($input)
         );
     }
 
@@ -147,6 +145,10 @@ class PMA_Transformation_Test extends PHPUnit_Framework_TestCase
      */
     public function testGetMime()
     {
+        $_SESSION['relation'][$GLOBALS['server']]['commwork'] = true;
+        $_SESSION['relation'][$GLOBALS['server']]['db'] = "pmadb";
+        $_SESSION['relation'][$GLOBALS['server']]['column_info'] = "column_info";
+        $_SESSION['relation'][$GLOBALS['server']]['trackingwork'] = false;
         $this->assertEquals(
             array('o' => array(
                 'column_name' => 'o',

@@ -129,10 +129,9 @@ if [ -d po ] ; then
     rm -rf po
 fi
 
-if [ -f ./scripts/compress-js ] ; then
-    echo "* Compressing javascript files"
-    ./scripts/compress-js
-    rm -rf sources
+if [ -f ./scripts/line-counts.sh ] ; then
+    echo "* Generating line counts"
+    ./scripts/line-counts.sh
 fi
 
 echo "* Removing unneeded files"
@@ -145,7 +144,7 @@ rm -rf test
 rm -rf PMAStandard
 
 # Testsuite setup
-rm -f build.xml phpunit.xml.dist .travis.yml
+rm -f build.xml phpunit.xml.dist .travis.yml .jshintrc
 
 # Remove readme for github
 rm -f README.rst
@@ -298,7 +297,6 @@ Todo now:
  6. send a short mail (with list of major changes) to
         phpmyadmin-devel@lists.sourceforge.net
         phpmyadmin-news@lists.sourceforge.net
-        phpmyadmin-users@lists.sourceforge.net
 
     Don't forget to update the Description section in the announcement,
     based on documentation.

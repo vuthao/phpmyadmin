@@ -13,7 +13,16 @@
 require_once 'libraries/core.lib.php';
 require_once 'libraries/Config.class.php';
 require_once 'libraries/relation.lib.php';
+require_once 'libraries/Theme.class.php';
+require_once 'libraries/vendor_config.php';
+require_once 'libraries/url_generating.lib.php';
+require_once 'libraries/php-gettext/gettext.inc';
 
+/**
+ * Tests behaviour of PMA_Config class
+ *
+ * @package PhpMyAdmin-test
+ */
 class PMA_ConfigTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -36,6 +45,8 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
     {
         $this->object = new PMA_Config;
         $GLOBALS['server'] = 0;
+        $_SESSION['is_git_revision'] = true;
+        $GLOBALS['PMA_Config'] = new PMA_Config(CONFIG_FILE);
     }
 
     /**
@@ -48,6 +59,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
     {
     }
 
+    /**
+     * Test for CheckSystem
+     *
+     * @return void
+     */
     public function testCheckSystem()
     {
         $this->object->checkSystem();
@@ -57,6 +73,78 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNotEmpty($this->object->get('PMA_THEME_GENERATION'));
     }
 
+    /**
+     * Test for GetFontsizeForm
+     *
+     * @return void
+     */
+    public function testGetFontsizeForm()
+    {
+        $this->assertContains(
+            '<form name="form_fontsize_selection" id="form_fontsize_selection"',
+            PMA_Config::getFontsizeForm()
+        );
+
+        $this->assertContains(
+            '<label for="select_fontsize">',
+            PMA_Config::getFontsizeForm()
+        );
+
+        //test getFontsizeOptions for "em" unit
+        $fontsize = $GLOBALS['PMA_Config']->get('fontsize');
+        $GLOBALS['PMA_Config']->set('fontsize', '');
+        $_COOKIE['pma_fontsize'] = "10em";
+        $this->assertContains(
+            '<option value="7em"',
+            PMA_Config::getFontsizeForm()
+        );
+        $this->assertContains(
+            '<option value="8em"',
+            PMA_Config::getFontsizeForm()
+        );
+
+        //test getFontsizeOptions for "pt" unit
+        $_COOKIE['pma_fontsize'] = "10pt";
+        $this->assertContains(
+            '<option value="2pt"',
+            PMA_Config::getFontsizeForm()
+        );
+        $this->assertContains(
+            '<option value="4pt"',
+            PMA_Config::getFontsizeForm()
+        );
+
+        //test getFontsizeOptions for "px" unit
+        $_COOKIE['pma_fontsize'] = "10px";
+        $this->assertContains(
+            '<option value="5px"',
+            PMA_Config::getFontsizeForm()
+        );
+        $this->assertContains(
+            '<option value="6px"',
+            PMA_Config::getFontsizeForm()
+        );
+
+        //test getFontsizeOptions for unknown unit
+        $_COOKIE['pma_fontsize'] = "10abc";
+        $this->assertContains(
+            '<option value="7abc"',
+            PMA_Config::getFontsizeForm()
+        );
+        $this->assertContains(
+            '<option value="8abc"',
+            PMA_Config::getFontsizeForm()
+        );
+        unset($_COOKIE['pma_fontsize']);
+        //rollback the fontsize setting
+        $GLOBALS['PMA_Config']->set('fontsize', $fontsize);
+    }
+
+    /**
+     * Test for checkOutputCompression
+     *
+     * @return void
+     */
     public function testCheckOutputCompression()
     {
 
@@ -71,7 +159,7 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $this->object->set('PMA_USR_BROWSER_AGENT', 'MOZILLA');
         $this->object->set('PMA_USR_BROWSER_VER', 5);
         $this->object->checkOutputCompression();
-        $this->assertEquals('auto', $this->object->get("OBGzip"));
+        $this->assertTrue($this->object->get("OBGzip"));
     }
 
     /**
@@ -105,6 +193,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * user Agent Provider
+     *
+     * @return array
+     */
     public function userAgentProvider()
     {
         return array(
@@ -115,7 +208,8 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
                 '9.80',
             ),
             array(
-                'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US) AppleWebKit/528.16 OmniWeb/622.8.0.112941',
+                'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US) AppleWebKit/'
+                . '528.16 OmniWeb/622.8.0.112941',
                 'Mac',
                 'OMNIWEB',
                 '622',
@@ -127,7 +221,43 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
                 '8.0',
             ),
             array(
-                'Mozilla/5.0 (Unknown; U; Unix BSD/SYSV system; C -) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.10.2',
+                'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+                'Win',
+                'IE',
+                '9.0',
+            ),
+            array(
+                'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; '
+                . 'Trident/6.0)',
+                'Win',
+                'IE',
+                '10.0',
+            ),
+            array(
+                'Mozilla/5.0 (IE 11.0; Windows NT 6.3; Trident/7.0; .NET4.0E; '
+                . '.NET4.0C; rv:11.0) like Gecko',
+                'Win',
+                'IE',
+                '11.0',
+            ),
+            array(
+                'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; .NET4.0E; '
+                . '.NET4.0C; .NET CLR 3.5.30729; .NET CLR 2.0.50727; '
+                . '.NET CLR 3.0.30729; InfoPath.3; rv:11.0) like Gecko',
+                'Win',
+                'IE',
+                '11.0',
+            ),
+            array(
+                'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.22 (KHTML, '
+                . 'like Gecko) Chrome/25.0.1364.172 Safari/537.22',
+                'Win',
+                'CHROME',
+                '25.0.1364.172',
+            ),
+            array(
+                'Mozilla/5.0 (Unknown; U; Unix BSD/SYSV system; C -) '
+                . 'AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.10.2',
                 'Unix',
                 'SAFARI',
                 '5.0.419',
@@ -139,27 +269,30 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
                 '1.9',
             ),
             array(
-                'Mozilla/5.0 (compatible; Konqueror/4.5; NetBSD 5.0.2; X11; amd64; en_US) KHTML/4.5.4 (like Gecko)',
+                'Mozilla/5.0 (compatible; Konqueror/4.5; NetBSD 5.0.2; X11; '
+                . 'amd64; en_US) KHTML/4.5.4 (like Gecko)',
                 'Other',
                 'KONQUEROR',
             ),
             array(
                 'Mozilla/5.0 (X11; Linux x86_64; rv:5.0) Gecko/20100101 Firefox/5.0',
                 'Linux',
-                'MOZILLA',
+                'FIREFOX',
                 '5.0',
+            ),
+            array(
+                'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 '
+                . 'Firefox/12.0',
+                'Linux',
+                'FIREFOX',
+                '12.0',
             ),
             /**
              * @todo Is this version really expected?
              */
             array(
-                'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0',
-                'Linux',
-                'MOZILLA',
-                '5.0',
-            ),
-            array(
-                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.4+ (KHTML, like Gecko) Version/5.0 Safari/535.4+ SUSE/12.1 (3.2.1) Epiphany/3.2.1',
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.4+ (KHTML, like G'
+                . 'ecko) Version/5.0 Safari/535.4+ SUSE/12.1 (3.2.1) Epiphany/3.2.1',
                 'Linux',
                 'SAFARI',
                 '5.0',
@@ -168,6 +301,12 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
 
     }
 
+
+    /**
+     * test for CheckGd2
+     *
+     * @return array
+     */
     public function testCheckGd2()
     {
         $prevIsGb2Val = $this->object->get('PMA_IS_GD2');
@@ -250,6 +389,12 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         unset($_SERVER['SERVER_SOFTWARE']);
     }
 
+
+    /**
+     * return server names
+     *
+     * @return array
+     */
     public function serverNames()
     {
         return array(
@@ -264,12 +409,20 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
+    /**
+     * test for CheckWebServerOs
+     *
+     * @return array
+     */
     public function testCheckWebServerOs()
     {
         $this->object->checkWebServerOs();
 
         if (defined('PHP_OS')) {
-            if (stristr(PHP_OS, 'win')) {
+            if (stristr(PHP_OS, 'darwin')) {
+                $this->assertEquals(0, $this->object->get('PMA_IS_WINDOWS'));
+            } elseif (stristr(PHP_OS, 'win')) {
                 $this->assertEquals(1, $this->object->get('PMA_IS_WINDOWS'));
             } elseif (stristr(PHP_OS, 'OS/2')) {
                 $this->assertEquals(1, $this->object->get('PMA_IS_WINDOWS'));
@@ -287,6 +440,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * test for CheckPhpVersion
+     *
+     * @return array
+     */
     public function testCheckPhpVersion()
     {
         $this->object->checkPhpVersion();
@@ -377,6 +535,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->object->error_config_default_file);
     }
 
+    /**
+     * test for CheckConfigSource
+     *
+     * @return array
+     */
     public function testCheckConfigSource()
     {
         $this->object->setSource('unexisted.config.php');
@@ -429,6 +592,12 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
+    /**
+     * test for CheckPmaAbsoluteUriEmpty
+     *
+     * @return array
+     */
     public function testCheckPmaAbsoluteUriEmpty()
     {
         $this->object->set('PmaAbsoluteUri', '');
@@ -460,6 +629,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->object->get('PmaAbsoluteUri'));
     }
 
+    /**
+     * return absolute Uris
+     *
+     * @return array
+     */
     public function absoluteUris()
     {
         return array(
@@ -509,6 +683,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * test for CheckCollationConnection
+     *
+     * @return array
+     */
     public function testCheckCollationConnection()
     {
         $_REQUEST['collation_connection'] = 'utf-8';
@@ -520,15 +699,27 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * test for IsHttp
+     *
+     * @return array
+     */
     public function testIsHttps()
     {
+        $this->object->set('is_https', null);
         $this->object->set('PmaAbsoluteUri', 'http://some_host.com/phpMyAdmin');
         $this->assertFalse($this->object->isHttps());
 
+        $this->object->set('is_https', null);
         $this->object->set('PmaAbsoluteUri', 'https://some_host.com/phpMyAdmin');
-        $this->assertFalse($this->object->isHttps());
+        $this->assertTrue($this->object->isHttps());
     }
 
+    /**
+     * test for DetectHttps
+     *
+     * @return array
+     */
     public function testDetectHttps()
     {
         unset($_SERVER['REQUEST_URI']);
@@ -605,21 +796,6 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Should check for https detection
-     *
-     * @return void
-     *
-     * @todo Implement testCheckIsHttps().
-     */
-    public function testCheckIsHttps()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * Test for getting cookie path
      *
      * @param string $absolute The absolute URL used for phpMyAdmin
@@ -635,6 +811,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->object->getCookiePath());
     }
 
+    /**
+     * Data provider for testGetCookiePath
+     *
+     * @return array data for testGetCookiePath
+     */
     public function cookieUris()
     {
         return array(
@@ -668,6 +849,11 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * return of config Paths
+     *
+     * @return array
+     */
     public function configPaths()
     {
         return array(
@@ -730,10 +916,30 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testGetThemeUniqueValue()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
+
+        $_SESSION['PMA_Theme'] = PMA_Theme::load('./themes/pmahomme');
+
+        $partial_sum = (
+            PHPUnit_Framework_Assert::readAttribute($this->object, 'source_mtime') +
+            PHPUnit_Framework_Assert::readAttribute(
+                $this->object,
+                'default_source_mtime'
+            ) +
+            $this->object->get('user_preferences_mtime') +
+            $_SESSION['PMA_Theme']->mtime_info +
+            $_SESSION['PMA_Theme']->filesize_info
         );
+
+        $this->object->set('fontsize', 10);
+        $this->assertEquals(10 + $partial_sum, $this->object->getThemeUniqueValue());
+        $this->object->set('fontsize', null);
+
+        $_COOKIE['pma_fontsize'] = 20;
+        $this->assertEquals(20 + $partial_sum, $this->object->getThemeUniqueValue());
+        unset($_COOKIE['pma_fontsize']);
+
+        $this->assertEquals($partial_sum, $this->object->getThemeUniqueValue());
+
     }
 
     /**
@@ -795,6 +1001,39 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test for isGitRevision
+     *
+     * @return void
+     */
+    public function testIsGitRevision()
+    {
+        $this->assertTrue(
+            $this->object->isGitRevision()
+        );
+    }
+
+    /**
+     * Test for Check HTTP
+     *
+     * @group medium
+     *
+     * @return void
+     */
+    public function testCheckHTTP()
+    {
+        $this->assertTrue(
+            $this->object->checkHTTP("http://www.phpmyadmin.net/test/data")
+        );
+        $this->assertContains(
+            "TEST DATA",
+            $this->object->checkHTTP("http://www.phpmyadmin.net/test/data", true)
+        );
+        $this->assertFalse(
+            $this->object->checkHTTP("http://www.phpmyadmin.net/test/nothing")
+        );
+    }
+
+    /**
      * Tests for rewriting URL to SSL variant
      *
      * @param string $original Original URL
@@ -810,6 +1049,12 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->object->getSSLUri());
     }
 
+
+    /**
+     * return of ssl Uris
+     *
+     * @return array
+     */
     public function sslUris()
     {
         return array(

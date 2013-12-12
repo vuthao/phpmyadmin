@@ -13,7 +13,7 @@
 require_once 'libraries/Util.class.php';
 require_once 'libraries/php-gettext/gettext.inc';
 
-class PMA_getBrowseUploadFileBlock_test extends PHPUnit_Framework_TestCase
+class PMA_GetBrowseUploadFileBlock_Test extends PHPUnit_Framework_TestCase
 {
 
     protected function setUp()
@@ -51,6 +51,6 @@ class PMA_getBrowseUploadFileBlock_test extends PHPUnit_Framework_TestCase
             . '<input type="file" name="import_file" id="input_import_file" />'
             . "(" . __('Max: '). $res . $unit .")" . "\n"
             . '<input type="hidden" name="MAX_FILE_SIZE" value="' .$size . '" />' . "\n"
-        );        
+        );
     }
 }

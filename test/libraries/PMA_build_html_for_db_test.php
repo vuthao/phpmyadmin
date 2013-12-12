@@ -16,12 +16,12 @@ require_once 'libraries/php-gettext/gettext.inc';
 require_once 'libraries/build_html_for_db.lib.php';
 require_once 'libraries/js_escape.lib.php';
 require_once 'libraries/Theme.class.php';
-require_once 'libraries/database_interface.lib.php';
+require_once 'libraries/database_interface.inc.php';
 require_once 'libraries/Tracker.class.php';
 require_once 'libraries/Types.class.php';
-require_once 'libraries/mysql_charsets.lib.php';
+require_once 'libraries/mysql_charsets.inc.php';
 
-class PMA_build_html_for_db_test extends PHPUnit_Framework_TestCase
+class PMA_BuildHtmlForDb_Test extends PHPUnit_Framework_TestCase
 {
     /**
      * Prepares environment for the test.
@@ -35,10 +35,6 @@ class PMA_build_html_for_db_test extends PHPUnit_Framework_TestCase
         $cfg['ShowFunctionFields'] = false;
         $GLOBALS['server'] = 0;
         $cfg['ServerDefault'] = 1;
-        $GLOBALS['lang'] = 'en';
-        $_SESSION[' PMA_token '] = 'token';
-        $cfg['MySQLManualType'] = 'viewable';
-        $cfg['MySQLManualBase'] = 'http://dev.mysql.com/doc/refman';
 
         $GLOBALS['PMA_Types'] = new PMA_Types_MySQL();
         $_SESSION['PMA_Theme'] = new PMA_Theme();
@@ -47,7 +43,6 @@ class PMA_build_html_for_db_test extends PHPUnit_Framework_TestCase
         $GLOBALS['pmaThemePath'] = $_SESSION['PMA_Theme']->getPath();
         $GLOBALS['pmaThemeImage'] = 'theme/';
 
-        $_SESSION[' PMA_token '] = 'token';
 
         $GLOBALS['cfg']['DefaultTabDatabase'] = 'db_structure.php';
     }
@@ -107,12 +102,11 @@ class PMA_build_html_for_db_test extends PHPUnit_Framework_TestCase
      *
      * @param array   $current
      * @param boolean $is_superuser
-     * @param string  $checkall
      * @param string  $url_query
      * @param array   $column_order
      * @param array   $replication_types
      * @param array   $replication_info
-     * @param string  $output
+     * @param array   $tags
      *
      * @return void
      * @dataProvider providerForTestBuildHtmlForDb

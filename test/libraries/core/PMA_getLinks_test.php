@@ -13,12 +13,10 @@ require_once 'libraries/core.lib.php';
 require_once 'libraries/url_generating.lib.php';
 require_once 'libraries/php-gettext/gettext.inc';
 
-class PMA_getLinks_test extends PHPUnit_Framework_TestCase
+class PMA_GetLinks_Test extends PHPUnit_Framework_TestCase
 {
     function setUp()
     {
-        $_SESSION[' PMA_token '] = 'token';
-        $GLOBALS['lang'] = 'en';
         $GLOBALS['server'] = 99;
         $GLOBALS['cfg']['ServerDefault'] = 0;
     }
@@ -36,8 +34,12 @@ class PMA_getLinks_test extends PHPUnit_Framework_TestCase
     public function providerLinkURL()
     {
         return array(
-            array('http://wiki.phpmyadmin.net', './url.php?url=http%3A%2F%2Fwiki.phpmyadmin.net&amp;server=99&amp;lang=en&amp;token=token'),
-            array('https://wiki.phpmyadmin.net', './url.php?url=https%3A%2F%2Fwiki.phpmyadmin.net&amp;server=99&amp;lang=en&amp;token=token'),
+            array('http://wiki.phpmyadmin.net',
+             './url.php?url=http%3A%2F%2Fwiki.phpmyadmin.net&amp;server=99'
+            . '&amp;lang=en&amp;token=token'),
+            array('https://wiki.phpmyadmin.net',
+             './url.php?url=https%3A%2F%2Fwiki.phpmyadmin.net&amp;server=99'
+            . '&amp;lang=en&amp;token=token'),
             array('wiki.phpmyadmin.net', 'wiki.phpmyadmin.net'),
             array('index.php?db=phpmyadmin', 'index.php?db=phpmyadmin')
         );

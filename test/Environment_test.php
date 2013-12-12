@@ -26,8 +26,8 @@ class Environment_Test extends PHPUnit_Framework_TestCase
     public function testPhpVersion()
     {
         $this->assertTrue(
-            version_compare('5.2', phpversion(), '<='),
-            'phpMyAdmin requires PHP 5.2 or above'
+            version_compare('5.3', phpversion(), '<='),
+            'phpMyAdmin requires PHP 5.3 or above'
         );
     }
 
@@ -59,7 +59,7 @@ class Environment_Test extends PHPUnit_Framework_TestCase
             );
         }
         catch (Exception $e) {
-            $this->fail("Error: ".$e->getMessage());
+            $this->markTestSkipped("Error: ".$e->getMessage());
         }
 
         // Check id MySQL server is 5 version
@@ -80,7 +80,7 @@ class Environment_Test extends PHPUnit_Framework_TestCase
      */
     public function testSession()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('No session testing');
     }
 }
 ?>
