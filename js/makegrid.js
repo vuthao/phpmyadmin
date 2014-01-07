@@ -999,6 +999,8 @@ function PMA_makegrid(t, enableResize, enableReorder, enableVisib, enableGridEdi
                             var micro = current_datetime_value.substring(23);
                             date.setHours(hour, min, sec, milli);
                             date.setMicroseconds(micro);
+                            var day = current_datetime_value.substring(8, 10);
+                            date.setDate(day);
                         } else {
                             date = new Date(current_datetime_value);
                         }
@@ -1448,6 +1450,7 @@ function PMA_makegrid(t, enableResize, enableReorder, enableVisib, enableGridEdi
             // register events
             $(t).find('th.draggable')
                 .mousedown(function (e) {
+                    $('#sqlqueryresults').addClass("turnOffSelect");
                     if (g.visibleHeadersCount > 1) {
                         g.dragStartReorder(e, this);
                     }
@@ -1846,6 +1849,7 @@ function PMA_makegrid(t, enableResize, enableReorder, enableVisib, enableGridEdi
             g.dragMove(e);
         });
         $(document).mouseup(function (e) {
+            $('#sqlqueryresults').removeClass("turnOffSelect");
             g.dragEnd(e);
         });
     }
