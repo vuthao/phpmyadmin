@@ -1,19 +1,18 @@
 # Automatically generated <>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: phpMyAdmin 4.1.5-dev\n"
+"Project-Id-Version: phpMyAdmin 4.1.6-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-01-15 08:42-0500\n"
-"PO-Revision-Date: 2013-08-23 11:36+0200\n"
-"Last-Translator: Michal Čihař <michal@cihar.com>\n"
-"Language-Team: Swedish <http://l10n.cihar.com/projects/phpmyadmin/master/sv/"
-">\n"
+"POT-Creation-Date: 2014-01-19 08:19-0500\n"
+"PO-Revision-Date: 2014-01-22 22:43+0200\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Language-Team: Swedish <http://l10n.cihar.com/projects/phpmyadmin/4-1/sv/>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 1.7-dev\n"
+"X-Generator: Weblate 1.9-dev\n"
 
 #: changelog.php:36 license.php:28
 #, php-format
@@ -606,8 +605,8 @@ msgstr ""
 #: import.php:116
 #, php-format
 msgid ""
-"You probably tried to upload a file that is too large. Please refer to %"
-"sdocumentation%s for a workaround for this limit."
+"You probably tried to upload a file that is too large. Please refer to "
+"%sdocumentation%s for a workaround for this limit."
 msgstr ""
 "Du försökte ladda upp en fil som är för stor. Se %sdocumentation%s för att "
 "gå runt denna begränsning."
@@ -885,8 +884,8 @@ msgid ""
 "Your PHP MySQL library version %s differs from your MySQL server version %s. "
 "This may cause unpredictable behavior."
 msgstr ""
-"Din PHP MySQL bibliotekversion %s skiljer sig från din MySQL server version %"
-"s. Detta kan orsaka oförutsägbara beteenden."
+"Din PHP MySQL bibliotekversion %s skiljer sig från din MySQL server version "
+"%s. Detta kan orsaka oförutsägbara beteenden."
 
 #: index.php:564
 #, php-format
@@ -901,7 +900,7 @@ msgstr "\"DROP DATABASE\"-satser är inaktiverade."
 
 #: js/messages.php:35
 msgid "Confirm"
-msgstr ""
+msgstr "Bekräfta"
 
 #: js/messages.php:36
 #, php-format
@@ -933,26 +932,24 @@ msgid "This operation could take a long time. Proceed anyway?"
 msgstr "Denna operation kan ta lång tid. Fortsätt ändå?"
 
 #: js/messages.php:44
-#, fuzzy, php-format
+#, php-format
 #| msgid "Do you really want to execute \"%s\"?"
 msgid "Do you really want to delete user group \"%s\"?"
-msgstr "Vill du verkligen exekvera \"%s\"?"
+msgstr "Vill du verkligen ta bort användargruppen \"%s\"?"
 
 #: js/messages.php:47
 msgid "Missing value in the form!"
 msgstr "Värde saknas i formuläret!"
 
 #: js/messages.php:48
-#, fuzzy
 #| msgid "Not a valid port number"
 msgid "Please enter a valid number"
-msgstr "Inte ett giltigt portnummer"
+msgstr "Var vänlig ange ett giltigt nummer"
 
 #: js/messages.php:49
-#, fuzzy
 #| msgid "Please enter correct captcha!"
 msgid "Please enter a valid length"
-msgstr "Ange korrekt captcha!"
+msgstr "Var vänlig ange en giltig längd"
 
 #: js/messages.php:50
 msgid "Add Index"
@@ -2007,22 +2004,21 @@ msgid "Create view"
 msgstr "Skapa vy"
 
 #: js/messages.php:409
-#, fuzzy
 #| msgid "Server port"
 msgid "Send Error Report"
-msgstr "Serverport"
+msgstr "Skicka felrapport"
 
 #: js/messages.php:410
 msgid "Submit Error Report"
-msgstr ""
+msgstr "Skicka felrapport"
 
 #: js/messages.php:412
-#, fuzzy
 #| msgid "An error has occured while loading the navigation tree"
 msgid ""
 "A fatal JavaScript error has occurred. Would you like to send an error "
 "report?"
-msgstr "Ett fel uppstod vid inläsning av navigeringsträdet"
+msgstr ""
+"Ett allvarligt JavaScript-fel har uppstått. Vill du skicka en felrapport?"
 
 #: js/messages.php:414
 #, fuzzy
@@ -2725,8 +2721,8 @@ msgstr "i fråga"
 #: libraries/DisplayResults.class.php:4913 libraries/structure.lib.php:653
 #, php-format
 msgid ""
-"This view has at least this number of rows. Please refer to %sdocumentation%"
-"s."
+"This view has at least this number of rows. Please refer to %sdocumentation"
+"%s."
 msgstr "Denna vy har åtminstone detta antal rader. Se %sdokumentationen%s."
 
 #: libraries/DisplayResults.class.php:4926
@@ -2873,8 +2869,8 @@ msgstr ""
 msgid "Git information missing!"
 msgstr "Versionsinformation"
 
-#: libraries/Footer.class.php:155 libraries/Footer.class.php:159
-#: libraries/Footer.class.php:162
+#: libraries/Footer.class.php:162 libraries/Footer.class.php:166
+#: libraries/Footer.class.php:169
 msgid "Open new phpMyAdmin window"
 msgstr "Öppna nytt phpMyAdmin-fönster"
 
@@ -3541,16 +3537,16 @@ msgstr ""
 
 #: libraries/Types.class.php:309
 msgid ""
-"A small floating-point number, allowable values are -3.402823466E+38 to -"
-"1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
+"A small floating-point number, allowable values are -3.402823466E+38 to "
+"-1.175494351E-38, 0, and 1.175494351E-38 to 3.402823466E+38"
 msgstr ""
 "Ett litet flyttal. Tillåtna värden är: 3.402823466E+38 till-1.175494351E-38, "
 "0, och 1.175494351E-38 till 3.402823466E+38"
 
 #: libraries/Types.class.php:311
 msgid ""
-"A double-precision floating-point number, allowable values are -"
-"1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and "
+"A double-precision floating-point number, allowable values are "
+"-1.7976931348623157E+308 to -2.2250738585072014E-308, 0, and "
 "2.2250738585072014E-308 to 1.7976931348623157E+308"
 msgstr ""
 "Ett dubbel-precision flyttal. Tillåtna värden är: 1.7976931348623157E+308 "
@@ -4168,11 +4164,11 @@ msgstr ""
 
 #: libraries/config.values.php:119
 msgid "Always send error reports"
-msgstr ""
+msgstr "Skicka alltid felrapporter"
 
 #: libraries/config.values.php:120
 msgid "Never send error reports"
-msgstr ""
+msgstr "Skicka aldrig felrapporter"
 
 #: libraries/config.values.php:149
 #: libraries/plugins/export/ExportHtmlword.class.php:69
@@ -4517,7 +4513,6 @@ msgid "Check config file permissions"
 msgstr "Kontrollera konfigurationsfilens behörigheter"
 
 #: libraries/config/messages.inc.php:43
-#, fuzzy
 #| msgid ""
 #| "Compress gzip/bzip2 exports on the fly without the need for much memory; "
 #| "if you encounter problems with created gzip/bzip2 files disable this "
@@ -4526,8 +4521,8 @@ msgid ""
 "Compress gzip exports on the fly without the need for much memory; if you "
 "encounter problems with created gzip files disable this feature"
 msgstr ""
-"Komprimera gzip/bzip2-exporter i farten utan att det behövs mycket minne; om "
-"du får problem med skapade gzip/bzip2-filer avaktivera funktionen"
+"Komprimera gzip-exporter i farten utan att det behövs mycket minne; om du "
+"får problem med skapade gzip-filer avaktivera funktionen"
 
 #: libraries/config/messages.inc.php:44
 msgid "Compress on the fly"
@@ -4813,10 +4808,9 @@ msgstr "Inaktivera kontroller av främmande nycklar"
 
 #: libraries/config/messages.inc.php:125
 #: libraries/plugins/export/ExportSql.class.php:155
-#, fuzzy
 #| msgid "Exporting rows from \"%s\" table"
 msgid "Export views as tables"
-msgstr "Exportera rader från tabellen \"%s\""
+msgstr "Exportera vyer som tabeller"
 
 #: libraries/config/messages.inc.php:126 libraries/config/messages.inc.php:127
 #: libraries/config/messages.inc.php:129 libraries/config/messages.inc.php:135
@@ -6604,10 +6598,9 @@ msgid "The password for authenticating with the proxy"
 msgstr "Lösenordet för autentisering med proxy"
 
 #: libraries/config/messages.inc.php:536
-#, fuzzy
 #| msgid "Password"
 msgid "Proxy password"
-msgstr "Lösenord"
+msgstr "Proxylösenord"
 
 #: libraries/config/messages.inc.php:538
 msgid ""
@@ -6642,10 +6635,9 @@ msgid "Choose the default action when sending error reports"
 msgstr ""
 
 #: libraries/config/messages.inc.php:546
-#, fuzzy
 #| msgid "Server port"
 msgid "Send error reports"
-msgstr "Serverport"
+msgstr "Skicka felrapporter"
 
 #: libraries/config/setup.forms.php:41
 msgid "Config authentication"
@@ -6716,7 +6708,7 @@ msgstr "möjlig djupgående rekursiv attack"
 #: libraries/database_interface.inc.php:34
 #, php-format
 msgid "See %sour documentation%s for more information."
-msgstr ""
+msgstr "Se %sdokumentationen%s för mer information."
 
 #: libraries/dbi/DBIDrizzle.class.php:146 libraries/dbi/DBIMysql.class.php:170
 #: libraries/dbi/DBIMysqli.class.php:224
@@ -6901,8 +6893,8 @@ msgstr ", @TABLE@ kommer bli tabellnamnet"
 #, php-format
 msgid ""
 "This value is interpreted using %1$sstrftime%2$s, so you can use time "
-"formatting strings. Additionally the following transformations will happen: %"
-"3$s. Other text will be kept as is. See the %4$sFAQ%5$s for details."
+"formatting strings. Additionally the following transformations will happen: "
+"%3$s. Other text will be kept as is. See the %4$sFAQ%5$s for details."
 msgstr ""
 "Detta värde tolkas med %1$sstrftime%2$s, så du kan använda strängar med "
 "tidsformatering. Dessutom kommer följande omvandlingar att ske: %3$s. Övrig "
@@ -7051,10 +7043,9 @@ msgid "%s of %s"
 msgstr "%s av %s"
 
 #: libraries/display_import.lib.php:457
-#, fuzzy
 #| msgid "Uploading your import file…"
 msgid "Uploading your import file…"
-msgstr "Ladda upp din importfil…"
+msgstr "Laddar upp din importfil…"
 
 #: libraries/display_import.lib.php:458
 #, php-format
@@ -7408,11 +7399,11 @@ msgstr ""
 #: libraries/engines/pbxt.lib.php:149
 #, php-format
 msgid ""
-"Documentation and further information about PBXT can be found on the %"
-"sPrimeBase XT Home Page%s."
+"Documentation and further information about PBXT can be found on the "
+"%sPrimeBase XT Home Page%s."
 msgstr ""
-"Dokumentation och ytterligare information finns på %sPrimeBase XT Home Page%"
-"s."
+"Dokumentation och ytterligare information finns på %sPrimeBase XT Home Page"
+"%s."
 
 #: libraries/engines/pbxt.lib.php:156
 msgid "Related Links"
@@ -7438,10 +7429,9 @@ msgid "Please explain the steps that lead to the error:"
 msgstr ""
 
 #: libraries/error_report.lib.php:301
-#, fuzzy
 #| msgid "Automatically create versions"
 msgid "Automatically send report next time"
-msgstr "Skapa versioner automatiskt"
+msgstr "Skicka rapport automatiskt nästa gång"
 
 #: libraries/import.lib.php:190 libraries/insert_edit.lib.php:122
 #: libraries/rte/rte_routines.lib.php:1466 libraries/sql.lib.php:1642
@@ -7811,7 +7801,6 @@ msgid "unknown"
 msgstr "okänd"
 
 #: libraries/navigation/Navigation.class.php:59
-#, fuzzy
 #| msgid "An error has occured while loading the navigation tree"
 msgid "An error has occurred while loading the navigation tree"
 msgstr "Ett fel uppstod vid inläsning av navigeringsträdet"
@@ -7849,10 +7838,9 @@ msgid "phpMyAdmin documentation"
 msgstr "phpMyAdmin-dokumentation"
 
 #: libraries/navigation/NavigationHeader.class.php:250
-#, fuzzy
 #| msgid "Reload navigation frame"
 msgid "Reload navigation panel"
-msgstr "Ladda om navigeringsram"
+msgstr "Ladda om navigeringspanel"
 
 #: libraries/navigation/NavigationTree.class.php:719
 #, php-format
@@ -7873,7 +7861,6 @@ msgstr "filtrera databaser efter namn"
 
 #: libraries/navigation/NavigationTree.class.php:1046
 #: libraries/navigation/NavigationTree.class.php:1080
-#, fuzzy
 #| msgid "Clear Fast Filter"
 msgid "Clear fast filter"
 msgstr "Rensa snabbfilter"
@@ -7919,7 +7906,6 @@ msgid "Show hidden items"
 msgstr "Visa tips"
 
 #: libraries/navigation/Nodes/Node_Database_Container.class.php:31
-#, fuzzy
 #| msgctxt "Create new column"
 #| msgid "New"
 msgctxt "Create new database"
@@ -7957,10 +7943,9 @@ msgid "New"
 msgstr "Ny"
 
 #: libraries/navigation/Nodes/Node_Procedure.class.php:34
-#, fuzzy
 #| msgid "Procedures"
 msgid "Procedure"
-msgstr "Procedurer"
+msgstr "Procedur"
 
 #: libraries/navigation/Nodes/Node_Procedure_Container.class.php:26
 #: libraries/navigation/Nodes/Node_Procedure_Container.class.php:27
@@ -8185,11 +8170,11 @@ msgstr "Välkommen till %s"
 #: libraries/plugins/auth/AuthenticationConfig.class.php:102
 #, php-format
 msgid ""
-"You probably did not create a configuration file. You might want to use the %"
-"1$ssetup script%2$s to create one."
+"You probably did not create a configuration file. You might want to use the "
+"%1$ssetup script%2$s to create one."
 msgstr ""
-"Du har troligen inte skapat en konfigurationsfil. Du vill kanske använda %1"
-"$suppsättningsskript%2$s för att skapa denna."
+"Du har troligen inte skapat en konfigurationsfil. Du vill kanske använda "
+"%1$suppsättningsskript%2$s för att skapa denna."
 
 #: libraries/plugins/auth/AuthenticationConfig.class.php:122
 msgid ""
@@ -8436,7 +8421,7 @@ msgstr "Sätt kolumnnamn på första raden:"
 #: libraries/plugins/export/ExportSql.class.php:620
 #: libraries/plugins/export/ExportXml.class.php:191
 #: libraries/replication_gui.lib.php:411 libraries/replication_gui.lib.php:682
-#: libraries/server_privileges.lib.php:1320 libraries/sql.lib.php:426
+#: libraries/server_privileges.lib.php:1319 libraries/sql.lib.php:426
 msgid "Host:"
 msgstr "Värd:"
 
@@ -8631,10 +8616,10 @@ msgid "RELATIONS FOR TABLE"
 msgstr "RELATIONER FÖR TABELL"
 
 #: libraries/plugins/export/ExportSql.class.php:1513
-#, fuzzy, php-format
+#, php-format
 #| msgid "Structure for view"
 msgid "Structure for view %s exported as a table"
-msgstr "Struktur för vy"
+msgstr "Struktur för vy %s exporterad som en tabell"
 
 #: libraries/plugins/export/ExportSql.class.php:1601
 msgid "Error reading data:"
@@ -9240,7 +9225,7 @@ msgstr "Server ID"
 
 #: libraries/replication_gui.lib.php:599 libraries/replication_gui.lib.php:686
 #: libraries/replication_gui.lib.php:827
-#: libraries/server_privileges.lib.php:1325
+#: libraries/server_privileges.lib.php:1324
 #: libraries/server_privileges.lib.php:1421
 #: libraries/server_privileges.lib.php:1814
 #: libraries/server_privileges.lib.php:1922
@@ -9257,17 +9242,17 @@ msgstr ""
 "Endast slavar startade med valet --report-host=host_name syns i denna lista."
 
 #: libraries/replication_gui.lib.php:729
-#: libraries/server_privileges.lib.php:1378
+#: libraries/server_privileges.lib.php:1377
 msgid "Any host"
 msgstr "Vilken värd som helst"
 
 #: libraries/replication_gui.lib.php:734
-#: libraries/server_privileges.lib.php:1386
+#: libraries/server_privileges.lib.php:1385
 msgid "Local"
 msgstr "Lokal"
 
 #: libraries/replication_gui.lib.php:741
-#: libraries/server_privileges.lib.php:1395
+#: libraries/server_privileges.lib.php:1394
 msgid "This Host"
 msgstr "Denna värd"
 
@@ -9278,13 +9263,13 @@ msgstr "Vilken användare som helst"
 
 #: libraries/replication_gui.lib.php:788 libraries/replication_gui.lib.php:821
 #: libraries/replication_gui.lib.php:854
-#: libraries/server_privileges.lib.php:1414
+#: libraries/server_privileges.lib.php:1413
 #: libraries/server_privileges.lib.php:2789
 msgid "Use text field:"
 msgstr "Använd textfältet:"
 
 #: libraries/replication_gui.lib.php:815
-#: libraries/server_privileges.lib.php:1405
+#: libraries/server_privileges.lib.php:1404
 msgid "Use Host Table"
 msgstr "Använd värdtabell"
 
@@ -9347,10 +9332,9 @@ msgid "Success."
 msgstr ""
 
 #: libraries/replication_gui.lib.php:924
-#, fuzzy
 #| msgid "Error"
 msgid "Error."
-msgstr "Fel"
+msgstr "Fel."
 
 #: libraries/replication_gui.lib.php:966
 msgid "Unknown error"
@@ -9409,7 +9393,6 @@ msgstr "Händelsen %1$s har skapats."
 
 #: libraries/rte/rte_events.lib.php:175 libraries/rte/rte_routines.lib.php:378
 #: libraries/rte/rte_triggers.lib.php:147
-#, fuzzy
 #| msgid ""
 #| "<b>One or more errors have occured while processing your request:</b>"
 msgid "<b>One or more errors have occurred while processing your request:</b>"
@@ -10202,7 +10185,7 @@ msgstr "Inget"
 #: libraries/server_privileges.lib.php:2908
 #: libraries/server_user_groups.lib.php:78
 msgid "User group"
-msgstr ""
+msgstr "Användargrupp"
 
 #: libraries/server_privileges.lib.php:704
 msgid "Resource limits"
@@ -10290,12 +10273,15 @@ msgid "Use text field"
 msgstr "Använd textfältet"
 
 #: libraries/server_privileges.lib.php:1310
+#| msgid ""
+#| "An account already exists with the same username but possibly a different "
+#| "hostname. Are you sure you wish to proceed?"
 msgid ""
 "An account already exists with the same username but possibly a different "
-"hostname. Are you sure you wish to proceed?"
+"hostname. "
 msgstr ""
 "Ett konto existerar redan med samma användarnamn men möjligen ett annat "
-"värdnamn. Är du säker att du vill fortsätta?"
+"värdnamn. "
 
 #: libraries/server_privileges.lib.php:1446
 msgid "Do not change the password"
@@ -10379,10 +10365,9 @@ msgid "wildcard"
 msgstr "jokertecken"
 
 #: libraries/server_privileges.lib.php:2069
-#, fuzzy
 #| msgid "database-specific"
 msgid "table-specific"
-msgstr "databasspecifik"
+msgstr "tabellspecifik"
 
 #: libraries/server_privileges.lib.php:2146
 #: libraries/server_privileges.lib.php:3351
@@ -10398,10 +10383,9 @@ msgid "Revoke"
 msgstr "Upphäv"
 
 #: libraries/server_privileges.lib.php:2248
-#, fuzzy
 #| msgid "Edit server"
 msgid "Edit user group"
-msgstr "Konfigurera server"
+msgstr "Redigera användargrupp"
 
 #: libraries/server_privileges.lib.php:2423
 msgid "… keep the old one."
@@ -10515,8 +10499,8 @@ msgstr "Användaröversikt"
 msgid ""
 "Note: phpMyAdmin gets the users' privileges directly from MySQL's privilege "
 "tables. The content of these tables may differ from the privileges the "
-"server uses, if they have been changed manually. In this case, you should %"
-"sreload the privileges%s before you continue."
+"server uses, if they have been changed manually. In this case, you should "
+"%sreload the privileges%s before you continue."
 msgstr ""
 "Anm: phpMyAdmin hämtar användarnas behörigheter direkt från MySQL's "
 "behörighetstabeller. Innehållet i dessa tabeller kan skilja sig från de "
@@ -11585,17 +11569,16 @@ msgstr "Antalet trådar som inte är vilande."
 #: libraries/server_user_groups.lib.php:23
 #, php-format
 msgid "Users of '%s' user group"
-msgstr ""
+msgstr "Användare av användargruppen '%s'"
 
 #: libraries/server_user_groups.lib.php:34
 msgid "No users were found belonging to this user group."
-msgstr ""
+msgstr "Inga användare tillhörde denna användargrupp."
 
 #: libraries/server_user_groups.lib.php:65 libraries/server_users.lib.php:30
-#, fuzzy
 #| msgid "Users"
 msgid "User groups"
-msgstr "Användare"
+msgstr "Användargrupper"
 
 #: libraries/server_user_groups.lib.php:79
 #, fuzzy
@@ -11616,22 +11599,20 @@ msgid "Table level tabs"
 msgstr "Tabellkommentarer"
 
 #: libraries/server_user_groups.lib.php:110
-#, fuzzy
 #| msgid "Views"
 msgid "View users"
-msgstr "Vy"
+msgstr "Visa användare"
 
 #: libraries/server_user_groups.lib.php:147
 #: libraries/server_user_groups.lib.php:208
-#, fuzzy
 #| msgid "Add user"
 msgid "Add user group"
-msgstr "Lägg till en användare"
+msgstr "Lägg till användargrupp"
 
 #: libraries/server_user_groups.lib.php:211
 #, php-format
 msgid "Edit user group: '%s'"
-msgstr ""
+msgstr "Redigera användargrupp: '%s'"
 
 #: libraries/server_user_groups.lib.php:227
 #, fuzzy
@@ -11640,10 +11621,9 @@ msgid "User group menu assignments"
 msgstr "Inga privilegier."
 
 #: libraries/server_user_groups.lib.php:234
-#, fuzzy
 #| msgid "Column names: "
 msgid "Group name:"
-msgstr "Kolumnnamn: "
+msgstr "Gruppnamn:"
 
 #: libraries/server_user_groups.lib.php:268
 #, fuzzy
@@ -13037,7 +13017,7 @@ msgstr ""
 "tillgängliga på detta system."
 
 #: setup/lib/index.lib.php:246
-#, fuzzy, php-format
+#, php-format
 #| msgid ""
 #| "%sLogin cookie validity%s greater than 1440 seconds may cause random "
 #| "session invalidation if %ssession.gc_maxlifetime%s is lower than its "
@@ -13046,9 +13026,9 @@ msgid ""
 "%sLogin cookie validity%s greater than %ssession.gc_maxlifetime%s may cause "
 "random session invalidation (currently session.gc_maxlifetime is %d)."
 msgstr ""
-"%sLogin cookie validity%s mer än 1440 sekunder kan orsaka slumpmässigt "
-"ogiltigförklarande av session om %ssession.gc_maxlifetime%s är mindre än "
-"dess värde (för närvarande %d)."
+"%sLogin cookie validity%s på mer än %ssession.gc_maxlifetime%s kan orsaka "
+"slumpmässigt ogiltigförklarande av session (session.gc_maxlifetime är för "
+"närvarande %d)."
 
 #: setup/lib/index.lib.php:257
 #, php-format
@@ -13078,8 +13058,8 @@ msgid ""
 "protection may not be reliable if your IP belongs to an ISP where thousands "
 "of users, including you, are connected to."
 msgstr ""
-"Om du känner att det är nödvändigt, använd extra skyddsinställningar - %"
-"shost autentisering%s-inställningar  och %strusted proxies listan%s. Dock "
+"Om du känner att det är nödvändigt, använd extra skyddsinställningar - "
+"%shost autentisering%s-inställningar  och %strusted proxies listan%s. Dock "
 "kan IP-baserat skydd inte vara tillförlitligt om din IP tillhör en ISP som "
 "tusentals användare, inklusive dig, är anslutna till."
 
@@ -13234,10 +13214,9 @@ msgid "Rename view to"
 msgstr "Ändra namn till"
 
 #: view_operations.php:133
-#, fuzzy
 #| msgid "Delete the table (DROP)"
 msgid "Delete the view (DROP)"
-msgstr "Ta bort tabellen (DROP)"
+msgstr "Ta bort vyn (DROP)"
 
 #: libraries/advisory_rules.txt:49
 msgid "Uptime below one day"
@@ -13590,8 +13569,8 @@ msgstr ""
 #: libraries/advisory_rules.txt:179
 #, php-format
 msgid ""
-"The current ratio of free query cache memory to total query cache size is %s%"
-"%. It should be above 80%%"
+"The current ratio of free query cache memory to total query cache size is %s"
+"%%. It should be above 80%%"
 msgstr ""
 "Det nuvarande förhållandet mellan ledigt frågecacheminne den totala fråge "
 "cache-storlek är %s%%. Det bör vara över 80%%"
@@ -13742,8 +13721,8 @@ msgstr ""
 #: libraries/advisory_rules.txt:216
 #, php-format
 msgid ""
-"%s%% of all sorts cause temporary tables, this value should be lower than 10%"
-"%."
+"%s%% of all sorts cause temporary tables, this value should be lower than "
+"10%%."
 msgstr ""
 "%s%% av alla sorteringar orsakar tillfälliga tabeller, detta värde bör vara "
 "lägre än 10%%."
@@ -15410,8 +15389,8 @@ msgstr "concurrent_insert är satt till 0"
 #~ "The result of this query can't be used for a chart. See [doc@faq6-29]FAQ "
 #~ "6.29[/doc]"
 #~ msgstr ""
-#~ "Resultatet av denna fråga kan inte användas för ett diagram. Se [doc@faq6-"
-#~ "29]FAQ 6.29[/doc]"
+#~ "Resultatet av denna fråga kan inte användas för ett diagram. Se "
+#~ "[doc@faq6-29]FAQ 6.29[/doc]"
 
 #~ msgid "Title"
 #~ msgstr "Titel"
