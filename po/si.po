@@ -4,16 +4,15 @@ msgstr ""
 "Project-Id-Version: phpMyAdmin 4.1.6-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-01-19 08:19-0500\n"
-"PO-Revision-Date: 2013-07-12 14:54+0200\n"
-"Last-Translator: Michal Čihař <michal@cihar.com>\n"
-"Language-Team: Sinhala <http://l10n.cihar.com/projects/phpmyadmin/master/si/"
-">\n"
+"PO-Revision-Date: 2014-02-03 14:06+0200\n"
+"Last-Translator: Madhura Jayaratne <madhura.cj@gmail.com>\n"
+"Language-Team: Sinhala <http://l10n.cihar.com/projects/phpmyadmin/4-1/si/>\n"
 "Language: si\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 1.6-dev\n"
+"X-Generator: Weblate 1.9-dev\n"
 
 #: changelog.php:36 license.php:28
 #, php-format
@@ -1537,10 +1536,9 @@ msgstr "අවලංගු කරන්න"
 
 #: js/messages.php:229 libraries/navigation/NavigationHeader.class.php:55
 #: libraries/server_status_monitor.lib.php:164
-#, fuzzy
 #| msgid "Loading"
 msgid "Loading…"
-msgstr "පූරණය කෙරෙමින්"
+msgstr "පූරණය කෙරෙමින්…"
 
 #: js/messages.php:230
 msgid "Request Aborted!!"
@@ -1682,7 +1680,7 @@ msgstr "අගයන් %dක් එක් කරන්න"
 #: js/messages.php:278
 msgid ""
 "Note: If the file contains multiple tables, they will be combined into one."
-msgstr "සටහන: ගොනුවේ වගු එකකට වැඩි ගණනක් ඇත්නම්, ඒවා එකකට සංයුක්ත කෙරෙනු ඇත"
+msgstr "සටහන: ගොනුවේ වගු එකකට වැඩි ගණනක් ඇත්නම්, ඒවා එකකට සංයුක්ත කෙරෙනු ඇත."
 
 #: js/messages.php:281
 msgid "Hide query box"
@@ -2712,16 +2710,16 @@ msgstr ""
 "මෙම දසුනේ අවම වශයෙන් පේළි මෙතරම් සංඛයාවක් ඇත. කරුණාකර %s ලේඛනය %s අධ්‍යනය කරන්න."
 
 #: libraries/DisplayResults.class.php:4926
-#, fuzzy, php-format
+#, php-format
 #| msgid "Showing rows"
 msgid "Showing rows %1s - %2s"
-msgstr "පේළි පෙන්වමින්"
+msgstr "%1s - %2s පේළි පෙන්වමින්"
 
 #: libraries/DisplayResults.class.php:4938
-#, fuzzy, php-format
+#, php-format
 #| msgid "total"
 msgid "%d total"
-msgstr "මුළු එකතුව"
+msgstr "මුළු එකතුව %d"
 
 #: libraries/DisplayResults.class.php:4950 libraries/sql.lib.php:1647
 #, php-format
@@ -3412,10 +3410,9 @@ msgid "Reset zoom"
 msgstr "සූමය ප්‍රතිසකසන්න"
 
 #: libraries/TableSearch.class.php:1343
-#, fuzzy
 #| msgid "Replace NULL with"
 msgid "Replace with:"
-msgstr "NULL වෙනුවට භාවිතා කරන්න"
+msgstr "වෙනුවට භාවිතා කරන්න:"
 
 #: libraries/TableSearch.class.php:1403
 msgid "Find and replace - preview"
@@ -9165,10 +9162,9 @@ msgid "Success."
 msgstr ""
 
 #: libraries/replication_gui.lib.php:924
-#, fuzzy
 #| msgid "Error"
 msgid "Error."
-msgstr "දෝෂය"
+msgstr "දෝෂය."
 
 #: libraries/replication_gui.lib.php:966
 msgid "Unknown error"
@@ -9225,7 +9221,6 @@ msgstr "%1$s සිද්ධිය සාදන ලදි."
 
 #: libraries/rte/rte_events.lib.php:175 libraries/rte/rte_routines.lib.php:378
 #: libraries/rte/rte_triggers.lib.php:147
-#, fuzzy
 #| msgid ""
 #| "<b>One or more errors have occured while processing your request:</b>"
 msgid "<b>One or more errors have occurred while processing your request:</b>"
@@ -10177,10 +10172,9 @@ msgid "wildcard"
 msgstr "අව්‍යවස්ථිත කාඩ්පත"
 
 #: libraries/server_privileges.lib.php:2069
-#, fuzzy
 #| msgid "database-specific"
 msgid "table-specific"
-msgstr "දත්තගබඩා විශේෂිත"
+msgstr "වගු විශේෂිත"
 
 #: libraries/server_privileges.lib.php:2146
 #: libraries/server_privileges.lib.php:3351
@@ -14005,10 +13999,9 @@ msgid "MyISAM concurrent inserts"
 msgstr "උපරිම සමගාමී සම්බන්ධතා"
 
 #: libraries/advisory_rules.txt:462
-#, fuzzy
 #| msgid "Enable concurrent_insert by setting it to 1"
 msgid "Enable {concurrent_insert} by setting it to 1"
-msgstr "concurret_insert 1ට සිටුවා සක්‍රීය කරන්න"
+msgstr "{concurret_insert} 1ට සිටුවා සක්‍රීය කරන්න"
 
 #: libraries/advisory_rules.txt:463
 msgid ""

@@ -76,7 +76,6 @@ class PMA_ServerPrivileges_Test extends PHPUnit_Framework_TestCase
         $GLOBALS['username'] = "username";
         $GLOBALS['collation_connection'] = "collation_connection";
         $GLOBALS['text_dir'] = "text_dir";
-
         //$_POST
         $_POST['pred_password'] = 'none';
         //$_SESSION
