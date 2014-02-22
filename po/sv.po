@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: phpMyAdmin 4.1.6-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-01-19 08:19-0500\n"
-"PO-Revision-Date: 2014-02-02 12:14+0200\n"
+"PO-Revision-Date: 2014-02-12 10:14+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <http://l10n.cihar.com/projects/phpmyadmin/4-1/sv/>\n"
 "Language: sv\n"
@@ -410,29 +410,32 @@ msgid ""
 "An error has been detected and an error report has been automatically "
 "submitted based on your settings."
 msgstr ""
+"Ett fel har upptäckts och en felrapport har skickats automatiskt i enlighet "
+"med dina inställningar."
 
 #: error_report.php:37 error_report.php:54 error_report.php:65
 #: error_report.php:81
 msgid "You may want to refresh the page."
-msgstr ""
+msgstr "Du kan vilja ladda om sidan."
 
 #: error_report.php:45
 msgid ""
 "An error has been detected and an error report has been generated but failed "
 "to be sent."
 msgstr ""
+"Ett fel har upptäckts och en felrapport har skapats men kunde inte skickas."
 
 #: error_report.php:50 error_report.php:77
 msgid "If you experience any problems please submit a bug report manually."
-msgstr ""
+msgstr "Skicka en buggrapport manuellt om du upplever några problem."
 
 #: error_report.php:63 error_report.php:72
 msgid "Thank you for submitting this report."
-msgstr ""
+msgstr "Tack för att du skickar denna rapport."
 
 #: error_report.php:74
 msgid "Unfortunately the submission failed."
-msgstr ""
+msgstr "Tyvärr så misslyckades sändningen."
 
 #: export.php:171
 msgid "Bad type!"
@@ -688,10 +691,9 @@ msgid "Back"
 msgstr "Föregående"
 
 #: index.php:115 libraries/Footer.class.php:70
-#, fuzzy
 #| msgid "phpMyAdmin homepage"
 msgid "phpMyAdmin Demo Server"
-msgstr "phpMyAdmin:s hemsida"
+msgstr "Demoserver för phpMyAdmin"
 
 #: index.php:119
 #, php-format
@@ -700,6 +702,9 @@ msgid ""
 "change root, debian-sys-maint and pma users. More information is available "
 "at %s."
 msgstr ""
+"Du använder demoservern. Du kan göra vad som helst här, men undvik att ändra "
+"användarna root, debian-sys-maint och pma. Mer information finns "
+"tillgänglig på %s."
 
 #: index.php:129
 msgid "General Settings"
@@ -1331,7 +1336,7 @@ msgstr "Från allmän logg"
 
 #: js/messages.php:162
 msgid "The database name is not known for this query in the server's logs."
-msgstr ""
+msgstr "Databasnamnet är inte känt för denna fråga i serverns loggar."
 
 #: js/messages.php:164
 msgid "Analysing logs"
@@ -1554,7 +1559,7 @@ msgstr "Laddar…"
 
 #: js/messages.php:230
 msgid "Request Aborted!!"
-msgstr ""
+msgstr "Förfrågan avbruten!!"
 
 #: js/messages.php:231
 msgid "Processing Request"
@@ -1971,14 +1976,13 @@ msgid "Hide Panel"
 msgstr "Dölj Panel"
 
 #: js/messages.php:395
-#, fuzzy
 #| msgid "Show logo in navigation panel"
 msgid "Show hidden navigation tree items"
-msgstr "Visa logotypen i navigeringspanelen"
+msgstr "Visa dolda navigationsträdsobjekt"
 
 #: js/messages.php:398
 msgid "The requested page was not found in the history, it may have expired."
-msgstr "Den begärda sidan hittades inte i historien, kan det ha upphört."
+msgstr "Den begärda sidan hittades inte i historien, den kan ha upphört."
 
 #: js/messages.php:401 setup/lib/index.lib.php:157
 #, php-format
@@ -2021,21 +2025,20 @@ msgstr ""
 "Ett allvarligt JavaScript-fel har uppstått. Vill du skicka en felrapport?"
 
 #: js/messages.php:414
-#, fuzzy
 #| msgid "Change settings"
 msgid "Change Report Settings"
-msgstr "Ändra inställningar"
+msgstr "Ändra rapportinställningar"
 
 #: js/messages.php:415
-#, fuzzy
 #| msgid "Show open tables"
 msgid "Show Report Details"
-msgstr "Visa öppna tabeller"
+msgstr "Visa rapportdetaljer"
 
 #: js/messages.php:418
 msgid ""
 "Your export is incomplete, due to a low execution time limit at the PHP level"
 msgstr ""
+"Din export är inkomplett på grund av en låg exekveringstidsgräns på PHP-nivå"
 
 #. l10n: Display text for calendar close link
 #: js/messages.php:439
@@ -2861,13 +2864,12 @@ msgstr "Kan inte läsa (flyttad) uppladdad fil."
 #: libraries/Footer.class.php:74
 #, php-format
 msgid "Currently running Git revision %1$s from the %2$s branch."
-msgstr ""
+msgstr "Kör nu Git version %1$s fron grenen %2$s."
 
 #: libraries/Footer.class.php:81
-#, fuzzy
 #| msgid "Version information"
 msgid "Git information missing!"
-msgstr "Versionsinformation"
+msgstr "Git-information saknas!"
 
 #: libraries/Footer.class.php:162 libraries/Footer.class.php:166
 #: libraries/Footer.class.php:169
@@ -3325,8 +3327,8 @@ msgid ""
 "Failed to cleanup table UI preferences (see $cfg['Servers'][$i]"
 "['MaxTableUiprefs'] %s)"
 msgstr ""
-"Misslyckades med att rensa UI inställningarna (se $cfg['Servers'][$i]"
-"['MaxTableUiprefs'] %s)"
+"Misslyckades med att rensa gränssnittsinställningar för tabell (se "
+"$cfg['Servers'][$i]['MaxTableUiprefs'] %s)"
 
 #: libraries/Table.class.php:1650
 #, php-format
@@ -3335,9 +3337,9 @@ msgid ""
 "after you refresh this page. Please check if the table structure has been "
 "changed."
 msgstr ""
-"Kan inte spara UI attribut \"%s\". Ändringarna kommer inte vara beständiga "
-"efter att du uppdaterar denna sida. Kontrollera om tabellens struktur har "
-"förändrats."
+"Kan inte spara gränssnittsattribut \"%s\". Ändringarna kommer inte vara "
+"beständiga efter att du uppdaterar denna sida. Kontrollera om tabellens "
+"struktur har förändrats."
 
 #: libraries/TableSearch.class.php:181 libraries/insert_edit.lib.php:211
 #: libraries/insert_edit.lib.php:217
@@ -4160,7 +4162,7 @@ msgstr "Stängd"
 
 #: libraries/config.values.php:118
 msgid "Ask before sending error reports"
-msgstr ""
+msgstr "Fråga innan felrapporter skickas"
 
 #: libraries/config.values.php:119
 msgid "Always send error reports"
@@ -6191,7 +6193,6 @@ msgid "User preferences storage table"
 msgstr "Användarinställningar för lagringstabell"
 
 #: libraries/config/messages.inc.php:455
-#, fuzzy
 #| msgid ""
 #| "Leave blank for no user preferences storage in database, suggested: [kbd]"
 #| "pma__userconfig[/kbd]"
@@ -6199,17 +6200,15 @@ msgid ""
 "Leave blank to disable configurable menus feature, suggested: [kbd]pma__users"
 "[/kbd]"
 msgstr ""
-"Lämna tomt för att stänga av lagring av användarpreferenser i databasen, "
-"förslag: [kbd]pma__userconfig[/kbd]"
+"Lämna tomt för att stänga av funktionen anpassningsbara menyer, förslag: "
+"[kbd]pma__users[/kbd]"
 
 #: libraries/config/messages.inc.php:456
-#, fuzzy
 #| msgid "Use Tables"
 msgid "Users table"
-msgstr "Använd tabeller"
+msgstr "Användartabell"
 
 #: libraries/config/messages.inc.php:457
-#, fuzzy
 #| msgid ""
 #| "Leave blank for no user preferences storage in database, suggested: [kbd]"
 #| "pma__userconfig[/kbd]"
@@ -6217,17 +6216,15 @@ msgid ""
 "Leave blank to disable configurable menus feature, suggested: [kbd]"
 "pma__usergroups[/kbd]"
 msgstr ""
-"Lämna tomt för att stänga av lagring av användarpreferenser i databasen, "
-"förslag: [kbd]pma__userconfig[/kbd]"
+"Lämna tomt för att stänga av funktionen anpassningsbara menyer, förslag: "
+"[kbd]pma__usergroups[/kbd]"
 
 #: libraries/config/messages.inc.php:458
-#, fuzzy
 #| msgid "Use Host Table"
 msgid "User groups table"
-msgstr "Använd värdtabell"
+msgstr "Användargruppstabell"
 
 #: libraries/config/messages.inc.php:459
-#, fuzzy
 #| msgid ""
 #| "Leave blank for no user preferences storage in database, suggested: [kbd]"
 #| "pma__userconfig[/kbd]"
@@ -6235,12 +6232,12 @@ msgid ""
 "Leave blank to disable the feature to hide and show navigation items, "
 "suggested: [kbd]pma__navigationhiding[/kbd]"
 msgstr ""
-"Lämna tomt för att stänga av lagring av användarpreferenser i databasen, "
-"förslag: [kbd]pma__userconfig[/kbd]"
+"Lämna tomt för att stänga av funktionen att dölja och visa "
+"navigationsobjekt, förslag: [kbd]pma__navigationhiding[/kbd]"
 
 #: libraries/config/messages.inc.php:460
 msgid "Hidden navigation items table"
-msgstr ""
+msgstr "Tabell för dolda navigationsobjekt"
 
 #: libraries/config/messages.inc.php:462
 msgid "User for config auth"
@@ -6303,7 +6300,7 @@ msgstr ""
 
 #: libraries/config/messages.inc.php:473
 msgid "Show Last update timestamp"
-msgstr "Visa senast ändrade tidstämpel"
+msgstr "Visa tidstämpeln Senaste uppdatering"
 
 #: libraries/config/messages.inc.php:474
 msgid ""
@@ -6314,7 +6311,7 @@ msgstr ""
 
 #: libraries/config/messages.inc.php:475
 msgid "Show Last check timestamp"
-msgstr "Visa senaste kontrolltidstämpel"
+msgstr "Visa tidstämpeln Senaste kontroll"
 
 #: libraries/config/messages.inc.php:476
 msgid ""
@@ -6555,7 +6552,6 @@ msgid "Version check"
 msgstr "Versionskontroll"
 
 #: libraries/config/messages.inc.php:531
-#, fuzzy
 #| msgid ""
 #| "The url of the proxy to be used when retrieving the information about the "
 #| "latest version of phpMyAdmin. You need this if the server where "
@@ -6568,13 +6564,13 @@ msgid ""
 "the internet. The format is: \"hostname:portnumber\""
 msgstr ""
 "Webbadressen till den proxyserver som ska användas när du hämtar information "
-"om den senaste versionen av phpMyAdmin. Du behöver denna om servern där "
-"phpMyAdmin installeras inte har direkt tillgång till Internet. Formatet är: "
-"\"värdnamn:portnummer\""
+"om den senaste versionen av phpMyAdmin eller sänder felrapporter. Du "
+"behöver denna om servern där phpMyAdmin är installerat inte har direkt "
+"tillgång till Internet. Formatet är: \"värdnamn:portnummer\""
 
 #: libraries/config/messages.inc.php:532
 msgid "Proxy url"
-msgstr ""
+msgstr "Proxy-url"
 
 #: libraries/config/messages.inc.php:533
 msgid ""
@@ -6587,10 +6583,9 @@ msgstr ""
 "typer av autentisering stöds för närvarande."
 
 #: libraries/config/messages.inc.php:534
-#, fuzzy
 #| msgid "Username"
 msgid "Proxy username"
-msgstr "Användarnamn"
+msgstr "Proxyanvändarnamn"
 
 #: libraries/config/messages.inc.php:535
 msgid "The password for authenticating with the proxy"
@@ -6631,7 +6626,7 @@ msgstr "Privat nyckel för reCaptcha"
 
 #: libraries/config/messages.inc.php:545
 msgid "Choose the default action when sending error reports"
-msgstr ""
+msgstr "Välj standardhandling vid sändande av felrapporter"
 
 #: libraries/config/messages.inc.php:546
 #| msgid "Server port"
@@ -7021,6 +7016,8 @@ msgid ""
 "Skip this number of queries (for SQL) or lines (for other formats), starting "
 "from the first one:"
 msgstr ""
+"Hoppa över detta antal frågor (för SQL) eller rader (för andra format), "
+"räknat från den första:"
 
 #: libraries/display_import.lib.php:342
 msgid "Format-Specific Options:"
@@ -7418,14 +7415,17 @@ msgid ""
 "as well as information about relevant configuration settings to send to the "
 "phpMyAdmin team to help us in debugging the problem."
 msgstr ""
+"phpMyAdmin har stött på ett fel. Vi har samlat data om detta fel liksom "
+"information om relevanta inställningar för sändning till phpMyAdmin-teamet "
+"för att hjälpa oss felsöka problemet."
 
 #: libraries/error_report.lib.php:286
 msgid "You may examine the data in the error report:"
-msgstr ""
+msgstr "Du kan undersöka data i felrapporten:"
 
 #: libraries/error_report.lib.php:293
 msgid "Please explain the steps that lead to the error:"
-msgstr ""
+msgstr "Var god förklara stegen som leder till felet:"
 
 #: libraries/error_report.lib.php:301
 #| msgid "Automatically create versions"
@@ -7850,13 +7850,12 @@ msgstr[1] "%s andra resultat hittade"
 
 #: libraries/navigation/NavigationTree.class.php:828
 msgid "Expand/Collapse"
-msgstr ""
+msgstr "Expandera/Vik ihop"
 
 #: libraries/navigation/NavigationTree.class.php:1044
-#, fuzzy
 #| msgid "filter databases by name"
 msgid "Filter databases by name or regex"
-msgstr "filtrera databaser efter namn"
+msgstr "Filtrera databaser efter namn eller regex"
 
 #: libraries/navigation/NavigationTree.class.php:1046
 #: libraries/navigation/NavigationTree.class.php:1080
@@ -7865,10 +7864,9 @@ msgid "Clear fast filter"
 msgstr "Rensa snabbfilter"
 
 #: libraries/navigation/NavigationTree.class.php:1079
-#, fuzzy
 #| msgid "filter items by name"
 msgid "Filter by name or regex"
-msgstr "filtrera tabeller efter namn"
+msgstr "Filtrera efter namn eller regex"
 
 #. l10n: The word "Node" must not be translated here
 #: libraries/navigation/NodeFactory.class.php:41
@@ -7893,16 +7891,14 @@ msgid "New"
 msgstr "Ny"
 
 #: libraries/navigation/Nodes/Node_Database.class.php:34
-#, fuzzy
 #| msgid "Database export options"
 msgid "Database operations"
-msgstr "Exportalternativ för databas"
+msgstr "Databasoperationer"
 
 #: libraries/navigation/Nodes/Node_Database.class.php:318
-#, fuzzy
 #| msgid "Show hint"
 msgid "Show hidden items"
-msgstr "Visa tips"
+msgstr "Visa dolda objekt"
 
 #: libraries/navigation/Nodes/Node_Database_Container.class.php:31
 #| msgctxt "Create new column"
@@ -8967,16 +8963,14 @@ msgid "User preferences"
 msgstr "Användarinställningar"
 
 #: libraries/relation.lib.php:268
-#, fuzzy
 #| msgid "Configuration: %s"
 msgid "Configurable menus"
-msgstr "Konfiguration: %s"
+msgstr "Anpassningsbara menyer"
 
 #: libraries/relation.lib.php:279
-#, fuzzy
 #| msgid "Reload navigation frame"
 msgid "Hide/show navigation items"
-msgstr "Ladda om navigeringsram"
+msgstr "Visa/dölj navigationsobjekt"
 
 #: libraries/relation.lib.php:285
 msgid "Quick steps to setup advanced features:"
@@ -9291,44 +9285,38 @@ msgid "Generate Password:"
 msgstr "Generera lösenord:"
 
 #: libraries/replication_gui.lib.php:908
-#, fuzzy
 #| msgid "Replication status"
 msgid "Replication started successfully."
-msgstr "Replikeringsstatus"
+msgstr "Replikering startade framgångsrikt."
 
 #: libraries/replication_gui.lib.php:909
-#, fuzzy
 #| msgid "Master replication"
 msgid "Error starting replication."
-msgstr "Master-replikering"
+msgstr "Fel vid start av replikering."
 
 #: libraries/replication_gui.lib.php:913
-#, fuzzy
 #| msgid "Chart generated successfully."
 msgid "Replication stopped successfully."
-msgstr "Diagram skapadesframgångsrikt."
+msgstr "Replikering stoppades framgångsrikt."
 
 #: libraries/replication_gui.lib.php:914
-#, fuzzy
 #| msgid "Master replication"
 msgid "Error stopping replication."
-msgstr "Master-replikering"
+msgstr "Fel vid stoppande av replikering."
 
 #: libraries/replication_gui.lib.php:918
-#, fuzzy
 #| msgid "Replication status"
 msgid "Replication resetting successfully."
-msgstr "Replikeringsstatus"
+msgstr "Replikering återställdes framgångsrikt."
 
 #: libraries/replication_gui.lib.php:919
-#, fuzzy
 #| msgid "Master replication"
 msgid "Error resetting replication."
-msgstr "Master-replikering"
+msgstr "Fel vid återställning av replikering."
 
 #: libraries/replication_gui.lib.php:923
 msgid "Success."
-msgstr ""
+msgstr "Lyckades."
 
 #: libraries/replication_gui.lib.php:924
 #| msgid "Error"
@@ -11580,22 +11568,19 @@ msgid "User groups"
 msgstr "Användargrupper"
 
 #: libraries/server_user_groups.lib.php:79
-#, fuzzy
 #| msgid "Server version"
 msgid "Server level tabs"
-msgstr "Serverversion"
+msgstr "Flikar på servernivå"
 
 #: libraries/server_user_groups.lib.php:80
-#, fuzzy
 #| msgid "Database server"
 msgid "Database level tabs"
-msgstr "Databas-server"
+msgstr "Flikar på databasnivå"
 
 #: libraries/server_user_groups.lib.php:81
-#, fuzzy
 #| msgid "Table comments"
 msgid "Table level tabs"
-msgstr "Tabellkommentarer"
+msgstr "Flikar på tabellnivå"
 
 #: libraries/server_user_groups.lib.php:110
 #| msgid "Views"
@@ -11625,22 +11610,19 @@ msgid "Group name:"
 msgstr "Gruppnamn:"
 
 #: libraries/server_user_groups.lib.php:268
-#, fuzzy
 #| msgid "Server version"
 msgid "Server-level tabs"
-msgstr "Serverversion"
+msgstr "Flikar på servernivå"
 
 #: libraries/server_user_groups.lib.php:271
-#, fuzzy
 #| msgid "Database server"
 msgid "Database-level tabs"
-msgstr "Databas-server"
+msgstr "Flikar på databasnivå"
 
 #: libraries/server_user_groups.lib.php:274
-#, fuzzy
 #| msgid "Table comments"
 msgid "Table-level tabs"
-msgstr "Tabellkommentarer"
+msgstr "Flikar på tabellnivå"
 
 #: libraries/server_variables.lib.php:114
 msgid "Setting variable failed"
@@ -11725,7 +11707,6 @@ msgid "Validated SQL"
 msgstr "Validerad SQL-kod"
 
 #: libraries/sql.lib.php:1917
-#, fuzzy
 #| msgid ""
 #| "Table %s does not contain a unique column. Grid edit, checkbox, Edit, "
 #| "Copy and Delete features are not available."
@@ -11733,8 +11714,9 @@ msgid ""
 "Current selection does not contain a unique column. Grid edit, checkbox, "
 "Edit, Copy and Delete features are not available."
 msgstr ""
-"Tabell %s innehåller ingen unik kolumn. Funktionerna rutnätsredigera, "
-"kryssruta, redigera, kopiera och radera är inte tillgängliga."
+"Nuvarande markering innehåller ingen unik kolumn. Funktionerna "
+"rutnätsredigera, kryssruta, redigera, kopiera och radera är inte "
+"tillgängliga."
 
 #: libraries/sql.lib.php:1954
 #, php-format
