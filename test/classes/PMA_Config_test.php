@@ -34,6 +34,13 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
      * @var PMA_Config
      */
     protected $object;
+    
+    /**
+     * @var object to test file permission
+     */
+    protected $permTestObj;
+    
+    
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -47,6 +54,9 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
         $GLOBALS['server'] = 0;
         $_SESSION['is_git_revision'] = true;
         $GLOBALS['PMA_Config'] = new PMA_Config(CONFIG_FILE);
+        
+        //for testing file permissions
+        $this->permTestObj = new PMA_Config("./config.sample.inc.php");
     }
 
     /**
@@ -57,6 +67,8 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
+        unset($this->object);
+        unset($this->permTestObj);
     }
 
     /**
@@ -950,10 +962,20 @@ class PMA_ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testCheckPermissions()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        //load file permissions for the current permissions file
+        $perms = @fileperms($this->object->getSource());
+        //testing for permissions for no configration file
+        $this->assertFalse(!($perms === false) && ($perms & 2));
+        
+        //load file permissions for the current permissions file
+        $perms = @fileperms($this->permTestObj->getSource());
+        //testing for permissions 
+        $this->assertFalse(!($perms === false) && ($perms & 2));
+        
+        //if the above assertion is false then applying further assertions
+        if(!($perms === false) && ($perms & 2)) {             
+            $this->assertFalse($this->permTestObj->get('PMA_IS_WINDOWS') == 0);
+        }
     }
 
 
