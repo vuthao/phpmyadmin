@@ -4,8 +4,8 @@ msgstr ""
 "Project-Id-Version: phpMyAdmin 4.1.6-dev\n"
 "Report-Msgid-Bugs-To: phpmyadmin-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-01-19 08:19-0500\n"
-"PO-Revision-Date: 2014-02-23 05:41+0200\n"
-"Last-Translator: minsung kang <manyfun7@gmail.com>\n"
+"PO-Revision-Date: 2014-03-15 15:29+0200\n"
+"Last-Translator: Yungu Kim <crimsonpi@gmail.com>\n"
 "Language-Team: Korean <https://l10n.cihar.com/projects/phpmyadmin/4-1/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -3527,7 +3527,7 @@ msgstr "DOUBLE과 동일함. (예외: REAL_AS_FLOAT SQL모드에서는 FLOAT으�
 msgid ""
 "A bit-field type (M), storing M of bits per value (default is 1, maximum is "
 "64)"
-msgstr ""
+msgstr "비트 필드 타입 (M), 값 하나 당 M 비트를 저장 (기본값은 1, 최대 64)"
 
 #: libraries/Types.class.php:317
 msgid ""
@@ -5099,7 +5099,7 @@ msgstr "탭이 어떻게 동작할지 선택"
 #: libraries/config/messages.inc.php:230
 #: libraries/schema/User_Schema.class.php:422
 msgid "Display relational schema"
-msgstr ""
+msgstr "릴레이션 스키마 표시"
 
 #: libraries/config/messages.inc.php:232
 #: libraries/schema/User_Schema.class.php:492
@@ -5313,7 +5313,7 @@ msgstr "최대한 표시될 SQL 길이"
 #: libraries/config/messages.inc.php:289 libraries/config/messages.inc.php:296
 #: libraries/config/messages.inc.php:352
 msgid "Users cannot set a higher value"
-msgstr "더 높은 값을 설정 할 수 없습니다."
+msgstr "사용자는 더 높은 값을 설정 할 수 없습니다"
 
 #: libraries/config/messages.inc.php:290
 msgid "Maximum number of databases displayed in database list"
@@ -6636,10 +6636,10 @@ msgid "Exporting tables from \"%s\" database"
 msgstr "데이터베이스 %s에서 테이블을 추출"
 
 #: libraries/display_export.lib.php:173
-#, fuzzy, php-format
+#, php-format
 #| msgid "Create table on database %s"
 msgid "Exporting rows from \"%s\" table"
-msgstr "데이터베이스 %s에 새로운 테이블을 만듭니다."
+msgstr "\"%s\" 테이블 내보내기"
 
 #: libraries/display_export.lib.php:198
 msgid "Export Method:"
@@ -7010,17 +7010,17 @@ msgstr ""
 
 #: libraries/engines/myisam.lib.php:33
 msgid "Automatic recovery mode"
-msgstr ""
+msgstr "자동복구모드"
 
 #: libraries/engines/myisam.lib.php:34
 msgid ""
 "The mode for automatic recovery of crashed MyISAM tables, as set via the --"
 "myisam-recover server startup option."
-msgstr ""
+msgstr "크래시된 MyISAM 테이블을 자동으로 복구하는 모드(서버 시작 시 --myisam-recover 옵션으로 설정)."
 
 #: libraries/engines/myisam.lib.php:37
 msgid "Maximum size for temporary sort files"
-msgstr ""
+msgstr "정렬을 위한 임시 파일의 최대 크기"
 
 #: libraries/engines/myisam.lib.php:38
 msgid ""
@@ -7028,6 +7028,8 @@ msgid ""
 "creating a MyISAM index (during REPAIR TABLE, ALTER TABLE, or LOAD DATA "
 "INFILE)."
 msgstr ""
+"MyISAM 인덱스를 재생성할 때 사용되는 임시 파일의 최대 크기(REPAIR TABLE, ALTER TABLE 또는 LOAD DATA "
+"INFILE에 사용)."
 
 #: libraries/engines/myisam.lib.php:42
 msgid "Maximum size for temporary files on index creation"
@@ -7039,26 +7041,31 @@ msgid ""
 "than using the key cache by the amount specified here, prefer the key cache "
 "method."
 msgstr ""
+"빠른 MyISAM 인덱스 생성시 사용되는 임시 파일의 크기가, 여기에 명시된 키 캐시 크기보다 클 경우 키 캐시 방식을 사용하는 것을 "
+"우선적으로 합니다."
 
 #: libraries/engines/myisam.lib.php:47
 msgid "Repair threads"
-msgstr ""
+msgstr "스레드  복구"
 
 #: libraries/engines/myisam.lib.php:48
 msgid ""
 "If this value is greater than 1, MyISAM table indexes are created in "
 "parallel (each index in its own thread) during the repair by sorting process."
 msgstr ""
+"이 값이 1보다 크면, 정령 프로세스가 복구 작업시 MyISAM 테이블 인덱스들은 병렬적으로(각 인덱스가 각자의 스레드로) 생성됩니다."
 
 #: libraries/engines/myisam.lib.php:52
 msgid "Sort buffer size"
-msgstr ""
+msgstr "정렬 버퍼 크기"
 
 #: libraries/engines/myisam.lib.php:53
 msgid ""
 "The buffer that is allocated when sorting MyISAM indexes during a REPAIR "
 "TABLE or when creating indexes with CREATE INDEX or ALTER TABLE."
 msgstr ""
+"REPAIR TABLE시 MyISAM 인덱스들을 정렬할 때, 또는 CREATE INDEX나 ALTER TABLE시 인덱스를 생성할 때 "
+"할당되는 버퍼."
 
 #: libraries/engines/pbxt.lib.php:28
 msgid "Index cache size"
@@ -7068,7 +7075,7 @@ msgstr "인덱스 캐시 크기"
 msgid ""
 "This is the amount of memory allocated to the index cache. Default value is "
 "32MB. The memory allocated here is used only for caching index pages."
-msgstr ""
+msgstr "인덱스 캐시를 위해 할당되는 메모리의 크기. 기본값은 32MB. 이 메모리는 인덱스 페이지를 캐시하기 위해서만 사용됩니다."
 
 #: libraries/engines/pbxt.lib.php:33
 msgid "Record cache size"
@@ -7080,6 +7087,8 @@ msgid ""
 "table data. The default value is 32MB. This memory is used to cache changes "
 "to the handle data (.xtd) and row pointer (.xtr) files."
 msgstr ""
+"테이블 데이터를 캐시하기 위해 할당되는 메모리의 크기. 기본값은 32MB. 이 메모리는 핸들 데이터(.xtd)와 행 포인터(.xtr) "
+"파일의 변화를 캐시하기위해 사용됩니다."
 
 #: libraries/engines/pbxt.lib.php:38
 msgid "Log cache size"
@@ -7089,17 +7098,17 @@ msgstr "로그 캐시 크기"
 msgid ""
 "The amount of memory allocated to the transaction log cache used to cache on "
 "transaction log data. The default is 16MB."
-msgstr ""
+msgstr "트랜잭션 로그 데이터를 캐시하기 위해 할당되는 메모리의 크기. 기본값은 16MB."
 
 #: libraries/engines/pbxt.lib.php:43
 msgid "Log file threshold"
-msgstr ""
+msgstr "로그 파일 스레시홀드"
 
 #: libraries/engines/pbxt.lib.php:44
 msgid ""
 "The size of a transaction log before rollover, and a new log is created. The "
 "default value is 16MB."
-msgstr ""
+msgstr "롤오버 전 부터 새 로그가 생성될 때까지의 트랜잭션의 크기. 기본값은 16MB."
 
 #: libraries/engines/pbxt.lib.php:48
 msgid "Transaction buffer size"
@@ -7109,21 +7118,21 @@ msgstr "트랜잭션 버퍼 크기"
 msgid ""
 "The size of the global transaction log buffer (the engine allocates 2 "
 "buffers of this size). The default is 1MB."
-msgstr ""
+msgstr "전역 트랜잭션 로그 버퍼의 크기(이 크기에 해당하는 버퍼를 2개 할당합니다). 기본값은 1MB."
 
 #: libraries/engines/pbxt.lib.php:53
 msgid "Checkpoint frequency"
-msgstr ""
+msgstr "체크포인트 빈도"
 
 #: libraries/engines/pbxt.lib.php:54
 msgid ""
 "The amount of data written to the transaction log before a checkpoint is "
 "performed. The default value is 24MB."
-msgstr ""
+msgstr "체크포인트가 수행되기 전에 트랜잭션 로그에 기록될 데이터의 양. 기본값은 24MB."
 
 #: libraries/engines/pbxt.lib.php:58
 msgid "Data log threshold"
-msgstr ""
+msgstr "데이터 로그 스레시홀드"
 
 #: libraries/engines/pbxt.lib.php:59
 msgid ""
@@ -7181,7 +7190,7 @@ msgstr "행 포인터 파일들(.xtr)의 증가량."
 
 #: libraries/engines/pbxt.lib.php:83
 msgid "Log file count"
-msgstr ""
+msgstr "로그 파일 수"
 
 #: libraries/engines/pbxt.lib.php:84
 msgid ""
@@ -8645,7 +8654,7 @@ msgstr ""
 
 #: libraries/plugins/transformations/abstract/SQLTransformationsPlugin.class.php:31
 msgid "Formats text as SQL query with syntax highlighting."
-msgstr ""
+msgstr "텍스트를 SQL 쿼리형식으로 문법 강조를 합니다."
 
 #: libraries/plugins/transformations/abstract/SubstringTransformationsPlugin.class.php:31
 msgid ""
@@ -8655,6 +8664,8 @@ msgid ""
 "option is the string to append and/or prepend when truncation occurs "
 "(Default: \"…\")."
 msgstr ""
+"문자열의 일부를 표시. 첫 번째 옵션은 문자열 앞 부분에 생략할 문자 수 (기본값은 0). 두 번재 옵션은 리턴할 문자열 수 (기본값: "
+"문자열 끝 까지). 세 번째 옵션은 생략된 문자열에 대신 표시될 문자열 (기본값: \"...\")."
 
 #: libraries/plugins/transformations/abstract/TextImageLinkTransformationsPlugin.class.php:33
 msgid ""
@@ -8662,6 +8673,8 @@ msgid ""
 "option is a URL prefix like \"http://www.example.com/\". The second and "
 "third options are the width and the height in pixels."
 msgstr ""
+"이미지와 링크를 표시; 컬럼에 파일명이 있음. 첫 번재 옵션은 URL 앞쪽에 추가될 문자열 (예: "
+"\"http://www.example.com/\"). 두 번째와 세 번째 옵션은 너비와 높이(pixel 단위)."
 
 #: libraries/plugins/transformations/abstract/TextLinkTransformationsPlugin.class.php:33
 msgid ""
@@ -8669,39 +8682,37 @@ msgid ""
 "prefix like \"http://www.example.com/\". The second option is a title for "
 "the link."
 msgstr ""
+"링크 표시; 컬럼에 파일명이 있음. 첫 번재 옵션은 URL 앞쪽에 추가될 문자열 (예: \"http://www.example.com\"). "
+"두 번재 옵션은 링크의 타이틀 내용."
 
 #: libraries/relation.lib.php:89
 msgid "not OK"
-msgstr ""
+msgstr "not OK"
 
 #: libraries/relation.lib.php:96
-#, fuzzy
 #| msgid "OK"
 msgctxt "Correctly working"
 msgid "OK"
-msgstr "확인"
+msgstr "OK"
 
 #: libraries/relation.lib.php:99
 msgid "Enabled"
 msgstr "사용가능"
 
 #: libraries/relation.lib.php:106 libraries/relation.lib.php:124
-#, fuzzy
 #| msgid "General Settings"
 msgid "General relation features"
-msgstr "일반 설정"
+msgstr "일반 릴레이션 기능"
 
 #: libraries/relation.lib.php:135
-#, fuzzy
 #| msgid "Display chart"
 msgid "Display Features"
-msgstr "차트 표시"
+msgstr "기능 표시"
 
 #: libraries/relation.lib.php:152
-#, fuzzy
 #| msgid "Creation:"
 msgid "Creation of PDFs"
-msgstr "생성:"
+msgstr "PDF 생성"
 
 #: libraries/relation.lib.php:163
 msgid "Displaying Column Comments"
@@ -8710,10 +8721,9 @@ msgstr "열(칼럼) 설명(코멘트) 출력하기"
 #: libraries/relation.lib.php:169
 #: libraries/tbl_columns_definition_form.lib.php:318
 #: transformation_overview.php:39
-#, fuzzy
 #| msgid "Version information"
 msgid "Browser transformation"
-msgstr "버전 정보"
+msgstr "브라우저 변형"
 
 #: libraries/relation.lib.php:175
 msgid ""
@@ -8741,16 +8751,14 @@ msgid "User preferences"
 msgstr "사용자 환경설정"
 
 #: libraries/relation.lib.php:268
-#, fuzzy
 #| msgid "Configuration file"
 msgid "Configurable menus"
-msgstr "설정 파일"
+msgstr "설정 가능한 메뉴"
 
 #: libraries/relation.lib.php:279
-#, fuzzy
 #| msgid "Reload navigation frame"
 msgid "Hide/show navigation items"
-msgstr "네비게이션 프레임 새로고침"
+msgstr "네비게이션 아이템 숨기기/보이기"
 
 #: libraries/relation.lib.php:285
 msgid "Quick steps to setup advanced features:"
@@ -8861,10 +8869,9 @@ msgid ""
 msgstr ""
 
 #: libraries/replication_gui.lib.php:211
-#, fuzzy
 #| msgid "Show slave status"
 msgid "See slave status table"
-msgstr "Slave 상태 보기"
+msgstr "Slave 상태 테이블 보기"
 
 #: libraries/replication_gui.lib.php:216
 msgid "Control slave:"
@@ -9311,10 +9318,9 @@ msgid "Routine %1$s has been created."
 msgstr "데이터베이스 %1$s가 생성되었습니다."
 
 #: libraries/rte/rte_routines.lib.php:446
-#, fuzzy
 #| msgid "Edit Index"
 msgid "Edit routine"
-msgstr "인덱스 수정"
+msgstr "루틴 수정"
 
 #: libraries/rte/rte_routines.lib.php:946
 #, fuzzy
@@ -9519,10 +9525,9 @@ msgid "No trigger with name %1$s found in database %2$s"
 msgstr "데이터베이스에 테이블이 없습니다."
 
 #: libraries/rte/rte_words.lib.php:45
-#, fuzzy
 #| msgid "There are no recent tables"
 msgid "There are no triggers to display."
-msgstr "최근 테이블이 없습니다."
+msgstr "표시할 트리거가 없습니다."
 
 #: libraries/rte/rte_words.lib.php:51
 msgid "Add event"
@@ -9584,10 +9589,9 @@ msgstr ""
 
 #: libraries/schema/Pdf_Relation_Schema.class.php:894
 #: libraries/schema/Pdf_Relation_Schema.class.php:1228
-#, fuzzy
 #| msgid "Relational key"
 msgid "Relational schema"
-msgstr "관계키"
+msgstr "릴레이션 스키마"
 
 #: libraries/schema/Pdf_Relation_Schema.class.php:1191
 msgid "Table of contents"
@@ -9660,10 +9664,9 @@ msgid "Show color"
 msgstr "색깔 보기"
 
 #: libraries/schema/User_Schema.class.php:463
-#, fuzzy
 #| msgid "Show open tables"
 msgid "Show dimension of tables"
-msgstr "열려있는 테이블 보기"
+msgstr "테이블 크기 보기"
 
 #: libraries/schema/User_Schema.class.php:468
 msgid "Same width for all tables"
@@ -10092,10 +10095,9 @@ msgid "You have revoked the privileges for %s."
 msgstr "%s의 권한을 제거했습니다."
 
 #: libraries/server_privileges.lib.php:1687
-#, fuzzy
 #| msgid "Database server"
 msgid "Database for user"
-msgstr "데이터베이스 서버"
+msgstr "유저 전용 데이터베이스"
 
 #: libraries/server_privileges.lib.php:1691
 msgid "Create database with same name and grant all privileges."
@@ -10154,10 +10156,9 @@ msgid "global"
 msgstr ""
 
 #: libraries/server_privileges.lib.php:2061
-#, fuzzy
 #| msgid "Databases"
 msgid "database-specific"
-msgstr "데이터베이스"
+msgstr "데이터베이스 고유"
 
 #: libraries/server_privileges.lib.php:2063
 msgid "wildcard"
@@ -12251,10 +12252,9 @@ msgid "Create relation"
 msgstr "관계 생성"
 
 #: pmd_general.php:99
-#, fuzzy
 #| msgid "Reload page"
 msgid "Reload"
-msgstr "페이지 새로고침"
+msgstr "새로고침"
 
 #: pmd_general.php:103
 msgid "Help"
@@ -12571,10 +12571,9 @@ msgid ""
 msgstr ""
 
 #: setup/frames/index.inc.php:87
-#, fuzzy
 #| msgid "Server connection collation"
 msgid "Insecure connection"
-msgstr "서버 연결 콜레이션(언어)"
+msgstr "보호되지 않은 연결"
 
 #: setup/frames/index.inc.php:116
 #, fuzzy
@@ -14021,7 +14020,7 @@ msgstr ""
 #: libraries/advisory_rules.txt:448
 #, php-format
 msgid "Your absolute InnoDB log size is %s MiB"
-msgstr "InnoDB 로그의 총 크기는 %s MiB 입니다"
+msgstr "InnoDB 로그 절대크기는 %s MiB 입니다"
 
 #: libraries/advisory_rules.txt:450
 msgid "InnoDB buffer pool size"
