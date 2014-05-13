@@ -24,7 +24,7 @@ class PMA_Table
     const PROP_COLUMN_ORDER = 'col_order';
     const PROP_COLUMN_VISIB = 'col_visib';
 
-    static $cache = array();
+    static public $cache = array();
 
     /**
      * @var string  table name
@@ -1606,6 +1606,9 @@ class PMA_Table
         // do checking based on property
         if ($property == self::PROP_SORTED_COLUMN) {
             if (isset($this->uiprefs[$property])) {
+                if (isset($_REQUEST['discard_remembered_sort'])) {
+                    $this->removeUiProp(self::PROP_SORTED_COLUMN);
+                }
                 // check if the column name exists in this table
                 $tmp = explode(' ', $this->uiprefs[$property]);
                 $colname = $tmp[0];

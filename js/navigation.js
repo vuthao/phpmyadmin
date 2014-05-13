@@ -252,9 +252,9 @@ $(function () {
             cache: false,
             type: 'POST',
             data: {
-                favorite_tables: (window.localStorage['favorite_tables']
+                favorite_tables: (window.localStorage.favorite_tables
                     !== undefined)
-                    ? window.localStorage['favorite_tables']
+                    ? window.localStorage.favorite_tables
                     : ''
             },
             success: function (data) {
@@ -268,7 +268,7 @@ $(function () {
                     );
                     // Update localStorage.
                     if (window.localStorage !== undefined) {
-                        window.localStorage['favorite_tables']
+                        window.localStorage.favorite_tables
                             = data.favorite_tables;
                     }
                 } else {
@@ -888,7 +888,14 @@ var ResizeHandler = function () {
             $nav_header = $("#pma_navigation_header"),
             $nav_tree_content = $("#pma_navigation_tree_content");
         $nav_tree.height($nav.height() - $nav_header.height());
-        $nav_tree_content.height($nav_tree.height() - $nav_tree_content.position().top);
+        if ($nav_tree_content.length > 0) {
+            $nav_tree_content.height($nav_tree.height() - $nav_tree_content.position().top);
+        } else {
+            //TODO: in fast filter search response there is no #pma_navigation_tree_content, needs to be added in php
+            $nav_tree.css({
+                'overflow-y': 'auto'
+            });
+        }
     };
     /* Initialisation section begins here */
     if ($.cookie('pma_navi_width')) {
@@ -912,6 +919,7 @@ var ResizeHandler = function () {
     // need to call this now and then, browser might decide
     // to show/hide horizontal scrollbars depending on page content width
     setInterval(this.treeResize, 2000);
+    this.treeResize();
 }; // End of ResizeHandler
 
 /**
@@ -1157,7 +1165,7 @@ PMA_fastFilter.filter.prototype.request = function () {
             self.xhr.abort();
         }
         var url = $('#pma_navigation').find('a.navigation_url').attr('href');
-        var results = self.$this.find('li:not(.hidden):not(.fast_filter):not(.navGroup)').not('[class^=new]').length;
+        var results = self.$this.find('li:not(.hidden):not(.fast_filter):not(.navGroup)').not('[class^=new]').not('[class^=warp_link]').length;
         var params = self.$this.find('> ul > li > form.fast_filter').first().serialize() + "&results=" + results;
         if (self.$this.find('> ul > li > form.fast_filter:first input[name=searchClause]').length === 0) {
             var $input = $('#pma_navigation_tree').find('li.fast_filter.db_fast_filter input.searchClause');

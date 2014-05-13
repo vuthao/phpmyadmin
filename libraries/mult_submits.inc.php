@@ -22,7 +22,6 @@ $request_params = array(
     'original_sql_query',
     'query_type',
     'reload',
-    'rows_to_delete',
     'selected',
     'selected_fld',
     'selected_recent_table',
@@ -47,7 +46,7 @@ if (! empty($submit_mult)
     && (! empty($selected_db)
     || ! empty($_POST['selected_tbl'])
     || ! empty($selected_fld)
-    || ! empty($rows_to_delete))
+    || ! empty($_REQUEST['rows_to_delete']))
 ) {
     define('PMA_SUBMIT_MULT', 1);
     if (isset($selected_db) && !empty($selected_db)) {
@@ -84,6 +83,9 @@ if (! empty($submit_mult)
                 include 'db_export.php';
                 exit;
                 break;
+            case 'show_create':
+                PMA_getHtmlShowCreate($db, $selected);
+                exit;
             } // end switch
         }
     } elseif (isset($selected_fld) && !empty($selected_fld)) {
@@ -111,7 +113,7 @@ if (! empty($submit_mult)
     } else {
         // coming from browsing - do something with selected rows
         $what = 'row_delete';
-        $selected = $rows_to_delete;
+        $selected = $_REQUEST['rows_to_delete'];
     }
 } // end if
 

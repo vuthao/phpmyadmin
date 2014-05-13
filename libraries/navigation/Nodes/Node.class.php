@@ -209,7 +209,6 @@ class Node
             && ($this->is_group != true || $groups)
         ) {
             $parents[] = $this;
-            $self      = false;
         }
         $parent = $this->parent;
         while (isset($parent)) {
@@ -361,10 +360,25 @@ class Node
     public function getData($type, $pos, $searchClause = '')
     {
         $query  = "SELECT `SCHEMA_NAME` ";
-        $query .= "FROM `INFORMATION_SCHEMA`.`SCHEMATA` ";
+        $query .= "FROM `INFORMATION_SCHEMA`.`SCHEMATA`, ";
+        $query .= "(";
+        $query .= "select DB_first_level ";
+        $query .= "from ( ";
+        $query .= "SELECT distinct SUBSTRING_INDEX(SCHEMA_NAME, ";
+        $query .= "'{$GLOBALS['cfg']['NavigationTreeDbSeparator']}', 1) ";
+        $query .= "DB_first_level ";
+        $query .= "FROM INFORMATION_SCHEMA.SCHEMATA ";
         $query .= $this->_getWhereClause($searchClause);
-        $query .= "ORDER BY `SCHEMA_NAME` ASC ";
-        $query .= "LIMIT $pos, {$GLOBALS['cfg']['MaxNavigationItems']}";
+        $query .= ") t ";
+        $query .= "ORDER BY DB_first_level ASC ";
+        $query .= "LIMIT $pos, {$GLOBALS['cfg']['FirstLevelNavigationItems']}";
+        $query .= ") t2 ";
+        $query .= "where 1 = locate(concat(DB_first_level, ";
+        $query .= "'{$GLOBALS['cfg']['NavigationTreeDbSeparator']}'), ";
+        $query .= "concat(SCHEMA_NAME, ";
+        $query .= "'{$GLOBALS['cfg']['NavigationTreeDbSeparator']}')) ";
+        $query .= "order by SCHEMA_NAME ASC";
+
         return $GLOBALS['dbi']->fetchResult($query);
     }
 
@@ -380,9 +394,14 @@ class Node
      */
     public function getPresence($type = '', $searchClause = '')
     {
-        $query  = "SELECT COUNT(*) ";
-        $query .= "FROM `INFORMATION_SCHEMA`.`SCHEMATA` ";
+        $query = "select COUNT(*) ";
+        $query .= "from ( ";
+        $query .= "SELECT distinct SUBSTRING_INDEX(SCHEMA_NAME, ";
+        $query .= "'{$GLOBALS['cfg']['NavigationTreeDbSeparator']}', 1) ";
+        $query .= "DB_first_level ";
+        $query .= "FROM INFORMATION_SCHEMA.SCHEMATA ";
         $query .= $this->_getWhereClause($searchClause);
+        $query .= ") t ";
         $retval = (int)$GLOBALS['dbi']->fetchValue($query);
         return $retval;
     }
@@ -436,6 +455,49 @@ class Node
     public function getHtmlForControlButtons()
     {
         return '';
+    }
+
+    /**
+     * Returns CSS classes for a node
+     *
+     * @param boolean $match Whether the node matched loaded tree
+     *
+     * @return String with html classes.
+     */
+    public function getCssClasses($match)
+    {
+        if ($GLOBALS['cfg']['NavigationTreeDisableDatabaseExpansion']) {
+            return '';
+        }
+
+        $result = array('expander');
+
+        if ($this->is_group || $match) {
+            $result[] = 'loaded';
+        }
+        if ($this->type == Node::CONTAINER) {
+            $result[] = 'container';
+        }
+
+        return implode(' ', $result);
+    }
+
+    /**
+     * Returns icon for the node
+     *
+     * @param boolean $match Whether the node matched loaded tree
+     *
+     * @return String with image name
+     */
+    public function getIcon($match)
+    {
+        if ($GLOBALS['cfg']['NavigationTreeDisableDatabaseExpansion']) {
+            return '';
+        } elseif ($match && ! $this->is_group) {
+            return PMA_Util::getImage('b_minus.png');
+        } else {
+            return PMA_Util::getImage('b_plus.png', __('Expand/Collapse'));
+        }
     }
 }
 ?>

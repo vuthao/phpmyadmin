@@ -90,17 +90,72 @@ function PMA_rangeOfUsers($initial = '')
 } // end function
 
 /**
+ * Formats privilege name for a display
+ *
+ * @param array   $privilege Privilege information
+ * @param boolean $html      Whether to use HTML
+ *
+ * @return string
+ */
+function PMA_formatPrivilege($privilege, $html)
+{
+    if ($html) {
+        return '<dfn title="' . $privilege[2] . '">'
+            . $privilege[1] . '</dfn>';
+    } else {
+        return $privilege[1];
+    }
+}
+
+/**
+ * Parses priliveges into an array, it modifies the array
+ *
+ * @param array &$row Results row from
+ *
+ * @return void
+ */
+function PMA_fillInTablePrivileges(&$row)
+{
+    $row1 = $GLOBALS['dbi']->fetchSingleRow(
+        'SHOW COLUMNS FROM `mysql`.`tables_priv` LIKE \'Table_priv\';',
+        'ASSOC', $GLOBALS['userlink']
+    );
+    // note: in MySQL 5.0.3 we get "Create View', 'Show view';
+    // the View for Create is spelled with uppercase V
+    // the view for Show is spelled with lowercase v
+    // and there is a space between the words
+
+    $av_grants = explode(
+        '\',\'',
+        substr(
+            $row1['Type'],
+            strpos($row1['Type'], '(') + 2,
+            strpos($row1['Type'], ')') - strpos($row1['Type'], '(') - 3
+        )
+    );
+
+    $users_grants = explode(',', $row['Table_priv']);
+
+    foreach ($av_grants as $current_grant) {
+        $row[$current_grant . '_priv']
+            = in_array($current_grant, $users_grants) ? 'Y' : 'N';
+    }
+    unset($row['Table_priv']);
+}
+
+
+/**
  * Extracts the privilege information of a priv table row
  *
- * @param array   $row        the row
- * @param boolean $enableHTML add <dfn> tag with tooltips
- * @param boolean $tablePrivs whether row contains table privileges
+ * @param array|null $row        the row
+ * @param boolean    $enableHTML add <dfn> tag with tooltips
+ * @param boolean    $tablePrivs whether row contains table privileges
  *
  * @global  resource $user_link the database connection
  *
  * @return array
  */
-function PMA_extractPrivInfo($row = '', $enableHTML = false, $tablePrivs = false)
+function PMA_extractPrivInfo($row = null, $enableHTML = false, $tablePrivs = false)
 {
     if ($tablePrivs) {
         $grants = PMA_getTableGrantsArray();
@@ -108,55 +163,30 @@ function PMA_extractPrivInfo($row = '', $enableHTML = false, $tablePrivs = false
         $grants = PMA_getGrantsArray();
     }
 
-    if (! empty($row) && isset($row['Table_priv'])) {
-        $row1 = $GLOBALS['dbi']->fetchSingleRow(
-            'SHOW COLUMNS FROM `mysql`.`tables_priv` LIKE \'Table_priv\';',
-            'ASSOC', $GLOBALS['userlink']
-        );
-        $av_grants = explode(
-            '\',\'',
-            substr($row1['Type'], 5, strlen($row1['Type']) - 7)
-        );
-        unset($row1);
-        $users_grants = explode(',', $row['Table_priv']);
-        foreach ($av_grants as $current_grant) {
-            $row[$current_grant . '_priv']
-                = in_array($current_grant, $users_grants) ? 'Y' : 'N';
-        }
-        unset($current_grant);
+    if (! is_null($row) && isset($row['Table_priv'])) {
+        PMA_fillInTablePrivileges($row);
     }
 
     $privs = array();
     $allPrivileges = true;
     foreach ($grants as $current_grant) {
-        if ((! empty($row) && isset($row[$current_grant[0]]))
-            || (empty($row) && isset($GLOBALS[$current_grant[0]]))
+        if ((! is_null($row) && isset($row[$current_grant[0]]))
+            || (is_null($row) && isset($GLOBALS[$current_grant[0]]))
         ) {
-            if ((! empty($row) && $row[$current_grant[0]] == 'Y')
-                || (empty($row)
+            if ((! is_null($row) && $row[$current_grant[0]] == 'Y')
+                || (is_null($row)
                 && ($GLOBALS[$current_grant[0]] == 'Y'
                 || (is_array($GLOBALS[$current_grant[0]])
                 && count($GLOBALS[$current_grant[0]]) == $_REQUEST['column_count']
                 && empty($GLOBALS[$current_grant[0] . '_none']))))
             ) {
-                if ($enableHTML) {
-                    $privs[] = '<dfn title="' . $current_grant[2] . '">'
-                        . $current_grant[1] . '</dfn>';
-                } else {
-                    $privs[] = $current_grant[1];
-                }
+                $privs[] = PMA_formatPrivilege($current_grant, $enableHTML);
             } elseif (! empty($GLOBALS[$current_grant[0]])
                 && is_array($GLOBALS[$current_grant[0]])
                 && empty($GLOBALS[$current_grant[0] . '_none'])
             ) {
-                if ($enableHTML) {
-                    $priv_string = '<dfn title="' . $current_grant[2] . '">'
-                        . $current_grant[1] . '</dfn>';
-                } else {
-                    $priv_string = $current_grant[1];
-                }
-                $privs[] = $priv_string . ' (`'
-                    . join('`, `', $GLOBALS[$current_grant[0]]) . '`)';
+                $privs[] = PMA_formatPrivilege($current_grant, $enableHTML)
+                    . ' (`' . join('`, `', $GLOBALS[$current_grant[0]]) . '`)';
             } else {
                 $allPrivileges = false;
             }
@@ -623,31 +653,7 @@ function PMA_getHtmlToDisplayPrivilegesTable($db = '*',
         }
     }
     if (isset($row['Table_priv'])) {
-        $row1 = $GLOBALS['dbi']->fetchSingleRow(
-            'SHOW COLUMNS FROM `mysql`.`tables_priv` LIKE \'Table_priv\';',
-            'ASSOC', $GLOBALS['userlink']
-        );
-        // note: in MySQL 5.0.3 we get "Create View', 'Show view';
-        // the View for Create is spelled with uppercase V
-        // the view for Show is spelled with lowercase v
-        // and there is a space between the words
-
-        $av_grants = explode(
-            '\',\'',
-            substr(
-                $row1['Type'],
-                strpos($row1['Type'], '(') + 2,
-                strpos($row1['Type'], ')') - strpos($row1['Type'], '(') - 3
-            )
-        );
-        unset($row1);
-        $users_grants = explode(',', $row['Table_priv']);
-
-        foreach ($av_grants as $current_grant) {
-            $row[$current_grant . '_priv']
-                = in_array($current_grant, $users_grants) ? 'Y' : 'N';
-        }
-        unset($row['Table_priv'], $current_grant, $av_grants, $users_grants);
+        PMA_fillInTablePrivileges($row);
 
         // get columns
         $res = $GLOBALS['dbi']->tryQuery(
@@ -716,8 +722,7 @@ function PMA_getHtmlForResourceLimits($row)
         . 'MAX QUERIES PER HOUR'
         . '</dfn></code></label>' . "\n"
         . '<input type="number" name="max_questions" id="text_max_questions" '
-        . 'value="' . $row['max_questions'] . '" '
-        . 'size="6" maxlength="11" min="0" '
+        . 'value="' . $row['max_questions'] . '" min="0" '
         . 'title="'
         . __(
             'Limits the number of queries the user may send to the server per hour.'
@@ -735,7 +740,7 @@ function PMA_getHtmlForResourceLimits($row)
         . 'MAX UPDATES PER HOUR'
         . '</dfn></code></label>' . "\n"
         . '<input type="number" name="max_updates" id="text_max_updates" '
-        . 'value="' . $row['max_updates'] . '" size="6" maxlength="11" min="0" '
+        . 'value="' . $row['max_updates'] . '" min="0" '
         . 'title="'
         . __(
             'Limits the number of commands that change any table '
@@ -753,7 +758,7 @@ function PMA_getHtmlForResourceLimits($row)
         . 'MAX CONNECTIONS PER HOUR'
         . '</dfn></code></label>' . "\n"
         . '<input type="number" name="max_connections" id="text_max_connections" '
-        . 'value="' . $row['max_connections'] . '" size="6" maxlength="11" min="0" '
+        . 'value="' . $row['max_connections'] . '" min="0" '
         . 'title="' . __(
             'Limits the number of new connections the user may open per hour.'
         )
@@ -769,7 +774,7 @@ function PMA_getHtmlForResourceLimits($row)
         . '</dfn></code></label>' . "\n"
         . '<input type="number" name="max_user_connections" '
         . 'id="text_max_user_connections" '
-        . 'value="' . $row['max_user_connections'] . '" size="6" maxlength="11" '
+        . 'value="' . $row['max_user_connections'] . '" '
         . 'title="'
         . __('Limits the number of simultaneous connections the user may have.')
         . '" />' . "\n"
@@ -993,7 +998,6 @@ function PMA_getHtmlForGlobalOrDbSpecificPrivs($db, $table, $row)
             - (isset($row['Grant_priv']) ? 1 : 0)
         )
         . '" />';
-    $legend = $menu_label = '';
     if ($db == '*') {
         $legend     = __('Global privileges');
         $menu_label = __('Global');
@@ -1229,8 +1233,9 @@ function PMA_getHtmlForGlobalPrivTableWithCheckboxes(
                 )
                 . '/>' . "\n"
                 . '<label for="checkbox_' . $priv[0] . '_priv">'
-                . '<code><dfn title="' . $priv[2] . '">'
-                . $priv[1] . '</dfn></code></label>' . "\n"
+                . '<code>'
+                . PMA_formatPrivilege($priv, true)
+                . '</code></label>' . "\n"
                 . '</div>' . "\n";
         }
         $html_output .= '</fieldset>' . "\n";
@@ -1513,22 +1518,22 @@ function PMA_getHtmlForLoginInformationFields($mode = 'new')
  */
 function PMA_getUsernameAndHostnameLength()
 {
-    $fields_info = $GLOBALS['dbi']->getColumns('mysql', 'user', null, true);
+    /* Fallback values */
     $username_length = 16;
     $hostname_length = 41;
+
+    /* Try to get real lengths from the database */
+    $fields_info = $GLOBALS['dbi']->fetchResult(
+        'SELECT COLUMN_NAME, CHARACTER_MAXIMUM_LENGTH '
+        . 'FROM information_schema.columns '
+        . "WHERE table_schema = 'mysql' AND table_name = 'user' "
+        . "AND COLUMN_NAME IN ('User', 'Host')"
+    );
     foreach ($fields_info as $val) {
-        if ($val['Field'] == 'User') {
-            strtok($val['Type'], '()');
-            $value = strtok('()');
-            if (is_int($value)) {
-                $username_length = $value;
-            }
-        } elseif ($val['Field'] == 'Host') {
-            strtok($val['Type'], '()');
-            $value = strtok('()');
-            if (is_int($value)) {
-                $hostname_length = $value;
-            }
+        if ($val['COLUMN_NAME'] == 'User') {
+            $username_length = $val['CHARACTER_MAXIMUM_LENGTH'];
+        } elseif ($val['COLUMN_NAME'] == 'Host') {
+            $hostname_length = $val['CHARACTER_MAXIMUM_LENGTH'];
         }
     }
     return array($username_length, $hostname_length);
@@ -2380,7 +2385,7 @@ function PMA_getExtraDataForAjaxBehavior(
 
         $new_user_string .= '</td>' . "\n";
         $new_user_string .= '<td>'
-            . '<code>' . join(', ', PMA_extractPrivInfo('', true)) . '</code>'
+            . '<code>' . join(', ', PMA_extractPrivInfo(null, true)) . '</code>'
             . '</td>'; //Fill in privileges here
 
         // if $cfg['Servers'][$i]['users'] and $cfg['Servers'][$i]['usergroups'] are
@@ -2441,7 +2446,7 @@ function PMA_getExtraDataForAjaxBehavior(
             $extra_data['db_specific_privs'] = ! $dbname_is_wildcard;
             $extra_data['db_wildcard_privs'] = $dbname_is_wildcard;
         }
-        $new_privileges = join(', ', PMA_extractPrivInfo('', true));
+        $new_privileges = join(', ', PMA_extractPrivInfo(null, true));
 
         $extra_data['new_privileges'] = $new_privileges;
     }
@@ -3389,11 +3394,10 @@ function PMA_updatePrivileges($username, $hostname, $tablename, $dbname)
 /**
  * Get List of information: Changes / copies a user
  *
- * @return array()
+ * @return array
  */
 function PMA_getDataForChangeOrCopyUser()
 {
-    $row = null;
     $queries = null;
     $password = null;
 
@@ -3621,7 +3625,6 @@ function PMA_getDataForDBInfo()
     $hostname = null;
     $dbname = null;
     $tablename = null;
-    $db_and_table = null;
     $dbname_is_wildcard = null;
 
     if (isset ($_REQUEST['username'])) {

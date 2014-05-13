@@ -354,7 +354,6 @@ function PMA_openExportFile($filename, $quick_export)
  */
 function PMA_closeExportFile($file_handle, $dump_buffer, $save_filename)
 {
-    $message = '';
     $write_result = @fwrite($file_handle, $dump_buffer);
     fclose($file_handle);
     if (strlen($dump_buffer) > 0
@@ -741,5 +740,27 @@ function PMA_exportTable(
     if (! $export_plugin->exportDBFooter($db)) {
         return;
     }
+}
+
+/**
+ * Loads correct page after doing export
+ *
+ * @param string $export_type Export type
+ *
+ * @return void
+ */
+function PMA_showExportPage($export_type)
+{
+    if ($export_type == 'server') {
+        $active_page = 'server_export.php';
+        include_once 'server_export.php';
+    } elseif ($export_type == 'database') {
+        $active_page = 'db_export.php';
+        include_once 'db_export.php';
+    } else {
+        $active_page = 'tbl_export.php';
+        include_once 'tbl_export.php';
+    }
+    exit();
 }
 ?>

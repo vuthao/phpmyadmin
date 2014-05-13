@@ -848,11 +848,18 @@ $cfg['Error_Handler']['display'] = false;
  */
 
 /**
+ * maximum number of first level databases displayed in navigation panel
+ *
+ * @global integer $cfg['FirstLevelNavigationItems']
+ */
+$cfg['FirstLevelNavigationItems'] = 250;
+
+/**
  * maximum number of items displayed in navigation panel
  *
  * @global integer $cfg['MaxNavigationItems']
  */
-$cfg['MaxNavigationItems'] = 250;
+$cfg['MaxNavigationItems'] = 50;
 
 /**
  * turn the select-based light menu into a tree

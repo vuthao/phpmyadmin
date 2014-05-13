@@ -157,15 +157,20 @@ class PMA_NavigationTree
             /*
              * @todo describe a scenario where this code is executed
              */
-            $query  = "SELECT (COUNT(`SCHEMA_NAME`) DIV %d) * %d ";
-            $query .= "FROM `INFORMATION_SCHEMA`.`SCHEMATA` ";
-            $query .= "WHERE `SCHEMA_NAME` < '%s' ";
-            $query .= "ORDER BY `SCHEMA_NAME` ASC";
+            $query  = "SELECT (COUNT(DB_first_level) DIV %d) * %d ";
+            $query .= "from ( ";
+            $query .= " SELECT distinct SUBSTRING_INDEX(SCHEMA_NAME, ";
+            $query .= " '{$GLOBALS['cfg']['NavigationTreeDbSeparator']}', 1) ";
+            $query .= " DB_first_level ";
+            $query .= " FROM INFORMATION_SCHEMA.SCHEMATA ";
+            $query .= " WHERE `SCHEMA_NAME` < '%s' ";
+            $query .= ") t ";
+
             $retval = $GLOBALS['dbi']->fetchValue(
                 sprintf(
                     $query,
-                    (int)$GLOBALS['cfg']['MaxNavigationItems'],
-                    (int)$GLOBALS['cfg']['MaxNavigationItems'],
+                    (int)$GLOBALS['cfg']['FirstLevelNavigationItems'],
+                    (int)$GLOBALS['cfg']['FirstLevelNavigationItems'],
                     PMA_Util::sqlAddSlashes($GLOBALS['db'])
                 )
             );
@@ -792,16 +797,41 @@ class PMA_NavigationTree
     }
 
     /**
+     * Finds whether given tree matches this tree.
+     *
+     * @param array  $tree  Tree to check
+     * @param array  $paths Paths to check
+     *
+     * @return boolean
+     */
+    private function _findTreeMatch($tree, $paths)
+    {
+        $match = false;
+        foreach ($tree as $path) {
+            $match = true;
+            foreach ($paths as $key => $part) {
+                if (! isset($path[$key]) || $part != $path[$key]) {
+                    $match = false;
+                    break;
+                }
+            }
+            if ($match) {
+                break;
+            }
+        }
+        return $match;
+    }
+
+    /**
      * Renders a single node or a branch of the tree
      *
-     * @param Node     $node      The node to render
-     * @param int|bool $recursive Bool: Whether to render a single node or a branch
-     *                            Int: How many levels deep to render
-     * @param string   $class     An additional class for the list item
+     * @param Node   $node      The node to render
+     * @param bool   $recursive Bool: Whether to render a single node or a branch
+     * @param string $class     An additional class for the list item
      *
      * @return string HTML code for the tree node or branch
      */
-    private function _renderNode($node, $recursive = -1, $class = '')
+    private function _renderNode($node, $recursive, $class = '')
     {
         $retval = '';
         $paths  = $node->getPaths();
@@ -815,11 +845,7 @@ class PMA_NavigationTree
             ) {
                 return '';
             }
-            $liClass = '';
-            if ($class || $node->classes) {
-                $liClass = " class='" . trim($class . ' ' . $node->classes) . "'";
-            }
-            $retval .= "<li$liClass>";
+            $retval .= '<li class="' . trim($class . ' ' . $node->classes) . '">';
             $sterile = array(
                 'events',
                 'triggers',
@@ -839,14 +865,6 @@ class PMA_NavigationTree
                 || (! in_array($parentName, $sterile) && ! $node->isNew)
                 || (in_array($node->real_name, $sterile))
             ) {
-                $loaded = '';
-                if ($node->is_group) {
-                    $loaded = ' loaded';
-                }
-                $container = '';
-                if ($node->type == Node::CONTAINER) {
-                    $container = ' container';
-                }
                 $retval .= "<div class='block'>";
                 $iClass = '';
                 if ($class == 'first') {
@@ -856,48 +874,11 @@ class PMA_NavigationTree
                 if (strpos($class, 'last') === false) {
                     $retval .= "<b></b>";
                 }
-                $icon  = PMA_Util::getImage('b_plus.png', __('Expand/Collapse'));
-                $match = 1;
-                foreach ($this->_aPath as $path) {
-                    $match = 1;
-                    foreach ($paths['aPath_clean'] as $key => $part) {
-                        if (! isset($path[$key]) || $part != $path[$key]) {
-                            $match = 0;
-                            break;
-                        }
-                    }
-                    if ($match) {
-                        $loaded = ' loaded';
-                        if (! $node->is_group) {
-                            $icon = PMA_Util::getImage(
-                                'b_minus.png'
-                            );
-                        }
-                        break;
-                    }
-                }
 
-                foreach ($this->_vPath as $path) {
-                    $match = 1;
-                    foreach ($paths['vPath_clean'] as $key => $part) {
-                        if ((! isset($path[$key]) || $part != $path[$key])) {
-                            $match = 0;
-                            break;
-                        }
-                    }
-                    if ($match) {
-                        $loaded = ' loaded';
-                        $icon  = PMA_Util::getImage('b_minus.png');
-                        break;
-                    }
-                }
+                $match = $this->_findTreeMatch($this->_aPath, $paths['aPath_clean']);
+                $match |= $this->_findTreeMatch($this->_vPath, $paths['vPath_clean']);
 
-                if (! $GLOBALS['cfg']['NavigationTreeDisableDatabaseExpansion']) {
-                    $retval .= "<a class='expander$loaded$container'";
-                } else {
-                    $retval .= "<a";
-                    $icon = "";
-                }
+                $retval .= '<a class="' . $node->getCssClasses($match) . '"';
                 $retval .= " href='#'>";
                 $retval .= "<span class='hide aPath'>";
                 $retval .= $paths['aPath'];
@@ -909,7 +890,7 @@ class PMA_NavigationTree
                 $retval .= $this->_pos;
                 $retval .= "</span>";
                 $retval .= $this->_getPaginationParamsHtml($node);
-                $retval .= $icon;
+                $retval .= $node->getIcon($match);
 
                 $retval .= "</a>";
                 $retval .= "</div>";
@@ -1000,20 +981,16 @@ class PMA_NavigationTree
             $children = $node->children;
             usort($children, array('PMA_NavigationTree', 'sortNode'));
             $buffer = '';
+            $extra_class = '';
             for ($i=0, $nbChildren = count($children); $i < $nbChildren; $i++) {
-                if ($i + 1 != $nbChildren) {
-                    $buffer .= $this->_renderNode(
-                        $children[$i],
-                        true,
-                        $children[$i]->classes
-                    );
-                } else {
-                    $buffer .= $this->_renderNode(
-                        $children[$i],
-                        true,
-                        $children[$i]->classes . ' last'
-                    );
+                if ($i + 1 == $nbChildren) {
+                    $extra_class = ' last';
                 }
+                $buffer .= $this->_renderNode(
+                    $children[$i],
+                    true,
+                    $children[$i]->classes . $extra_class
+                );
             }
             if (! empty($buffer)) {
                 if ($wrap) {
@@ -1145,7 +1122,7 @@ class PMA_NavigationTree
                  array('server' => $GLOBALS['server']),
                  'navigation.php',
                  'frame_navigation',
-                 $GLOBALS['cfg']['MaxNavigationItems'],
+                 $GLOBALS['cfg']['FirstLevelNavigationItems'],
                  'pos',
                  array('dbselector')
              );

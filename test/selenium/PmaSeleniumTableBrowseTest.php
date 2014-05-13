@@ -69,7 +69,7 @@ class PMA_SeleniumTableBrowseTest extends PMA_SeleniumBase
         // case 1
         $this->byLinkText("name")->click();
         $this->waitForElementNotPresent("byId", "loading_parent");
-        usleep(100);
+        $this->sleep();
 
         $this->assertEquals(
             "1",
@@ -89,7 +89,7 @@ class PMA_SeleniumTableBrowseTest extends PMA_SeleniumBase
         // case 2
         $this->byLinkText("name")->click();
         $this->waitForElementNotPresent("byId", "loading_parent");
-        usleep(100);
+        $this->sleep();
 
         $this->assertEquals(
             "2",
@@ -109,7 +109,7 @@ class PMA_SeleniumTableBrowseTest extends PMA_SeleniumBase
         // case 2
         $this->byLinkText("datetimefield")->click();
         $this->waitForElementNotPresent("byId", "loading_parent");
-        usleep(100);
+        $this->sleep();
 
         $this->assertEquals(
             "3",
@@ -129,7 +129,7 @@ class PMA_SeleniumTableBrowseTest extends PMA_SeleniumBase
         // case 4
         $this->byLinkText("datetimefield")->click();
         $this->waitForElementNotPresent("byId", "loading_parent");
-        usleep(100);
+        $this->sleep();
 
         $this->assertEquals(
             "2",
@@ -156,9 +156,11 @@ class PMA_SeleniumTableBrowseTest extends PMA_SeleniumBase
      */
     public function testChangeRecords()
     {
+        $this->sleep();
         $this->byCssSelector(
             "table#table_results tbody tr:nth-child(2) td:nth-child(2) a"
         )->click();
+        $this->sleep();
         /* TODO: this occassionally fails, so there is probably something wrong */
         $this->waitForElement("byId", "insertForm");
 

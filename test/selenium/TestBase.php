@@ -56,20 +56,23 @@ abstract class PMA_SeleniumBase extends PHPUnit_Extensions_Selenium2TestCase
             $strategy = 'shared';
             $build_local = false;
             $build_id = 'Manual';
+            $project_name = 'phpMyAdmin';
             if (getenv('BUILD_TAG')) {
                 $build_id = getenv('BUILD_TAG');
                 $strategy = 'isolated';
+                $project_name = 'phpMyAdmin (Jenkins)';
             } elseif (getenv('TRAVIS_JOB_NUMBER')) {
                 $build_id = 'travis-' . getenv('TRAVIS_JOB_NUMBER');
                 $build_local = true;
                 $strategy = 'isolated';
+                $project_name = 'phpMyAdmin (Travis)';
             }
 
             $capabilities = array(
                 'browserstack.user' => $GLOBALS['TESTSUITE_BROWSERSTACK_USER'],
                 'browserstack.key' => $GLOBALS['TESTSUITE_BROWSERSTACK_KEY'],
                 'browserstack.debug' => false,
-                'project' => 'phpMyAdmin',
+                'project' => $project_name,
                 'build' => $build_id,
             );
 
@@ -141,30 +144,12 @@ abstract class PMA_SeleniumBase extends PHPUnit_Extensions_Selenium2TestCase
                 array(
                     'browserName' => $GLOBALS['TESTSUITE_SELENIUM_BROWSER'],
                     'host' => $GLOBALS['TESTSUITE_SELENIUM_HOST'],
-                    'port' => $GLOBALS['TESTSUITE_SELENIUM_PORT'],
+                    'port' => intval($GLOBALS['TESTSUITE_SELENIUM_PORT']),
                 )
             );
         } else {
             return array();
         }
-    }
-
-    /**
-     * Sets session with setting URL to workaround phpunit-selenium issue
-     * https://github.com/sebastianbergmann/phpunit-selenium/issues/295
-     *
-     * @return session object
-     */
-    public function prepareSession()
-    {
-        $result = parent::prepareSession();
-        if (! empty($GLOBALS['TESTSUITE_SELENIUM_COVERAGE'])) {
-            $this->coverageScriptUrl = $GLOBALS['TESTSUITE_SELENIUM_COVERAGE'];
-            $this->url($this->coverageScriptUrl);
-        } else {
-            $this->url('');
-        }
-        return $result;
     }
 
     /**
@@ -404,8 +389,21 @@ abstract class PMA_SeleniumBase extends PHPUnit_Extensions_Selenium2TestCase
             if (!$this->isElementPresent($func, $arg)) {
                 return true;
             }
-            usleep(100);
+            usleep(5000);
         }
+    }
+
+    /**
+     * Sleeps while waiting for browser to perform an action.
+     *
+     * @todo This method should not be used, but rather there would be
+     *       explicit waiting for some elements.
+     *
+     * @return void
+     */
+    public function sleep()
+    {
+        usleep(5000);
     }
 
     /**
@@ -549,12 +547,12 @@ abstract class PMA_SeleniumBase extends PHPUnit_Extensions_Selenium2TestCase
         /* We need to resize to ensure it fits into accessible area */
         $this->execute(
             array(
-                'script' => "$('#topmenu').css('width', '50%')"
-                    . ".menuResizer('destroy');",
+                'script' => "$('#topmenu').css('font-size', '50%');"
+                    . "$(window).resize()",
                 'args' => array()
             )
         );
-        $this->waitForElementNotPresent('byCssSelector', 'li.submenu');
+        $this->sleep();
     }
 
     /**
@@ -574,6 +572,9 @@ abstract class PMA_SeleniumBase extends PHPUnit_Extensions_Selenium2TestCase
             'byCssSelector',
             'li.last.table'
         );
+
+        /* TODO: Timing issue of expanding navigation tree */
+        $this->sleep();
 
         // go to table page
         $this->waitForElement(

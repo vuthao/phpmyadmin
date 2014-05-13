@@ -1046,7 +1046,7 @@ function PMA_getHtmlForColumnCollation($columnNumber, $ci, $ci_offset, $columnMe
  * @param int $ci                       cell index
  * @param int $ci_offset                cell index offset
  * @param int $length_values_input_size length values input size
- * @param int $length_to_display        length to disply
+ * @param int $length_to_display        length to display
  *
  * @return string
  */
@@ -1291,19 +1291,12 @@ function PMA_getHtmlForColumnAttributes($columnNumber, $columnMeta, $type_upper,
 /**
  * Function to get form parameters for old column
  *
-<<<<<<< HEAD
- * @param array $columnMeta   column meta
- * @param int   $length       length
- * @param array $form_params  form parameters
- * @param int   $columnNumber column/field number
-=======
  * @param array  $columnMeta           column meta
  * @param int    $length               length
  * @param array  $form_params          form parameters
  * @param int    $columnNumber         column/field number
  * @param string $type                 type in lowercase without the length
  * @param array  $extracted_columnspec details about the column spec 
->>>>>>> db6ec58
  *
  * @return array
  */

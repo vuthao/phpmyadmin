@@ -1033,6 +1033,7 @@ function PMA_makegrid(t, enableResize, enableReorder, enableVisib, enableGridEdi
                 }
                 if ($(g.cEdit).offset().left + $editArea.outerWidth() > $(document.body).width()) {
                     $editArea.addClass('edit_area_right');
+                    $editArea.css('top','');
                 }
                 if ($editArea.children().length > 0 && !is_null) {
                     $editArea.show();
@@ -1731,8 +1732,8 @@ function PMA_makegrid(t, enableResize, enableReorder, enableVisib, enableGridEdi
             });
             $('html').click(function (e) {
                 // hide edit cell if the click is not fromDat edit area
-                if ($(e.target).parents().index($(g.cEdit)) == -1
-                    && ! $(e.target).parents('.ui-datepicker-header').length
+                if ($(e.target).parents().index($(g.cEdit)) == -1 &&
+                    ! $(e.target).parents('.ui-datepicker-header').length
                 ) {
                     g.hideEditCell();
                 }
@@ -1860,7 +1861,7 @@ function PMA_makegrid(t, enableResize, enableReorder, enableVisib, enableGridEdi
             });
         })
         .mouseleave(function (e) {
-            g.showSortHint = false;            
+            g.showSortHint = false;
             g.showRemColHint = false;
             $(t).find("th.draggable").tooltip("option", {
                 content: g.updateHint()

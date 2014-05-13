@@ -988,14 +988,14 @@ class PMA_DisplayResults
     /**
      * Get the headers of the results table
      *
-     * @param array        &$is_display                 which elements to display
-     * @param array|string $analyzed_sql                the analyzed query
-     * @param string       $sort_expression             sort expression
-     * @param string       $sort_expression_nodirection sort expression
-     *                                                  without direction
-     * @param string       $sort_direction              sort direction
-     * @param boolean      $is_limited_display          with limited operations
-     *                                                  or not
+     * @param array   &$is_display                 which elements to display
+     * @param array   $analyzed_sql                the analyzed query
+     * @param string  $sort_expression             sort expression
+     * @param string  $sort_expression_nodirection sort expression
+     *                                             without direction
+     * @param string  $sort_direction              sort direction
+     * @param boolean $is_limited_display          with limited operations
+     *                                             or not
      *
      * @return string html content
      *
@@ -1004,7 +1004,7 @@ class PMA_DisplayResults
      * @see    getTable()
      */
     private function _getTableHeaders(
-        &$is_display, $analyzed_sql = '',
+        &$is_display, $analyzed_sql,
         $sort_expression = '', $sort_expression_nodirection = '',
         $sort_direction = '', $is_limited_display = false
     ) {
@@ -1959,14 +1959,12 @@ class PMA_DisplayResults
             $sort_tbl_new = $sort_tbl;
             // Test to detect if the column name is a standard name
             // Standard name has the table name prefixed to the column name
-            $is_standard_name = false;
             if (strpos($name_to_use_in_sort, '.') !== false) {
                 $matches = explode('.', $name_to_use_in_sort);
                 // Matches[0] has the table name
                 // Matches[1] has the column name
                 $name_to_use_in_sort = $matches[1];
                 $sort_tbl_new = $matches[0];
-                $is_standard_name = true;
             }
 
 
@@ -1979,7 +1977,6 @@ class PMA_DisplayResults
             // If this the first column name in the order by clause add
             // order by clause to the  column name
             $query_head = $is_first_clause ? "\nORDER BY " : "";
-            $tbl = $is_standard_name ? $sort_tbl_new : $sort_tbl;
             // Again a check to see if the given column is a aggregate column
             if (strpos($name_to_use_in_sort, '(') !== false) {
                 $sort_order .=  $query_head  . $name_to_use_in_sort . ' ' ;
@@ -2662,15 +2659,6 @@ class PMA_DisplayResults
             if (($is_display['edit_lnk'] != self::NO_EDIT_OR_DELETE)
                 || ($is_display['del_lnk'] != self::NO_EDIT_OR_DELETE)
             ) {
-                // We need to copy the value
-                // or else the == 'both' check will always return true
-
-                if ($GLOBALS['cfg']['ActionLinksMode'] === self::POSITION_BOTH) {
-                    $iconic_spacer = '<div class="nowrap">';
-                } else {
-                    $iconic_spacer = '';
-                }
-
                 // 1.2.1 Modify link(s) - update row case
                 if ($is_display['edit_lnk'] == self::UPDATE_ROW) {
 
@@ -2847,7 +2835,7 @@ class PMA_DisplayResults
                 : false;
 
             // Wrap MIME-transformations. [MIME]
-            $default_function = '_mimeDefaultFunction'; // default_function
+            $default_function = 'PMA_mimeDefaultFunction'; // default_function
             $transformation_plugin = $default_function;
             $transform_options = array();
 
@@ -3810,7 +3798,7 @@ class PMA_DisplayResults
                         $transform_options,
                         $meta
                     )
-                    : $this->$default_function($column, array(), $meta);
+                    : $default_function($column, array(), $meta);
 
                 if ($is_field_truncated) {
                     $class .= ' truncated';
@@ -4890,7 +4878,7 @@ class PMA_DisplayResults
                 $row = $GLOBALS['dbi']->fetchRow($dt_result);
 
                 // initializing default arguments
-                $default_function = '_mimeDefaultFunction';
+                $default_function = 'PMA_mimeDefaultFunction';
                 $transformation_plugin = $default_function;
                 $transform_options = array();
 
@@ -5573,7 +5561,7 @@ class PMA_DisplayResults
                 );
             } else {
 
-                $result = $this->$default_function($result, array(), $meta);
+                $result = $default_function($result, array(), $meta);
                 if (stristr($meta->type, self::BLOB_FIELD)
                     && $_SESSION['tmpval']['display_blob']
                 ) {
@@ -5709,7 +5697,7 @@ class PMA_DisplayResults
                         $transform_options,
                         $meta
                     )
-                    : $this->$default_function($data)
+                    : $default_function($data)
                 )
                 . ' <code>[-&gt;' . $dispval . ']</code>';
 
@@ -5762,10 +5750,10 @@ class PMA_DisplayResults
                     if ($relational_display == self::RELATIONAL_DISPLAY_COLUMN) {
                         // user chose "relational display field" in the
                         // display options, so show display field in the cell
-                        $result .= $this->$default_function($dispval);
+                        $result .= $default_function($dispval);
                     } else {
                         // otherwise display data in the cell
-                        $result .= $this->$default_function($data);
+                        $result .= $default_function($data);
                     }
 
                 }
@@ -5779,7 +5767,7 @@ class PMA_DisplayResults
                     $transform_options,
                     $meta
                 )
-                : $this->$default_function($data)
+                : $default_function($data)
             );
         }
 
@@ -6071,32 +6059,6 @@ class PMA_DisplayResults
         return $ret;
 
     } // end of the '_getCheckboxAndLinks()' function
-
-
-    /**
-     * Replace some html-unfriendly stuff
-     *
-     * @param string $buffer String to process
-     *
-     * @return String Escaped and cleaned up text suitable for html.
-     *
-     * @access private
-     *
-     * @see    _getDataCellForBlobField(), _getRowData(),
-     *         _handleNonPrintableContents()
-     */
-    private function _mimeDefaultFunction($buffer)
-    {
-        $buffer = htmlspecialchars($buffer);
-        $buffer = str_replace(
-            "\011",
-            ' &nbsp;&nbsp;&nbsp;',
-            str_replace('  ', ' &nbsp;', $buffer)
-        );
-        $buffer = preg_replace("@((\015\012)|(\015)|(\012))@", '<br />', $buffer);
-
-        return $buffer;
-    }
 
     /**
      * Display binary columns as hex string if requested

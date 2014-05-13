@@ -313,6 +313,12 @@ Todo now:
 
  8. add a milestone for this new version in the bugs tickets, at https://sourceforge.net/p/phpmyadmin/bugs/milestones
 
- 9. the end :-)
+ 9. send a private twitter message to @phpmya, containing a short version of the announcement
+
+10. update demo/php/versions.ini in the scripts repository so that the demo server shows current versions
+
+11. in case of  new major release, update the render.py in website repository to include the new major releases
+
+12. the end :-)
 
 END
