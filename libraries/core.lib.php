@@ -353,12 +353,12 @@ function PMA_getRealSize($size = 0)
 
     $scan = array(
         'gb' => 1073741824, //1024 * 1024 * 1024,
-        'g' => 1073741824, //1024 * 1024 * 1024,
-        'mb' => 1048576,
-        'm' => 1048576,
-        'kb' => 1024,
-        'k' => 1024,
-        'b' => 1,
+        'g'  => 1073741824, //1024 * 1024 * 1024,
+        'mb' =>    1048576,
+        'm'  =>    1048576,
+        'kb' =>       1024,
+        'k'  =>       1024,
+        'b'  =>          1,
     );
 
     foreach ($scan as $unit => $factor) {
@@ -901,8 +901,33 @@ function PMA_mimeDefaultFunction($buffer)
         ' &nbsp;&nbsp;&nbsp;',
         str_replace('  ', ' &nbsp;', $buffer)
     );
-    $buffer = preg_replace("@((\015\012)|(\015)|(\012))@", '<br />', $buffer);
+    $buffer = preg_replace("@((\015\012)|(\015)|(\012))@", '<br />' . "\n", $buffer);
 
     return $buffer;
+}
+
+/**
+ * Displays SQL query before executing.
+ *
+ * @param array|string $query_data Array containing queries or query itself
+ *
+ * @return void
+ */
+function PMA_previewSQL($query_data)
+{
+    $retval = '<div class="preview_sql">';
+    if (empty($query_data)) {
+        $retval .= __('No change');
+    } elseif (is_array($query_data)) {
+        foreach ($query_data as $query) {
+            $retval .= PMA_Util::formatSql($query);
+        }
+    } else {
+        $retval .= PMA_Util::formatSql($query_data);
+    }
+    $retval .= '</div>';
+    $response = PMA_Response::getInstance();
+    $response->addJSON('sql_data', $retval);
+    exit;
 }
 ?>

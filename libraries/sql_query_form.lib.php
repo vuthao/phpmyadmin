@@ -88,7 +88,7 @@ function PMA_getHtmlForSqlQueryForm(
         $html .= ' action="import.php" ' . $enctype . ' name="sqlform">';
     } else {
         $html .= '<form method="post" action="import.php" ' . $enctype;
-        $html .= ' class="ajax"';
+        $html .= ' class="ajax lock-page"';
         $html .= ' id="sqlqueryform" name="sqlform">' . "\n";
     }
 
@@ -126,7 +126,8 @@ function PMA_getHtmlForSqlQueryForm(
 
     // Bookmark Support
     if ($display_tab === 'full' || $display_tab === 'history') {
-        if (! empty($GLOBALS['cfg']['Bookmark'])) {
+        $cfgBookmark = PMA_Bookmark_getParams();
+        if ($cfgBookmark) {
             $html .= PMA_getHtmlForSqlQueryFormBookmark();
         }
     }
@@ -313,7 +314,8 @@ function PMA_getHtmlForSqlQueryFormInsert(
     $html .= '<div class="clearfloat"></div>' . "\n";
     $html .= '</div>' . "\n";
 
-    if (! empty($GLOBALS['cfg']['Bookmark'])) {
+    $cfgBookmark = PMA_Bookmark_getParams();
+    if ($cfgBookmark) {
         $html .= '<div id="bookmarkoptions">';
         $html .= '<div class="formelement">';
         $html .= '<label for="bkm_label">'
@@ -390,7 +392,7 @@ function PMA_getHtmlForSqlQueryFormInsert(
 /**
  * return HTML for sql Query Form Bookmark
  *
- * @return string|void
+ * @return string|null
  *
  * @usedby  PMA_getHtmlForSqlQueryForm()
  */
@@ -398,7 +400,7 @@ function PMA_getHtmlForSqlQueryFormBookmark()
 {
     $bookmark_list = PMA_Bookmark_getList($GLOBALS['db']);
     if (! $bookmark_list || count($bookmark_list) < 1) {
-        return;
+        return null;
     }
 
     $html  = '<fieldset id="fieldsetBookmarkOptions">';
@@ -500,7 +502,6 @@ function PMA_getHtmlForSqlQueryFormUpload()
 
     $html .= '<div class="clearfloat"></div>' . "\n";
     $html .= '</fieldset>';
-
 
     $html .= '<fieldset id="" class="tblFooters">';
     $html .= __('Character set of the file:') . "\n";

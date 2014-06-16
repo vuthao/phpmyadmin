@@ -89,8 +89,6 @@ $strConfigDefaultTabTable_name = __('Default table tab');
 $strConfigHideStructureActions_desc
     = __('Whether the table structure actions should be hidden.');
 $strConfigHideStructureActions_name = __('Hide table structure actions');
-$strConfigDisplayBinaryAsHex_desc = __('Show binary contents as HEX by default.');
-$strConfigDisplayBinaryAsHex_name = __('Show binary contents as HEX');
 $strConfigDisplayServersList_desc
     = __('Show server listing as a list instead of a drop down.');
 $strConfigDisplayServersList_name = __('Display servers as a list');
@@ -175,7 +173,7 @@ $strConfigExport_sql_create_table_name = sprintf(__('Add %s'), 'CREATE TABLE');
 $strConfigExport_sql_create_view_name = sprintf(__('Add %s'), 'CREATE VIEW');
 $strConfigExport_sql_create_trigger_name
     = sprintf(__('Add %s'), 'CREATE TRIGGER');
-$strConfigExport_sql_hex_for_blob_name = __('Use hexadecimal for BLOB');
+$strConfigExport_sql_hex_for_binary_name = __('Use hexadecimal for BINARY & BLOB');
 $strConfigExport_sql_if_not_exists_name = sprintf(__('Add %s'), 'IF NOT EXISTS');
 $strConfigExport_sql_ignore_name = __('Use ignore inserts');
 $strConfigExport_sql_include_comments_name = __('Comments');
@@ -615,6 +613,12 @@ $strConfigServers_MaxTableUiprefs_desc = __(
 );
 $strConfigServers_MaxTableUiprefs_name
     = __('Maximal number of table preferences to store');
+$strConfigServers_savedsearches_name = __('QBE saved searches table');
+$strConfigServers_savedsearches_desc = __(
+    'Leave blank for no QBE saved searches support, suggested: '
+    . '[kbd]pma__savedsearches[/kbd].'
+);
+
 $strConfigServers_nopassword_desc = __('Try to connect without password.');
 $strConfigServers_nopassword_name = __('Connect without password');
 $strConfigServers_only_db_desc = __(

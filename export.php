@@ -64,6 +64,7 @@ if (!defined('TESTSUITE')) {
             'htmlword_structure_or_data',
             'htmlword_null',
             'htmlword_columns',
+            'mediawiki_headers',
             'mediawiki_structure_or_data',
             'mediawiki_caption',
             'pdf_report_title',
@@ -122,7 +123,7 @@ if (!defined('TESTSUITE')) {
             'sql_type',
             'sql_insert_syntax',
             'sql_max_query_size',
-            'sql_hex_for_blob',
+            'sql_hex_for_binary',
             'sql_utc_time',
             'sql_drop_database',
             'csv_separator',
@@ -391,7 +392,8 @@ if (!defined('TESTSUITE')) {
             PMA_exportTable(
                 $db, $table, $whatStrucOrData, $export_plugin, $crlf, $err_url,
                 $export_type, $do_relation, $do_comments, $do_mime, $do_dates,
-                $allrows, $limit_to, $limit_from, $sql_query
+                $allrows, $limit_to, $limit_from, $sql_query,
+                PMA_SQP_getAliasesFromQuery($sql_query, $db)
             );
         }
         if (! $export_plugin->exportFooter()) {

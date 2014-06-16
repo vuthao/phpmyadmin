@@ -390,7 +390,7 @@ function PMA_getSqlConstraintsQueryForFullDb(
         $sql_constraints = '';
         $sql_drop_foreign_keys = '';
         $export_sql_plugin->getTableDef(
-            $db, $each_table, "\n", '', false, false
+            $db, $each_table, "\n", '', false, false, false, false
         );
         if ($move && ! empty($sql_drop_foreign_keys)) {
             $GLOBALS['dbi']->query($sql_drop_foreign_keys);
@@ -448,7 +448,7 @@ function PMA_getSqlQueryForCopyTable($tables_full, $sql_query, $move, $db)
 {
     $error = false;
     foreach ($tables_full as $each_table => $tmp) {
-        // skip the views; we have creted stand-in definitions
+        // skip the views; we have created stand-in definitions
         if (PMA_Table::isView($db, $each_table)) {
             continue;
         }

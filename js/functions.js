@@ -40,6 +40,10 @@ var codemirror_inline_editor = false;
 var chart_activeTimeouts = {};
 
 /**
+ * @var central_column_list array to hold the columns in central list per db.
+ */
+var central_column_list = [];
+/**
  * Make sure that ajax requests will not be cached
  * by appending a random variable to their parameters
  */
@@ -53,7 +57,36 @@ $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
 });
 
 /**
- * Show notices for ENUM columns; add/hide the default value 
+ * HTML escaping
+ */
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+/**
+ * Hides/shows the default value input field, depending on the default type
+ * Ticks the NULL checkbox if NULL is chosen as default value.
+ */
+function PMA_hideShowDefaultValue($default_type)
+{
+    if ($default_type.val() == 'USER_DEFINED') {
+        $default_type.siblings('.default_value').show().focus();
+    } else {
+        $default_type.siblings('.default_value').hide();
+        if ($default_type.val() == 'NULL') {
+            var $null_checkbox = $default_type.closest('tr').find('.allow_null');
+            $null_checkbox.prop('checked', true);
+        }
+    }
+}
+
+/**
+ * Show notices for ENUM columns; add/hide the default value
  *
  */
 function PMA_verifyColumnsProperties()
@@ -401,14 +434,14 @@ function confirmQuery(theForm1, sqlQuery1)
  */
 function checkSqlQuery(theForm)
 {
+    var sqlQuery;
     // get the textarea element containing the query
     var sqlQuery;
     if (codemirror_editor) {
         codemirror_editor.save();
-        sqlQuery = codemirror_editor.display.input;
-        sqlQuery.value = codemirror_editor.getValue();
+        sqlQuery = codemirror_editor.getValue();
     } else {
-        sqlQuery = theForm.elements.sql_query;
+        sqlQuery = theForm.elements.sql_query.value;
     }
     var isEmpty  = 1;
     var space_re = new RegExp('\\s+');
@@ -426,7 +459,7 @@ function checkSqlQuery(theForm)
         return true;
     }
     // Checks for "DROP/DELETE/ALTER" statements
-    if (sqlQuery.value.replace(space_re, '') !== '') {
+    if (sqlQuery.replace(space_re, '') !== '') {
         if (confirmQuery(theForm, sqlQuery)) {
             return true;
         } else {
@@ -1405,7 +1438,7 @@ AJAX.registerOnload('functions.js', function () {
         }
 
         var $form = $(this).prev('form');
-        var sql_query  = $form.find("input[name='sql_query']").val();
+        var sql_query  = $form.find("input[name='sql_query']").val().trim();
         var $inner_sql = $(this).parent().prev().find('code.sql');
         var old_text   = $inner_sql.html();
 
@@ -2289,6 +2322,13 @@ AJAX.registerOnload('functions.js', function () {
                 .submit();
         }
     });
+
+    $('body')
+    .off('click', 'input.preview_sql')
+    .on('click', 'input.preview_sql', function () {
+        var $form = $(this).closest('form');
+        PMA_previewSQL($form);
+    });
 });
 
 
@@ -2645,23 +2685,6 @@ AJAX.registerOnload('functions.js', function () {
 });
 
 /**
- * Hides/shows the default value input field, depending on the default type
- * Ticks the NULL checkbox if NULL is chosen as default value.
- */
-function PMA_hideShowDefaultValue($default_type)
-{
-    if ($default_type.val() == 'USER_DEFINED') {
-        $default_type.siblings('.default_value').show().focus();
-    } else {
-        $default_type.siblings('.default_value').hide();
-        if ($default_type.val() == 'NULL') {
-            var $null_checkbox = $default_type.closest('tr').find('.allow_null');
-            $null_checkbox.prop('checked', true);
-        }
-    }
-}
-
-/**
  * If the column does not allow NULL values, makes sure that default is not NULL
  */
 function PMA_validateDefaultValue($null_checkbox)
@@ -2674,6 +2697,48 @@ function PMA_validateDefaultValue($null_checkbox)
     }
 }
 
+/**
+ * function to populate the input fields on picking a column from central list
+ *
+ * @param string  input_id input id of the name field for the column to be populated
+ * @param integer offset of the selected column in central list of columns
+ */
+function autoPopulate(input_id, offset)
+{
+    var db = PMA_commonParams.get('db');
+    var table = PMA_commonParams.get('table');
+    input_id = input_id.substring(0, input_id.length - 1);
+    $('#'+input_id+'1').val(central_column_list[db+'_'+table][offset].col_name);
+    var col_type = central_column_list[db+'_'+table][offset].col_type.toUpperCase();
+    $('#'+input_id+'2').val(col_type);
+    $('#'+input_id+'3').val(central_column_list[db+'_'+table][offset].col_length);
+    if(col_type === 'ENUM' || col_type === 'SET') {
+        $('#'+input_id+'3').next().show();
+    } else {
+        $('#'+input_id+'3').next().hide();
+    }
+    var col_default = central_column_list[db+'_'+table][offset].col_default.toUpperCase();
+    if (col_default !== '' && col_default !== 'NULL' && col_default !== 'CURRENT_TIMESTAMP') {
+        $('#'+input_id+'4').val("USER_DEFINED");
+        $('#'+input_id+'4').next().next().show();
+        $('#'+input_id+'4').next().next().val(central_column_list[db+'_'+table][offset].col_default);
+    } else {
+        $('#'+input_id+'4').val(central_column_list[db+'_'+table][offset].col_default);
+        $('#'+input_id+'4').next().next().hide();
+    }
+    $('#'+input_id+'5').val(central_column_list[db+'_'+table][offset].col_collation);
+    $('#'+input_id+'6').val(central_column_list[db+'_'+table][offset].col_extra);
+    if(central_column_list[db+'_'+table][offset].col_extra.toUpperCase() === 'AUTO_INCREMENT') {
+        $('#'+input_id+'9').attr("checked","checked");
+    } else {
+        $('#'+input_id+'9').removeAttr("checked");
+    }
+    if(central_column_list[db+'_'+table][offset].col_isNull !== '0') {
+        $('#'+input_id+'7').attr("checked","checked");
+    } else {
+        $('#'+input_id+'7').removeAttr("checked");
+    }
+}
 
 /**
  * Unbind all event handlers before tearing down a page
@@ -2682,6 +2747,7 @@ AJAX.registerTeardown('functions.js', function () {
     $("a.open_enum_editor").die('click');
     $("input.add_value").die('click');
     $("#enum_editor td.drop").die('click');
+    $('a.central_columns_dialog').die('click');
 });
 /**
  * @var $enum_editor_dialog An object that points to the jQuery
@@ -2837,6 +2903,112 @@ AJAX.registerOnload('functions.js', function () {
         });
         // Focus the slider, otherwise it looks nearly transparent
         $('a.ui-slider-handle').addClass('ui-state-focus');
+        return false;
+    });
+
+    $('a.central_columns_dialog').live('click',function(e) {
+        var href = "db_central_columns.php";
+        var db = PMA_commonParams.get('db');
+        var table = PMA_commonParams.get('table');
+        var maxRows = $(this).data('maxrows');
+        var params = {
+            'ajax_request' : true,
+            'token' : PMA_commonParams.get('token'),
+            'db' : PMA_commonParams.get('db'),
+            'cur_table' : PMA_commonParams.get('table'),
+            'getColumnList':true
+        };
+        var colid = $(this).closest('td').find("input").attr("id");
+        var fields = '';
+        if (! (db+'_'+table in central_column_list)) {
+            central_column_list.push(db+'_'+table);
+            $.ajax({
+                type: 'POST',
+                url: href,
+                data: params,
+                success: function (data) {
+                    central_column_list[db+'_'+table] = $.parseJSON(data.message);
+                },
+                async:false
+            });
+        }
+        var i = 0;
+        var list_size = central_column_list[db+'_'+table].length;
+        var min = (list_size<=maxRows)?list_size:maxRows;
+        for (i = 0; i<min; i++) {
+            fields += '<tr><td><div><span style="font-size:14px; font-weight:bold">'+escapeHtml(central_column_list[db+'_'+table][i].col_name)+
+                '</span><br><span style="color:gray">'+central_column_list[db+'_'+table][i].col_type;
+            if(central_column_list[db+'_'+table][i].col_length !== '') {
+                fields += '('+escapeHtml(central_column_list[db+'_'+table][i].col_length)+') ';
+            }
+            fields += escapeHtml(central_column_list[db+'_'+table][i].col_extra)+'</span>'+
+                '</div></td><td><input class="pick" style="width:100%" type="submit" value="'+PMA_messages.pickColumn+'" onclick="autoPopulate(\''+colid+'\','+i+')"/></td></tr>';
+        }
+        var result_pointer = i;
+        var search_in = '<input type="text" class="filter_rows" placeholder="'+PMA_messages.searchList+'">';
+        if (fields === '') {
+            fields = $.sprintf(PMA_messages.strEmptyCentralList, "'"+db+"'");
+            search_in = '';
+        }
+        var seeMore = '';
+        if (list_size > maxRows) {
+            seeMore = "<fieldset class='tblFooters' style='text-align:center;font-weight:bold'><a href='#' id='seeMore'>"+PMA_messages.seeMore+"</a></fieldset>";
+        }
+        var central_columns_dialog = "<div style='max-height:400px'>" +
+                    "<fieldset>" +
+                    search_in+
+                    "<table id='col_list' style='width:100%' class='values'>" + fields + "</table>" +
+                    "</fieldset>"+
+                    seeMore+
+                    "</div>";
+
+        var width = parseInt(
+            (parseInt($('html').css('font-size'), 10) / 13) * 500,
+            10
+        );
+        if (! width) {
+            width = 500;
+        }
+        var buttonOptions = {};
+        var $central_columns_dialog = $(central_columns_dialog).dialog({
+            minWidth: width,
+            modal: true,
+            title: PMA_messages.pickColumnTitle,
+            buttons: buttonOptions,
+            open: function () {
+                $('#col_list').on("click",".pick", function(){
+                    $central_columns_dialog.remove();
+                });
+                $(".filter_rows").on("keyup", function () {
+                    $.uiTableFilter($("#col_list"), $(this).val());
+                });
+                $("#seeMore").click(function() {
+                    fields = '';
+                    min = (list_size<=maxRows+result_pointer)?list_size:maxRows+result_pointer;
+                    for (i = result_pointer; i < min; i++) {
+                        fields += '<tr><td><div><span style="font-size:14px; font-weight:bold">'+central_column_list[db+'_'+table][i].col_name+
+                            '</span><br><span style="color:gray">'+central_column_list[db+'_'+table][i].col_type;
+                        if(central_column_list[db+'_'+table][i].col_length !== '') {
+                            fields += '('+central_column_list[db+'_'+table][i].col_length+') ';
+                        }
+                        fields += central_column_list[db+'_'+table][i].col_extra+'</span>'+
+                            '</div></td><td><input class="pick" style="width:100%" type="submit" value="'+PMA_messages.pickColumn+'" onclick="autoPopulate(\''+colid+'\','+i+')"/></td></tr>';
+                    }
+                    $("#col_list").append(fields);
+                    result_pointer = i;
+                    if (result_pointer === list_size) {
+                        $('.tblFooters').hide();
+                    }
+                    return false;
+                });
+                $(this).closest('.ui-dialog').find('.ui-dialog-buttonpane button:first').focus();
+            },
+            close: function () {
+                $('#col_list').off("click",".pick");
+                $(".filter_rows").off("keyup");
+                $(this).remove();
+            }
+        });
         return false;
     });
 
@@ -2998,6 +3170,11 @@ function indexEditorDialog(url, title, callback_success, callback_failure)
                 PMA_ajaxShowMessage($error, false);
             }
         }); // end $.post()
+    };
+    button_options[PMA_messages.strPreviewSQL] = function () {
+        // Function for Previewing SQL
+        var $form = $('#index_frm');
+        PMA_previewSQL($form);
     };
     button_options[PMA_messages.strCancel] = function () {
         $(this).dialog('close');
@@ -3841,18 +4018,6 @@ function PMA_clearSelection() {
 }
 
 /**
- * HTML escaping
- */
-function escapeHtml(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-/**
  * Print button
  */
 function printPage()
@@ -4173,4 +4338,54 @@ function checkNumberOfFields() {
     });
 
     return true;
+}
+
+/**
+ * Requests SQL for previewing before executing.
+ *
+ * @param jQuery Object $form Form containing query data
+ *
+ * @return void
+ */
+function PMA_previewSQL($form)
+{
+    var form_url = $form.attr('action');
+    var form_data = $form.serialize() +
+        '&do_save_data=1' +
+        '&preview_sql=1' +
+        '&ajax_request=1';
+    $.ajax({
+        type: 'POST',
+        url: form_url,
+        data: form_data,
+        success: function (response) {
+            if (response.success) {
+                var $dialog_content = $('<div/>')
+                    .append(response.sql_data);
+                var button_options = {};
+                button_options[PMA_messages.strClose] = function () {
+                    $(this).dialog('close');
+                };
+                var $response_dialog = $dialog_content.dialog({
+                    minWidth: 550,
+                    maxHeight: 400,
+                    modal: true,
+                    buttons: button_options,
+                    title: PMA_messages.strPreviewSQL,
+                    close: function () {
+                        $(this).remove();
+                    },
+                    open: function () {
+                        // Pretty SQL printing.
+                        PMA_highlightSQL($(this));
+                    }
+                });
+            } else {
+                PMA_ajaxShowMessage(response.message);
+            }
+        },
+        error: function () {
+            PMA_ajaxShowMessage(PMA_messages.strErrorProcessingRequest);
+        }
+    });
 }

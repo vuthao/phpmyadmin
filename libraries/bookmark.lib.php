@@ -179,7 +179,7 @@ function PMA_Bookmark_save($bkm_fields, $all_users = false)
 /**
  * Deletes a bookmark
  *
- * @param integer $id the id of the bookmark to get
+ * @param integer $id the id of the bookmark to delete
  *
  * @return bool true if successful
  *
@@ -205,11 +205,4 @@ function PMA_Bookmark_delete($id)
     return $GLOBALS['dbi']->tryQuery($query, $controllink);
 } // end of the 'PMA_Bookmark_delete()' function
 
-
-/**
- * Bookmark Support
- */
-if (!defined('TESTSUITE')) {
-    $GLOBALS['cfg']['Bookmark'] = PMA_Bookmark_getParams();
-}
 ?>

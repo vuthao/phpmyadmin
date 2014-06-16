@@ -913,7 +913,6 @@ class PMA_Table
             /* Generate query back */
             $sql_structure = PMA_SQP_format($parsed_sql, 'query_only');
             // If table exists, and 'add drop table' is selected: Drop it!
-            $drop_query = '';
             if (isset($_REQUEST['drop_if_exists'])
                 && $_REQUEST['drop_if_exists'] == 'true'
             ) {
@@ -1011,15 +1010,44 @@ class PMA_Table
                 $GLOBALS['sql_indexes'] = PMA_SQP_format(
                     $parsed_sql, 'query_only'
                 );
-                if ($mode == 'one_table') {
+                if ($mode == 'one_table' || $mode == 'db_copy') {
                     $GLOBALS['dbi']->query($GLOBALS['sql_indexes']);
                 }
                 $GLOBALS['sql_query'] .= "\n" . $GLOBALS['sql_indexes'];
-                if ($mode == 'one_table') {
+                if ($mode == 'one_table' || $mode == 'db_copy') {
                     unset($GLOBALS['sql_indexes']);
 
                 }
+            }
 
+            /*
+             * add AUTO_INCREMENT to the table
+             *
+             * @todo refactor with similar code above
+             */
+            if (! empty($GLOBALS['sql_auto_increments'])) {
+                if ($mode == 'one_table' || $mode == 'db_copy') {
+                    $parsed_sql =  PMA_SQP_parse($GLOBALS['sql_auto_increments']);
+                    $i = 0;
+
+                    // find the first $table_delimiter, it must be the source
+                    // table name
+                    while ($parsed_sql[$i]['type'] != $table_delimiter) {
+                        $i++;
+                    }
+
+                    // replace it by the target table name, no need
+                    // to backquote()
+                    $parsed_sql[$i]['data'] = $target;
+
+                    // Generate query back
+                    $GLOBALS['sql_auto_increments'] = PMA_SQP_format(
+                        $parsed_sql, 'query_only'
+                    );
+                    $GLOBALS['dbi']->query($GLOBALS['sql_auto_increments']);
+                    $GLOBALS['sql_query'] .= "\n" . $GLOBALS['sql_auto_increments'];
+                    unset($GLOBALS['sql_auto_increments']);
+                }
             }
 
         } else {
@@ -1145,7 +1173,6 @@ class PMA_Table
                     $new_fields
                 );
 
-
                 /**
                  * @todo revise this code when we support cross-db relations
                  */
@@ -1171,7 +1198,6 @@ class PMA_Table
                     $new_fields
                 );
 
-
                 $get_fields = array(
                     'foreign_field',
                     'master_table',
@@ -1193,7 +1219,6 @@ class PMA_Table
                     $where_fields,
                     $new_fields
                 );
-
 
                 $get_fields = array('x', 'y', 'v', 'h');
                 $where_fields = array(

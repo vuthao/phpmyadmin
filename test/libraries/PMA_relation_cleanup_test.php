@@ -53,6 +53,7 @@ class PMA_Relation_Cleanup_Test extends PHPUnit_Framework_TestCase
         $GLOBALS['cfg']['Server']['usergroups'] = 'usergroups';
         $GLOBALS['cfg']['Server']['navigationhiding'] = 'navigationhiding';
         $GLOBALS['cfg']['Server']['savedsearches'] = 'savedsearches';
+        $GLOBALS['cfg']['Server']['central_columns'] = 'central_columns';
 
         $this->redefineRelation();
     }
@@ -382,6 +383,7 @@ class DBI_PMA_Relation_Cleanup extends PMA_DatabaseInterface
      */
     function fetchRow($result)
     {
+        $curr_table = array();
         if ($this->index < count($this->values)) {
             $curr_table[0] = $this->values[$this->index];
             $this->index++;
@@ -511,6 +513,7 @@ class DBI_PMA_Relation_Cleanup extends PMA_DatabaseInterface
      */
     public function fetchAssoc($result)
     {
+        $assocResult = array();
         if ($this->assocIndex < $this->totalNum) {
             $assocResult['db_name'] = "db_name" . $this->assocIndex;
             $assocResult['comment'] = "comment" . $this->assocIndex;

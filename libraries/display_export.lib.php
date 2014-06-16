@@ -17,13 +17,15 @@ if (! defined('PHPMYADMIN')) {
  *
  * @param string $str option name
  *
- * @return string|void
+ * @return string
  */
 function PMA_exportCheckboxCheck($str)
 {
     if (isset($GLOBALS['cfg']['Export'][$str]) && $GLOBALS['cfg']['Export'][$str]) {
         return ' checked="checked"';
     }
+
+    return null;
 }
 
 /**
@@ -134,7 +136,6 @@ function PMA_getHtmlForHiddenInput(
     // The export method (quick, custom or custom-no-form)
     $html .= '<input type="hidden" name="export_method" value="'
         . htmlspecialchars($cfg['Export']['method']) . '" />';
-
 
     if (isset($_GET['sql_query'])) {
         $html .= '<input type="hidden" name="sql_query" value="'

@@ -636,13 +636,6 @@ class PMA_DisplayResults
         // contains accented characters
         $html_sql_query = htmlspecialchars($this->__get('sql_query'));
 
-        /**
-         * @todo move this to a central place
-         * @todo for other future table types
-         */
-        $is_innodb = (isset($showtable['Type'])
-            && $showtable['Type'] == self::TABLE_TYPE_INNO_DB);
-
         // Navigation bar
         $table_navigation_html .= '<table class="navigation nospacing nopadding">'
             . '<tr>'
@@ -1145,7 +1138,7 @@ class PMA_DisplayResults
                         $fields_meta[$i], $sort_expression,
                         $sort_expression_nodirection, $i, $unsorted_sql_query,
                         $session_max_rows, $direction, $comments,
-                        $sort_direction, $directionCondition, $col_visib,
+                        $sort_direction, $col_visib,
                         $col_visib[$j]
                     );
 
@@ -1661,11 +1654,6 @@ class PMA_DisplayResults
                 'display_blob', __('Show BLOB contents'),
                 ! empty($_SESSION['tmpval']['display_blob']), false
             )
-            . '<br />'
-            . PMA_Util::getCheckbox(
-                'display_binary_as_hex', __('Show binary contents as HEX'),
-                ! empty($_SESSION['tmpval']['display_binary_as_hex']), false
-            )
             . '</div>';
 
         // I would have preferred to name this "display_transformation".
@@ -1827,11 +1815,9 @@ class PMA_DisplayResults
      * @param integer $column_index                the index of the column
      * @param string  $unsorted_sql_query          the unsorted sql query
      * @param integer $session_max_rows            maximum rows resulted by sql
-     * @param array   $direction                   the display direction
+     * @param string  $direction                   the display direction
      * @param string  $comments                    comment for row
      * @param array   $sort_direction              sort direction
-     * @param boolean $directionCondition          display direction horizontal
-     *                                             or horizontalflipped
      * @param boolean $col_visib                   column is visible(false)
      *        array                                column isn't visible(string array)
      * @param string  $col_visib_j                 element of $col_visib array
@@ -1845,7 +1831,7 @@ class PMA_DisplayResults
     private function _getOrderLinkAndSortedHeaderHtml(
         $fields_meta, $sort_expression, $sort_expression_nodirection,
         $column_index, $unsorted_sql_query, $session_max_rows, $direction,
-        $comments, $sort_direction, $directionCondition, $col_visib, $col_visib_j
+        $comments, $sort_direction, $col_visib, $col_visib_j
     ) {
 
         $sorted_header_html = '';
@@ -1966,7 +1952,6 @@ class PMA_DisplayResults
                 $name_to_use_in_sort = $matches[1];
                 $sort_tbl_new = $matches[0];
             }
-
 
             // $name_to_use_in_sort might contain a space due to
             // formatting of function expressions like "COUNT(name )"
@@ -2091,7 +2076,7 @@ class PMA_DisplayResults
      * Get sort url paramaeters - sort order and order image
      *
      * @param array   $sort_direction the sort direction
-     * @param array   $sort_order     the sorting order
+     * @param string  $sort_order     the sorting order
      * @param integer $column_index   the index of the column
      * @param integer $index          the index of sort direction array.
      *
@@ -2413,8 +2398,8 @@ class PMA_DisplayResults
      *
      * @access  private
      *
-     * @see     _getDataCellForBlobColumns(), _getDataCellForGeometryColumns(),
-     *          _getDataCellForNonNumericAndNonBlobColumns()
+     * @see     _getDataCellForGeometryColumns(),
+     *          _getDataCellForNonNumericColumns()
      */
     private function _buildValueDisplay($class, $condition_field, $value)
     {
@@ -2435,9 +2420,9 @@ class PMA_DisplayResults
      *
      * @access  private
      *
-     * @see     _getDataCellForNumericColumns(), _getDataCellForBlobColumns(),
+     * @see     _getDataCellForNumericColumns(),
      *          _getDataCellForGeometryColumns(),
-     *          _getDataCellForNonNumericAndNonBlobColumns()
+     *          _getDataCellForNonNumericColumns()
      */
     private function _buildNullDisplay($class, $condition_field, $meta, $align = '')
     {
@@ -2463,15 +2448,15 @@ class PMA_DisplayResults
      *
      * @access  private
      *
-     * @see     _getDataCellForNumericColumns(), _getDataCellForBlobColumns(),
+     * @see     _getDataCellForNumericColumns(),
      *          _getDataCellForGeometryColumns(),
-     *          _getDataCellForNonNumericAndNonBlobColumns()
+     *          _getDataCellForNonNumericColumns()
      */
     private function _buildEmptyDisplay($class, $condition_field, $meta, $align = '')
     {
         return '<td ' . $align . ' class="'
             . $this->_addClass(
-                $class, $condition_field, $meta, ' nowrap'
+                $class, $condition_field, $meta, 'nowrap'
             )
             . '"></td>';
     } // end of the '_buildEmptyDisplay()' function
@@ -2500,33 +2485,45 @@ class PMA_DisplayResults
         $class, $condition_field, $meta, $nowrap, $is_field_truncated = false,
         $transformation_plugin = '', $default_function = ''
     ) {
+        $classes = array(
+            $class,
+            $nowrap,
+        );
+
+        if (isset($meta->mimetype)) {
+            $classes[] = preg_replace('/\//', '_', $meta->mimetype);
+        }
+
+        if ($condition_field) {
+            $classes[] = 'condition';
+        }
+
+        if ($is_field_truncated) {
+            $classes[] = 'truncated';
+        }
+
+        if ($transformation_plugin != $default_function) {
+            $classes[] = 'transformed';
+        }
 
         // Define classes to be added to this data field based on the type of data
-        $enum_class = '';
-        if (strpos($meta->flags, 'enum') !== false) {
-            $enum_class = ' enum';
+        $matches = array(
+            'enum' => 'enum',
+            'set' => 'set',
+            'binary' => 'hex',
+        );
+
+        foreach ($matches as $key => $value) {
+            if (strpos($meta->flags, $key) !== false) {
+                $classes[] = $value;
+            }
         }
 
-        $set_class = '';
-        if (strpos($meta->flags, 'set') !== false) {
-            $set_class = ' set';
-        }
-
-        $bit_class = '';
         if (strpos($meta->type, 'bit') !== false) {
-            $bit_class = ' bit';
+            $classes[] = 'bit';
         }
 
-        $mime_type_class = '';
-        if (isset($meta->mimetype)) {
-            $mime_type_class = ' ' . preg_replace('/\//', '_', $meta->mimetype);
-        }
-
-        return $class . ($condition_field ? ' condition' : '') . $nowrap
-            . ' ' . ($is_field_truncated ? ' truncated' : '')
-            . ($transformation_plugin != $default_function ? ' transformed' : '')
-            . $enum_class . $set_class . $bit_class . $mime_type_class;
-
+        return implode(' ', $classes);
     } // end of the '_addClass()' function
 
 
@@ -2672,18 +2669,12 @@ class PMA_DisplayResults
                 } // end if (1.2.1)
 
                 // 1.2.2 Delete/Kill link(s)
-                if (($is_display['del_lnk'] == self::DELETE_ROW)
-                    || ($is_display['del_lnk'] == self::KILL_PROCESS)
-                ) {
-
-                    list($del_query, $del_url, $del_str, $js_conf)
-                        = $this->_getDeleteAndKillLinks(
-                            $where_clause, $clause_is_unique,
-                            $url_sql_query, $is_display['del_lnk'],
-                            $row
-                        );
-
-                } // end if (1.2.2)
+                list($del_query, $del_url, $del_str, $js_conf)
+                    = $this->_getDeleteAndKillLinks(
+                        $where_clause, $clause_is_unique,
+                        $url_sql_query, $is_display['del_lnk'],
+                        $row
+                    );
 
                 // 1.3 Displays the links at left if required
                 if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_LEFT)
@@ -2962,20 +2953,6 @@ class PMA_DisplayResults
                         $transform_options
                     );
 
-            } elseif (stristr($meta->type, self::BLOB_FIELD)) {
-                //  b l o b
-
-                // PMA_mysql_fetch_fields returns BLOB in place of
-                // TEXT fields type so we have to ensure it's really a BLOB
-                $field_flags = $GLOBALS['dbi']->fieldFlags($dt_result, $i);
-
-                $vertical_display['data'][$row_no][$i]
-                    = $this->_getDataCellForBlobColumns(
-                        $row[$i], $class, $meta, $_url_params, $field_flags,
-                        $transformation_plugin, $default_function,
-                        $transform_options, $condition_field, $is_field_truncated
-                    );
-
             } elseif ($meta->type == self::GEOMETRY_FIELD) {
                 // g e o m e t r y
 
@@ -2992,10 +2969,10 @@ class PMA_DisplayResults
                     );
 
             } else {
-                // n o t   n u m e r i c   a n d   n o t   B L O B
+                // n o t   n u m e r i c
 
                 $vertical_display['data'][$row_no][$i]
-                    = $this->_getDataCellForNonNumericAndNonBlobColumns(
+                    = $this->_getDataCellForNonNumericColumns(
                         $row[$i], $class, $meta, $map, $_url_params,
                         $condition_field, $transformation_plugin,
                         $default_function, $transform_options,
@@ -3166,7 +3143,6 @@ class PMA_DisplayResults
                 . $row_info[$link_relations['link_param'][2]] . '`';
             $linking_url_params[$link_relations['link_param'][0]] = $sql;
         }
-
 
         if (! empty($link_relations['link_dependancy_params'])) {
 
@@ -3473,18 +3449,22 @@ class PMA_DisplayResults
                     $_url_params, 'text'
                 );
 
+            $kill = $GLOBALS['dbi']->getKillQuery($row[0]);
+
             $_url_params = array(
                     'db'        => 'mysql',
-                    'sql_query' => 'KILL ' . $row[0],
+                    'sql_query' => $kill,
                     'goto'      => $lnk_goto,
                 );
 
             $del_url  = 'sql.php' . PMA_URL_getCommon($_url_params);
-            $del_query = 'KILL ' . $row[0];
-            $js_conf  = 'KILL ' . $row[0];
+            $del_query = $kill;
+            $js_conf  = $kill;
             $del_str = PMA_Util::getIcon(
                 'b_drop.png', __('Kill')
             );
+        } else {
+            $del_url = $del_query = $del_str = $js_conf = null;
         }
 
         return array($del_query, $del_url, $del_str, $js_conf);
@@ -3651,6 +3631,8 @@ class PMA_DisplayResults
             $field_type_class = 'datefield';
         } elseif ($type == self::TIME_FIELD) {
             $field_type_class = 'timefield';
+        } elseif ($type == self::STRING_FIELD) {
+            $field_type_class = 'text';
         } else {
             $field_type_class = '';
         }
@@ -3718,105 +3700,6 @@ class PMA_DisplayResults
 
 
     /**
-     * Get data cell for blob type fields
-     *
-     * @param string  $column                the relevant column in data row
-     * @param string  $class                 the html class for column
-     * @param object  $meta                  the meta-information about this
-     *                                       field
-     * @param array   $_url_params           the parameters for generate url
-     * @param string  $field_flags           field flags for column(blob,
-     *                                       primary etc)
-     * @param string  $transformation_plugin the name of transformation function
-     * @param string  $default_function      the default transformation function
-     * @param string  $transform_options     the transformation parameters
-     * @param boolean $condition_field       the column should highlighted
-     *                                       or not
-     * @param boolean $is_field_truncated    the condition for blob data
-     *                                       replacements
-     *
-     * @return  string  $cell                the prepared cell, html content
-     *
-     * @access  private
-     *
-     * @see     _getTableBody()
-     */
-    private function _getDataCellForBlobColumns(
-        $column, $class, $meta, $_url_params, $field_flags, $transformation_plugin,
-        $default_function, $transform_options, $condition_field, $is_field_truncated
-    ) {
-
-        if (stristr($field_flags, self::BINARY_FIELD)) {
-
-            // remove 'grid_edit' from $class as we can't edit binary data.
-            $class = str_replace('grid_edit', '', $class);
-
-            if (! isset($column) || is_null($column)) {
-
-                $cell = $this->_buildNullDisplay($class, $condition_field, $meta);
-
-            } else {
-
-                $blobtext = $this->_handleNonPrintableContents(
-                    self::BLOB_FIELD, (isset($column) ? $column : ''),
-                    $transformation_plugin, $transform_options,
-                    $default_function, $meta, $_url_params
-                );
-
-                $cell = $this->_buildValueDisplay(
-                    $class, $condition_field, $blobtext
-                );
-                unset($blobtext);
-            }
-        } else {
-            // not binary:
-
-            if (! isset($column) || is_null($column)) {
-
-                $cell = $this->_buildNullDisplay($class, $condition_field, $meta);
-
-            } elseif ($column != '') {
-
-                // if a transform function for blob is set, none of these
-                // replacements will be made
-                $limitChars = $GLOBALS['cfg']['LimitChars'];
-                if (($GLOBALS['PMA_String']->strlen($column) > $limitChars)
-                    && ($_SESSION['tmpval']['pftext'] == self::DISPLAY_PARTIAL_TEXT)
-                    && empty($this->transformation_info[strtolower($this->__get('db'))][strtolower($this->__get('table'))][strtolower(strtolower($meta->name))])
-                ) {
-                    $column = $GLOBALS['PMA_String']->substr(
-                        $column, 0, $GLOBALS['cfg']['LimitChars']
-                    ) . '...';
-                    $is_field_truncated = true;
-                }
-
-                // displays all space characters, 4 space
-                // characters for tabulations and <cr>/<lf>
-                $column = ($default_function != $transformation_plugin)
-                    ? $transformation_plugin->applyTransformation(
-                        $column,
-                        $transform_options,
-                        $meta
-                    )
-                    : $default_function($column, array(), $meta);
-
-                if ($is_field_truncated) {
-                    $class .= ' truncated';
-                }
-
-                $cell = $this->_buildValueDisplay($class, $condition_field, $column);
-
-            } else {
-                $cell = $this->_buildEmptyDisplay($class, $condition_field, $meta);
-            }
-        }
-
-        return $cell;
-
-    } // end of the '_getDataCellForBlobColumns()' function
-
-
-    /**
      * Get data cell for geometry type fields
      *
      * @param string  $column                the relevant column in data row
@@ -3842,9 +3725,6 @@ class PMA_DisplayResults
         $transformation_plugin, $default_function, $transform_options,
         $is_field_truncated, $analyzed_sql
     ) {
-
-        $pftext = $_SESSION['tmpval']['pftext'];
-        $limitChars = $GLOBALS['cfg']['LimitChars'];
 
         if (! isset($column) || is_null($column)) {
 
@@ -3872,15 +3752,7 @@ class PMA_DisplayResults
 
                 // Convert to WKT format
                 $wktval = PMA_Util::asWKT($column);
-
-                if (($GLOBALS['PMA_String']->strlen($wktval) > $limitChars)
-                    && ($pftext == self::DISPLAY_PARTIAL_TEXT)
-                ) {
-                    $wktval = $GLOBALS['PMA_String']->substr(
-                        $wktval, 0, $limitChars
-                    ) . '...';
-                    $is_field_truncated = true;
-                }
+                $is_field_truncated = $this->_getPartialText($wktval);
 
                 $cell = $this->_getRowData(
                     $class, $condition_field, $analyzed_sql, $meta, $map,
@@ -3896,16 +3768,8 @@ class PMA_DisplayResults
 
                     $where_comparison = ' = ' . $column;
 
-                    $wkbval = $this->_displayBinaryAsPrintable($column, 'binary', 8);
-
-                    if (($GLOBALS['PMA_String']->strlen($wkbval) > $limitChars)
-                        && ($pftext == self::DISPLAY_PARTIAL_TEXT)
-                    ) {
-                        $wkbval = $GLOBALS['PMA_String']->substr(
-                            $wkbval, 0, $GLOBALS['cfg']['LimitChars']
-                        ) . '...';
-                        $is_field_truncated = true;
-                    }
+                    $wkbval = $GLOBALS['PMA_String']->substr(bin2hex($column), 8);
+                    $is_field_truncated = $this->_getPartialText($wkbval);
 
                     $cell = $this->_getRowData(
                         $class, $condition_field,
@@ -3937,24 +3801,29 @@ class PMA_DisplayResults
 
 
     /**
-     * Get data cell for non numeric and non blob type fields
+     * Get data cell for non numeric type fields
      *
-     * @param string  $column                the relevant column in data row
-     * @param string  $class                 the html class for column
-     * @param object  $meta                  the meta-information about the field
-     * @param array   $map                   the list of relations
-     * @param array   $_url_params           the parameters for generate url
-     * @param boolean $condition_field       the column should highlighted
-     *                                       or not
-     * @param string  $transformation_plugin the name of transformation function
-     * @param string  $default_function      the default transformation function
-     * @param string  $transform_options     the transformation parameters
-     * @param boolean $is_field_truncated    the condition for blob data
-     *                                       replacements
-     * @param array   $analyzed_sql          the analyzed query
-     * @param integer &$dt_result            the link id associated to the query
-     *                                        which results have to be displayed
-     * @param integer $col_index             the column index
+     * @param string        $column                the relevant column in data row
+     * @param string        $class                 the html class for column
+     * @param object        $meta                  the meta-information about
+     *                                             the field
+     * @param array         $map                   the list of relations
+     * @param array         $_url_params           the parameters for generate
+     *                                             url
+     * @param boolean       $condition_field       the column should highlighted
+     *                                             or not
+     * @param object|string $transformation_plugin the name of transformation
+     *                                             function
+     * @param string        $default_function      the default transformation
+     *                                             function
+     * @param string        $transform_options     the transformation parameters
+     * @param boolean       $is_field_truncated    is data truncated due to
+     *                                             LimitChars
+     * @param array         $analyzed_sql          the analyzed query
+     * @param integer       &$dt_result            the link id associated to
+     *                                             the query which results
+     *                                             have to be displayed
+     * @param integer       $col_index             the column index
      *
      * @return  string  $cell               the prepared data cell, html content
      *
@@ -3962,18 +3831,26 @@ class PMA_DisplayResults
      *
      * @see     _getTableBody()
      */
-    private function _getDataCellForNonNumericAndNonBlobColumns(
+    private function _getDataCellForNonNumericColumns(
         $column, $class, $meta, $map, $_url_params, $condition_field,
         $transformation_plugin, $default_function, $transform_options,
         $is_field_truncated, $analyzed_sql, &$dt_result, $col_index
     ) {
 
-        $limitChars = $GLOBALS['cfg']['LimitChars'];
         $is_analyse = $this->__get('is_analyse');
         $field_flags = $GLOBALS['dbi']->fieldFlags($dt_result, $col_index);
-        if (stristr($field_flags, self::BINARY_FIELD)
-            && ($GLOBALS['cfg']['ProtectBinary'] == 'all'
-            || $GLOBALS['cfg']['ProtectBinary'] == 'noblob')
+        // disable inline grid editing
+        // if binary fields are protected
+        // or transformation plugin is of non text type
+        // such as image
+        if ((stristr($field_flags, self::BINARY_FIELD)
+            && ($GLOBALS['cfg']['ProtectBinary'] === 'all'
+            || ($GLOBALS['cfg']['ProtectBinary'] === 'noblob'
+            && !stristr($meta->type, self::BLOB_FIELD))
+            || ($GLOBALS['cfg']['ProtectBinary'] === 'blob'
+            && stristr($meta->type, self::BLOB_FIELD))))
+            || (gettype($transformation_plugin) === 'object'
+            && strpos($transformation_plugin->getMIMEtype(), 'Text') === false)
         ) {
             $class = str_replace('grid_edit', '', $class);
         }
@@ -3985,16 +3862,12 @@ class PMA_DisplayResults
         } elseif ($column != '') {
 
             // Cut all fields to $GLOBALS['cfg']['LimitChars']
-            // (unless it's a link-type transformation)
-            if ($GLOBALS['PMA_String']->strlen($column) > $limitChars
-                && ($_SESSION['tmpval']['pftext'] == self::DISPLAY_PARTIAL_TEXT)
-                && ! (gettype($transformation_plugin) == "object"
+            // (unless it's a link-type transformation or binary)
+            if (!(gettype($transformation_plugin) === "object"
                 && strpos($transformation_plugin->getName(), 'Link') !== false)
+                && !stristr($field_flags, self::BINARY_FIELD)
             ) {
-                $column = $GLOBALS['PMA_String']->substr(
-                    $column, 0, $GLOBALS['cfg']['LimitChars']
-                ) . '...';
-                $is_field_truncated = true;
+                $is_field_truncated = $this->_getPartialText($column);
             }
 
             $formatted = false;
@@ -4008,26 +3881,31 @@ class PMA_DisplayResults
                 // being BINARY but they are quite readable,
                 // so don't treat them as BINARY
             } elseif (stristr($field_flags, self::BINARY_FIELD)
-                && ($meta->type == self::STRING_FIELD)
                 && !(isset($is_analyse) && $is_analyse)
             ) {
-
-                if ($_SESSION['tmpval']['display_binary']) {
-
-                    // user asked to see the real contents of BINARY
-                    // fields
-                    $column = $this->_displayBinaryAsPrintable($column, 'binary');
-
-                } else {
-                    // we show the BINARY message and field's size
-                    // (or maybe use a transformation)
-                    $column = $this->_handleNonPrintableContents(
-                        self::BINARY_FIELD, $column, $transformation_plugin,
-                        $transform_options, $default_function,
-                        $meta, $_url_params
-                    );
-                    $formatted = true;
+                // we show the BINARY or BLOB message and field's size
+                // (or maybe use a transformation)
+                $binary_or_blob = self::BLOB_FIELD;
+                if ($meta->type === self::STRING_FIELD) {
+                    $binary_or_blob = self::BINARY_FIELD;
                 }
+                $column = $this->_handleNonPrintableContents(
+                    $binary_or_blob, $column, $transformation_plugin,
+                    $transform_options, $default_function,
+                    $meta, $_url_params, $is_field_truncated
+                );
+                $class = $this->_addClass(
+                    $class, $condition_field, $meta, '',
+                    $is_field_truncated, $transformation_plugin, $default_function
+                );
+                $result = strip_tags($column);
+                // disable inline grid editing
+                // if binary or blob data is not shown
+                if (stristr($result, $binary_or_blob)) {
+                    $class = str_replace('grid_edit', '', $class);
+                }
+                $formatted = true;
+
             } elseif (((substr($meta->type, 0, 9) == self::TIMESTAMP_FIELD)
                 || ($meta->type == self::DATETIME_FIELD)
                 || ($meta->type == self::TIME_FIELD)
@@ -4076,8 +3954,67 @@ class PMA_DisplayResults
 
         return $cell;
 
-    } // end of the '_getDataCellForNonNumericAndNonBlobColumns()' function
+    } // end of the '_getDataCellForNonNumericColumns()' function
 
+    /**
+     * Get one link for the vertical direction mode.
+     *
+     * @param string $leftOrRight      'left' or 'right' constant
+     * @param string $linkName         the name of the link to generate
+     * @param array  $vertical_display the vertical display elements
+     *
+     * @return string       html content
+     *
+     * @access  private
+     *
+     */
+    private function _getOneLink($leftOrRight, $linkName, $vertical_display)
+    {
+        $html = '';
+        if ((($GLOBALS['cfg']['RowActionLinks'] == $leftOrRight)
+            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
+            && is_array($vertical_display[$linkName])
+            && ((count($vertical_display[$linkName]) > 0)
+            || !empty($vertical_display['textbtn']))
+        ) {
+            $html .= $this->_getOperationLinksForVerticalTable(
+                $linkName
+            );
+        } // end if
+        return $html;
+    }
+
+    /**
+     * Get three links for the vertical direction mode.
+     *
+     * @param string $leftOrRight      'left' or 'right' constant
+     * @param array  $vertical_display the vertical display elements
+     *
+     * @return string       html content
+     *
+     * @access  private
+     *
+     */
+    private function _getThreeLinks($leftOrRight, $vertical_display)
+    {
+        $html = '';
+
+        // Prepares "edit" link if required
+        $html .= $this->_getOneLink(
+            $leftOrRight, 'edit', $vertical_display
+        );
+
+        // Prepares "copy" link if required
+        $html .= $this->_getOneLink(
+            $leftOrRight, 'copy', $vertical_display
+        );
+
+        // Prepares "delete" link if required
+        $html .= $this->_getOneLink(
+            $leftOrRight, 'delete', $vertical_display
+        );
+        return $html;
+    }
 
     /**
      * Get the resulted table with the vertical direction mode.
@@ -4116,41 +4053,10 @@ class PMA_DisplayResults
                 . '</tr>' . "\n";
         } // end if
 
-        // Prepares "edit" link at top if required
-        if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_LEFT)
-            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
-            && is_array($vertical_display['edit'])
-            && ((count($vertical_display['edit']) > 0)
-            || !empty($vertical_display['textbtn']))
-        ) {
-            $vertical_table_html .= $this->_getOperationLinksForVerticleTable(
-                'edit'
-            );
-        } // end if
-
-        // Prepares "copy" link at top if required
-        if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_LEFT)
-            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
-            && is_array($vertical_display['copy'])
-            && ((count($vertical_display['copy']) > 0)
-            || !empty($vertical_display['textbtn']))
-        ) {
-            $vertical_table_html .= $this->_getOperationLinksForVerticleTable(
-                'copy'
-            );
-        } // end if
-
-        // Prepares "delete" link at top if required
-        if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_LEFT)
-            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
-            && is_array($vertical_display['delete'])
-            && ((count($vertical_display['delete']) > 0)
-            || !empty($vertical_display['textbtn']))
-        ) {
-            $vertical_table_html .= $this->_getOperationLinksForVerticleTable(
-                'delete'
-            );
-        } // end if
+        // Prepare three links at top if required
+        $vertical_table_html .= $this->_getThreeLinks(
+            self::POSITION_LEFT, $vertical_display
+        );
 
         list($col_order, $col_visib) = $this->_getColumnParams($analyzed_sql);
 
@@ -4199,41 +4105,10 @@ class PMA_DisplayResults
                 . '</tr>' . "\n";
         } // end if
 
-        // Prepares "edit" link at bottom if required
-        if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_RIGHT)
-            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
-            && is_array($vertical_display['edit'])
-            && ((count($vertical_display['edit']) > 0)
-            || !empty($vertical_display['textbtn']))
-        ) {
-            $vertical_table_html .= $this->_getOperationLinksForVerticleTable(
-                'edit'
-            );
-        } // end if
-
-        // Prepares "copy" link at bottom if required
-        if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_RIGHT)
-            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
-            && is_array($vertical_display['copy'])
-            && ((count($vertical_display['copy']) > 0)
-            || !empty($vertical_display['textbtn']))
-        ) {
-            $vertical_table_html .= $this->_getOperationLinksForVerticleTable(
-                'copy'
-            );
-        } // end if
-
-        // Prepares "delete" link at bottom if required
-        if ((($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_RIGHT)
-            || ($GLOBALS['cfg']['RowActionLinks'] == self::POSITION_BOTH))
-            && is_array($vertical_display['delete'])
-            && ((count($vertical_display['delete']) > 0)
-            || !empty($vertical_display['textbtn']))
-        ) {
-            $vertical_table_html .= $this->_getOperationLinksForVerticleTable(
-                'delete'
-            );
-        }
+        // Prepare three links at bottom if required
+        $vertical_table_html .= $this->_getThreeLinks(
+            self::POSITION_RIGHT, $vertical_display
+        );
 
         return $vertical_table_html;
 
@@ -4241,7 +4116,7 @@ class PMA_DisplayResults
 
 
     /**
-     * Prepare edit, copy and delete links for verticle table
+     * Prepare edit, copy and delete links for vertical table
      *
      * @param string $operation edit/copy/delete
      *
@@ -4251,7 +4126,7 @@ class PMA_DisplayResults
      *
      * @see     _getVerticalTable()
      */
-    private function _getOperationLinksForVerticleTable($operation)
+    private function _getOperationLinksForVerticalTable($operation)
     {
 
         $link_html = '<tr>' . "\n";
@@ -4278,7 +4153,7 @@ class PMA_DisplayResults
 
         return $link_html;
 
-    } // end of the '_getOperationLinksForVerticleTable' function
+    } // end of the '_getOperationLinksForVerticalTable' function
 
 
     /**
@@ -4443,23 +4318,6 @@ class PMA_DisplayResults
             $query['display_binary'] = true;
         }
 
-        if (isset($_REQUEST['display_binary_as_hex'])) {
-            $query['display_binary_as_hex'] = true;
-            unset($_REQUEST['display_binary_as_hex']);
-        } elseif (isset($_REQUEST['display_options_form'])) {
-            // we know that the checkbox was unchecked
-            unset($query['display_binary_as_hex']);
-        } elseif (isset($_REQUEST['full_text_button'])) {
-            // do nothing to keep the value that is there in the session
-        } else {
-            // display_binary_as_hex config option
-            if (isset($GLOBALS['cfg']['DisplayBinaryAsHex'])
-                && ($GLOBALS['cfg']['DisplayBinaryAsHex'] === true)
-            ) {
-                $query['display_binary_as_hex'] = true;
-            }
-        }
-
         if (isset($_REQUEST['display_blob'])) {
             $query['display_blob'] = true;
             unset($_REQUEST['display_blob']);
@@ -4497,9 +4355,6 @@ class PMA_DisplayResults
             = $query['geoOption'];
         $_SESSION['tmpval']['display_binary'] = isset(
             $query['display_binary']
-        );
-        $_SESSION['tmpval']['display_binary_as_hex'] = isset(
-            $query['display_binary_as_hex']
         );
         $_SESSION['tmpval']['display_blob'] = isset(
             $query['display_blob']
@@ -4729,7 +4584,6 @@ class PMA_DisplayResults
             $table_html .= "\n" . '<br /><br />' . "\n";
         }
 
-
         // 6. ----- Prepare "Query results operations"
         if ((! isset($printview) || ($printview != '1')) && ! $is_limited_display) {
             $table_html .= $this->_getResultsOperations(
@@ -4790,6 +4644,9 @@ class PMA_DisplayResults
     private function _getSortParams($order_by_clause)
     {
 
+        $sort_expression             = array();
+        $sort_expression_nodirection = array();
+        $sort_direction              = array();
         if (! empty($order_by_clause)) {
             // Each order by clause is assumed to be delimited by a comma
             // A typical order by clause would be order by column1 asc, column2 desc
@@ -5501,31 +5358,32 @@ class PMA_DisplayResults
      * Verifies what to do with non-printable contents (binary or BLOB)
      * in Browse mode.
      *
-     * @param string $category              BLOB|BINARY|GEOMETRY
-     * @param string $content               the binary content
-     * @param string $transformation_plugin transformation plugin.
-     *                                      Can also be the default function:
-     *                                      PMA_mimeDefaultFunction
-     * @param string $transform_options     transformation parameters
-     * @param string $default_function      default transformation function
-     * @param object $meta                  the meta-information about the field
-     * @param array  $url_params            parameters that should go to the
-     *                                      download link
+     * @param string  $category              BLOB|BINARY|GEOMETRY
+     * @param string  $content               the binary content
+     * @param string  $transformation_plugin transformation plugin.
+     *                                       Can also be the default function:
+     *                                       PMA_mimeDefaultFunction
+     * @param string  $transform_options     transformation parameters
+     * @param string  $default_function      default transformation function
+     * @param object  $meta                  the meta-information about the field
+     * @param array   $url_params            parameters that should go to the
+     *                                       download link
+     * @param boolean &$is_truncated         the result is truncated or not
      *
      * @return mixed  string or float
      *
      * @access  private
      *
-     * @see     _getDataCellForBlobColumns(),
-     *          _getDataCellForGeometryColumns(),
-     *          _getDataCellForNonNumericAndNonBlobColumns(),
+     * @see     _getDataCellForGeometryColumns(),
+     *          _getDataCellForNonNumericColumns(),
      *          _getSortedColumnMessage()
      */
     private function _handleNonPrintableContents(
         $category, $content, $transformation_plugin, $transform_options,
-        $default_function, $meta, $url_params = array()
+        $default_function, $meta, $url_params = array(), &$is_truncated = null
     ) {
 
+        $is_truncated = false;
         $result = '[' . $category;
 
         if (isset($content)) {
@@ -5544,11 +5402,13 @@ class PMA_DisplayResults
         $result .= ']';
 
         // if we want to use a text transformation on a BLOB column
-        if (gettype($transformation_plugin) == "object"
+        if (gettype($transformation_plugin) === "object"
             && (strpos($transformation_plugin->getMIMESubtype(), 'Octetstream')
             || strpos($transformation_plugin->getMIMEtype(), 'Text') !== false)
         ) {
-            $result = $content;
+            // Applying Transformations on hex string of binary data
+            // seems more appropriate
+            $result = bin2hex($content);
         }
 
         if ($size > 0) {
@@ -5562,11 +5422,14 @@ class PMA_DisplayResults
             } else {
 
                 $result = $default_function($result, array(), $meta);
-                if (stristr($meta->type, self::BLOB_FIELD)
-                    && $_SESSION['tmpval']['display_blob']
+                if (($_SESSION['tmpval']['display_binary']
+                    && $meta->type === self::STRING_FIELD)
+                    || ($_SESSION['tmpval']['display_blob']
+                    && stristr($meta->type, self::BLOB_FIELD))
                 ) {
                     // in this case, restart from the original $content
-                    $result = $this->_displayBinaryAsPrintable($content, 'blob');
+                    $result = bin2hex($content);
+                    $is_truncated = $this->_getPartialText($result);
                 }
 
                 /* Create link to download */
@@ -5610,7 +5473,7 @@ class PMA_DisplayResults
      * @access  private
      *
      * @see     _getDataCellForNumericColumns(), _getDataCellForGeometryColumns(),
-     *          _getDataCellForNonNumericAndNonBlobColumns(),
+     *          _getDataCellForNonNumericColumns(),
      *
      */
     private function _getRowData(
@@ -6060,50 +5923,34 @@ class PMA_DisplayResults
 
     } // end of the '_getCheckboxAndLinks()' function
 
+
     /**
-     * Display binary columns as hex string if requested
-     * otherwise escape the contents using the best possible way
+     * Truncates given string based on LimitChars configuration
+     * and Session pftext variable
+     * (string is truncated only if necessary)
      *
-     * @param string $content        String to parse
-     * @param string $binary_or_blob binary' or 'blob'
-     * @param int    $hexlength      optional, get substring
+     * @param string &$str string to be truncated
      *
-     * @return String Displayable version of the binary string
+     * @return boolean  true if truncated, otherwise false
      *
-     * @access private
+     * @access  private
      *
-     * @see    _getDataCellForGeometryColumns
-     *         _getDataCellForNonNumericAndNonBlobColumns
-     *         _handleNonPrintableContents
+     * @see     _handleNonPrintableContents(), _getDataCellForGeometryColumns(),
+     *          _getDataCellForNonNumericColumns
      */
-    private function _displayBinaryAsPrintable(
-        $content, $binary_or_blob, $hexlength = null
-    ) {
-        if ($binary_or_blob === 'binary'
-            && $_SESSION['tmpval']['display_binary_as_hex']
+    private function _getPartialText(&$str)
+    {
+        if ($GLOBALS['PMA_String']->strlen($str) > $GLOBALS['cfg']['LimitChars']
+            && $_SESSION['tmpval']['pftext'] === self::DISPLAY_PARTIAL_TEXT
         ) {
-            $content = bin2hex($content);
-            if ($hexlength !== null) {
-                $content = $GLOBALS['PMA_String']->substr($content, $hexlength);
-            }
-        } elseif (PMA_Util::containsNonPrintableAscii($content)) {
-            if (PMA_PHP_INT_VERSION < 50400) {
-                $content = htmlspecialchars(
-                    PMA_Util::replaceBinaryContents(
-                        $content
-                    )
-                );
-            } else {
-                // The ENT_SUBSTITUTE option is available for PHP >= 5.4.0
-                $content = htmlspecialchars(
-                    PMA_Util::replaceBinaryContents(
-                        $content
-                    ),
-                    ENT_SUBSTITUTE
-                );
-            }
+            $str = $GLOBALS['PMA_String']->substr(
+                $str, 0, $GLOBALS['cfg']['LimitChars']
+            ) . '...';
+
+            return true;
         }
-        return $content;
+
+        return false;
     }
 }
 

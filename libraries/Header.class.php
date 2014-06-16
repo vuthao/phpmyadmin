@@ -206,6 +206,8 @@ class PMA_Header
     {
         $db = ! empty($GLOBALS['db']) ? $GLOBALS['db'] : '';
         $table = ! empty($GLOBALS['table']) ? $GLOBALS['table'] : '';
+        $pftext = ! empty($_SESSION['tmpval']['pftext'])
+            ? $_SESSION['tmpval']['pftext'] : '';
         return array(
             'common_query' => PMA_URL_getCommon('', '', '&'),
             'opendb_url' => $GLOBALS['cfg']['DefaultTabDatabase'],
@@ -226,6 +228,8 @@ class PMA_Header
             'pma_text_left_default_tab' => PMA_Util::getTitleForTarget(
                 $GLOBALS['cfg']['NavigationTreeDefaultTabTable']
             ),
+            'LimitChars' => $GLOBALS['cfg']['LimitChars'],
+            'pftext' => $pftext,
             'confirm' => $GLOBALS['cfg']['Confirm']
         );
     }
@@ -398,6 +402,7 @@ class PMA_Header
                 $retval .= $this->_getWarnings();
                 if ($this->_menuEnabled && $GLOBALS['server'] > 0) {
                     $retval .= $this->_menu->getDisplay();
+                    $retval .= '<span id="lock_page_icon"></span>';
                     $retval .= sprintf(
                         '<a id="goto_pagetop" href="#" title="%s">%s</a>',
                         __('Click on the bar to scroll to top of page'),
@@ -588,12 +593,14 @@ class PMA_Header
             $retval .= '<link rel="stylesheet" type="text/css" href="'
                 . $basedir . 'print.css" />';
         } else {
+            // load jQuery's CSS prior to our theme's CSS, to let the theme
+            // override jQuery's CSS
+            $retval .= '<link rel="stylesheet" type="text/css" href="'
+                . $theme_path . '/jquery/jquery-ui-1.9.2.custom.css" />';
             $retval .= '<link rel="stylesheet" type="text/css" href="'
                 . $basedir . 'phpmyadmin.css.php'
                 . $common_url . '&amp;nocache='
                 . $theme_id . $GLOBALS['text_dir'] . '" />';
-            $retval .= '<link rel="stylesheet" type="text/css" href="'
-                . $theme_path . '/jquery/jquery-ui-1.9.2.custom.css" />';
         }
 
         return $retval;

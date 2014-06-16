@@ -657,6 +657,7 @@ class PMA_Tracker
         $dml_date_to = $date;
 
         // Define begin and end of date range for both logs
+        $data = array();
         if (strtotime($ddl_date_from) <= strtotime($dml_date_from)) {
             $data['date_from'] = $ddl_date_from;
         } else {
@@ -721,7 +722,8 @@ class PMA_Tracker
          * DDL statements
          */
 
-        $result['type']         = 'DDL';
+        $result         = array();
+        $result['type'] = 'DDL';
 
         // Parse CREATE VIEW statement
         if (in_array('CREATE', $tokens) == true
@@ -989,7 +991,11 @@ class PMA_Tracker
                 $date  = date('Y-m-d H:i:s');
 
                 // Cut off `dbname`. from query
-                $query = preg_replace('/`' . preg_quote($dbname) . '`\s?\./', '', $query);
+                $query = preg_replace(
+                    '/`' . preg_quote($dbname) . '`\s?\./',
+                    '',
+                    $query
+                );
 
                 // Add log information
                 $query = self::getLogComment() . $query ;

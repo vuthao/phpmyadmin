@@ -173,6 +173,10 @@ function verificationsAfterFieldChange(urlField, multi_edit, theType)
     // Unchecks the Ignore checkbox for the current row
     $("input[name='insert_ignore_" + multi_edit + "']").prop('checked', false);
     var $this_input = $("input[name='fields[multi_edit][" + multi_edit + "][" + urlField + "]']");
+    // check if it is textarea rather than input
+    if ($this_input.length === 0) {
+        $this_input = $("textarea[name='fields[multi_edit][" + multi_edit + "][" + urlField + "]']");
+    }
 
     // Does this field come from datepicker?
     if ($this_input.data('comes_from') == 'datepicker') {
@@ -228,9 +232,17 @@ function verificationsAfterFieldChange(urlField, multi_edit, theType)
                 return false;
             }
         }
+        // validate binary & blob types
+        if (theType.indexOf('blob') > -1 || theType.indexOf('binary') > -1) {
+            $this_input.removeClass("invalid_value");
+            if ($this_input.val().match(/^[a-f0-9]*$/i) === null) {
+                $this_input.addClass("invalid_value");
+                return false;
+            }
+        }
     }
 }
- /* End of datetime validation*/
+ /* End of fields validation*/
 
 
 /**
@@ -302,7 +314,6 @@ AJAX.registerOnload('tbl_change.js', function () {
             $(this).siblings('.multi_edit').val()
         );
     });
-
 
     /**
      * Reset the auto_increment column to 0 when selecting any of the
@@ -534,7 +545,7 @@ AJAX.registerOnload('tbl_change.js', function () {
     /**
      * @var $function_option_dialog object holds dialog for selected function options.
      */
-     var $function_option_dialog = null;
+    var $function_option_dialog = null;
 
     PMA_tooltip(
         $("select[name*='funcs']"),

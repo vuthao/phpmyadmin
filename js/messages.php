@@ -43,7 +43,7 @@ $js_messages['strDroppingPrimaryKeyIndex'] = __('Dropping Primary Key/Index');
 $js_messages['strOperationTakesLongTime'] = __('This operation could take a long time. Proceed anyway?');
 $js_messages['strDropUserGroupWarning'] = __('Do you really want to delete user group "%s"?');
 $js_messages['strConfirmDeleteQBESearch'] = __('Do you really want to delete the search "%s"?');
-$js_messages['strConfirmNavigation'] = __('Are you sure you want to navigate away from this page? Press OK to continue or Cancel to stay on the current page.');
+$js_messages['strConfirmNavigation'] = __('You have unsaved changes; are you sure you want to leave this page?');
 
 /* For indexes */
 $js_messages['strFormEmpty'] = __('Missing value in the form!');
@@ -53,6 +53,9 @@ $js_messages['strEnterValidLength'] = __('Please enter a valid length!');
 $js_messages['strAddIndex'] = __('Add Index');
 $js_messages['strEditIndex'] = __('Edit Index');
 $js_messages['strAddToIndex'] = __('Add %s column(s) to index');
+
+/* For Preview SQL*/
+$js_messages['strPreviewSQL'] = __('Preview SQL');
 
 /* Charts */
 /* l10n: Default label for the y-Axis of Charts */
@@ -246,6 +249,7 @@ $js_messages['strNo'] = __('No');
 $js_messages['strForeignKeyCheck'] = __('Foreign key check:');
 $js_messages['strForeignKeyCheckEnabled'] = __('(Enabled)');
 $js_messages['strForeignKeyCheckDisabled'] = __('(Disabled)');
+$js_messages['strErrorRealRowCount'] = __('Failed to get real row count.');
 
 /* For db_search.js */
 $js_messages['strSearching'] = __('Searching');
@@ -272,6 +276,17 @@ $js_messages['strHideQueryBox'] = __('Hide query box');
 $js_messages['strShowQueryBox'] = __('Show query box');
 $js_messages['strEdit'] = __('Edit');
 $js_messages['strNotValidRowNumber'] = __('%d is not valid row number.');
+$js_messages['strBrowseForeignValues'] = __('Browse foreign values');
+
+/* For Central list of columns */
+$js_messages['pickColumn'] = __('Pick');
+$js_messages['pickColumnTitle'] = __('Column selector');
+$js_messages['searchList'] = __('Search this list');
+$js_messages['strEmptyCentralList'] = __('No columns in the central list. Make sure the Central columns list for database %s has columns that are not present in the current table.');
+$js_messages['seeMore'] = __('See more');
+$js_messages['confirmTitle'] = __('Are you sure?');
+$js_messages['makeConsistentMessage'] = __('This action may change some of the columns definition.<br/>Are you sure you want to continue?');
+$js_messages['strContinue'] = __('Continue');
 
 /* For server_variables.js */
 $js_messages['strSave'] = __('Save');
@@ -350,6 +365,7 @@ $js_messages['strColVisibHint'] = __(
 );
 $js_messages['strShowAllCol'] = __('Show all');
 $js_messages['strAlertNonUnique'] = __('This table does not contain a unique column. Features related to the grid edit, checkbox, Edit, Copy and Delete links may not work after saving.');
+$js_messages['strEnterValidHex'] = __('Please enter a valid hexadecimal string. Valid characters are 0-9, A-F.');
 
 // this approach does not work when the parameter is changed via user prefs
 switch ($GLOBALS['cfg']['GridEditing']) {
@@ -429,8 +445,9 @@ echo "var mysql_doc_template = '" . PMA_Util::getMySQLDocuURL('%s') . "';\n";
 
 //Max input vars allowed by PHP.
 $maxInputVars = ini_get('max_input_vars');
-echo 'var maxInputVars = ' . (false === $maxInputVars ? 'false' : $maxInputVars)
-    . ';';
+echo 'var maxInputVars = '
+    . (false === $maxInputVars || '' == $maxInputVars ? 'false' : $maxInputVars)
+    . ';' . "\n";
 
 echo "if ($.datepicker) {\n";
 /* l10n: Display text for calendar close link */

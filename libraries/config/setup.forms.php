@@ -80,6 +80,7 @@ $forms['Servers']['Server_pmadb'] = array('Servers' => array(1 => array(
     'pdf_pages' => 'pma__pdf_pages',
     'designer_coords' => 'pma__designer_coords',
     'savedsearches' => 'pma__savedsearches',
+    'central_columns' => 'pma__central_columns',
     'MaxTableUiprefs' => 100)));
 $forms['Servers']['Server_tracking'] = array('Servers' => array(1 => array(
     'tracking_version_auto_create',
@@ -315,7 +316,7 @@ $forms['Export']['Sql'] = array('Export' => array(
         'sql_type',
         'sql_insert_syntax',
         'sql_max_query_size',
-        'sql_hex_for_blob',
+        'sql_hex_for_binary',
         'sql_utc_time'));
 $forms['Export']['CodeGen'] = array('Export' => array(
     'codegen_format'));

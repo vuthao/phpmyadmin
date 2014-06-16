@@ -18,7 +18,7 @@ PMA_Util::checkParameters(array('db'));
 /* Check if database name is empty */
 if (strlen($db) == 0) {
     PMA_Util::mysqlDie(
-        __('The database name is empty!'), '', '', 'index.php'
+        __('The database name is empty!'), '', false, 'index.php'
     );
 }
 
@@ -29,7 +29,7 @@ if (!$GLOBALS['dbi']->selectDb($db)) {
     PMA_Util::mysqlDie(
         sprintf(__('\'%s\' database does not exist.'), htmlspecialchars($db)),
         '',
-        '',
+        false,
         'index.php'
     );
 }
@@ -39,7 +39,7 @@ if ($GLOBALS['dbi']->getColumns($db, $table)) {
     PMA_Util::mysqlDie(
         sprintf(__('Table %s already exists!'), htmlspecialchars($table)),
         '',
-        '',
+        false,
         'db_structure.php?' . PMA_URL_getCommon($db)
     );
 }
@@ -55,6 +55,11 @@ $action = 'tbl_create.php';
  */
 if (isset($_REQUEST['do_save_data'])) {
     $sql_query = PMA_getTableCreationQuery($db, $table);
+
+    // If there is a request for SQL previewing.
+    if (isset($_REQUEST['preview_sql'])) {
+        PMA_previewSQL($sql_query);
+    }
     // Executes the query
     $result = $GLOBALS['dbi']->tryQuery($sql_query);
 

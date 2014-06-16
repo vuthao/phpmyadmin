@@ -29,6 +29,9 @@ AJAX.registerTeardown('db_structure.js', function () {
     $('a.drop_tracking_anchor.ajax').die('click');
     $('#real_end_input').die('click');
     $("a.favorite_table_anchor.ajax").die('click');
+    $('a.real_row_count').off('click');
+    $('a.row_count_sum').off('click');
+    $('select[name=submit_mult]').unbind('change');
 });
 
 /**
@@ -126,9 +129,55 @@ function PMA_adjustTotals() {
     // Update summary with new data
     var $summary = $("#tbl_summary_row");
     $summary.find('.tbl_num').text($.sprintf(PMA_messages.strTables, tableSum));
-    $summary.find('.tbl_rows').text(strRowSum);
+    $summary.find('.row_count_sum').text(strRowSum);
     $summary.find('.tbl_size').text(sizeSum + " " + byteUnits[size_magnitude]);
     $summary.find('.tbl_overhead').text(overheadSum + " " + byteUnits[overhead_magnitude]);
+}
+
+/**
+ * Gets the real row count for a table or DB.
+ * @param object $target Target for appending the real count value.
+ */
+function PMA_fetchRealRowCount($target)
+{
+    var $throbber = $('#pma_navigation .throbber')
+        .first()
+        .clone()
+        .css({visibility: 'visible', display: 'inline-block'})
+        .click(false);
+    $target.html($throbber);
+    $.ajax({
+        type: 'GET',
+        url: $target.attr('href'),
+        cache: false,
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                // If to update all row counts for a DB.
+                if (response.real_row_count_all) {
+                    $.each(JSON.parse(response.real_row_count_all),
+                        function (index, table) {
+                            // Update each table row count.
+                            $('table.data td[data-table*="' + table.table + '"]')
+                            .text(table.row_count);
+                        }
+                    );
+                }
+                // If to update a particular table's row count.
+                if (response.real_row_count) {
+                    // Append the parent cell with real row count.
+                    $target.parent().text(response.real_row_count);
+                }
+                // Adjust the 'Sum' displayed at the bottom.
+                PMA_adjustTotals();
+            } else {
+                PMA_ajaxShowMessage(PMA_messages.strErrorRealRowCount);
+            }
+        },
+        error: function () {
+            PMA_ajaxShowMessage(PMA_messages.strErrorRealRowCount);
+        }
+    });
 }
 
 AJAX.registerOnload('db_structure.js', function () {
@@ -157,6 +206,46 @@ AJAX.registerOnload('db_structure.js', function () {
         }
     });
 
+/**
+ * function to open the confirmation dialog for making table consistent with central list
+ *
+ * @param string   msg     message text to be displayedd to user
+ * @param function success function to be called on success
+ *
+ */
+    var jqConfirm = function(msg, success) {
+        var dialogObj = $("<div style='display:none'>"+msg+"</div>");
+        $('body').append(dialogObj);
+        var buttonOptions = {};
+        buttonOptions[PMA_messages.strContinue] = function () {
+            success();
+            $( this ).dialog( "close" );
+        };
+        buttonOptions[PMA_messages.strCancel] = function () {
+            $( this ).dialog( "close" );
+            $('#tablesForm')[0].reset();
+        };
+        $(dialogObj).dialog({
+            resizable: false,
+            modal: true,
+            title: PMA_messages.confirmTitle,
+            buttons: buttonOptions
+        });
+    };
+
+/**
+ *  Event handler on select of "Make consistent with central list"
+ */
+    $('select[name=submit_mult]').change(function(event) {
+        if($(this).val() === 'make_consistent_with_central_list') {
+            event.preventDefault();
+            event.stopPropagation();
+            jqConfirm(PMA_messages.makeConsistentMessage, function(){
+                        $('#tablesForm').submit();
+                    });
+            return false;
+        }
+    });
      /**
      * Event handler for 'Foreign Key Checks' disabling option
      * in the drop table confirmation form
@@ -395,5 +484,16 @@ AJAX.registerOnload('db_structure.js', function () {
             'a',
             $(this).attr("title")
         );
+    });
+
+    // Get real row count via Ajax.
+    $('a.real_row_count').on('click', function (event) {
+        event.preventDefault();
+        PMA_fetchRealRowCount($(this));
+    });
+    // Get all real row count.
+    $('a.row_count_sum').on('click', function (event) {
+        event.preventDefault();
+        PMA_fetchRealRowCount($(this));
     });
 }); // end $()

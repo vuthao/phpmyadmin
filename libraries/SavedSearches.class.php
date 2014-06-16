@@ -130,14 +130,14 @@ class PMA_SavedSearches
     /**
      * Setter for criterias
      *
-     * @param array $criterias Criterias of saved searches
-     * @param bool  $json      Criterias are in JSON format
+     * @param array|string $criterias Criterias of saved searches
+     * @param bool         $json      Criterias are in JSON format
      *
      * @return static
      */
     public function setCriterias($criterias, $json = false)
     {
-        if (true === $json) {
+        if (true === $json && is_string($criterias)) {
             $this->_criterias = json_decode($criterias, true);
             return $this;
         }
@@ -408,7 +408,7 @@ class PMA_SavedSearches
     /**
      * Get the list of saved search of a user on a DB
      *
-     * @param array $wheres List of filters
+     * @param string[] $wheres List of filters
      *
      * @return array|bool List of saved search or false on failure
      */

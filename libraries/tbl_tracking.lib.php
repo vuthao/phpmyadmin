@@ -843,11 +843,13 @@ function PMA_getHtmlForColumns($columns)
 function PMA_getHtmlForField($field, $style)
 {
     $html = '<tr class="noclick ' . $style . '">';
+    $html .= '<td><b>' . htmlspecialchars($field['Field']);
     if ($field['Key'] == 'PRI') {
-        $html .= '<td><b><u>' . htmlspecialchars($field['Field']) . '</u></b></td>';
-    } else {
-        $html .= '<td><b>' . htmlspecialchars($field['Field']) . '</b></td>';
+        $html .= ' ' . PMA_Util::getImage(
+            'b_primary.png', __('Primary')
+        );
     }
+    $html .= '</b></td>';
     $html .= "\n";
     $html .= '<td>' . htmlspecialchars($field['Type']) . '</td>';
     $html .= '<td>' . htmlspecialchars($field['Collation']) . '</td>';
@@ -1271,6 +1273,7 @@ function PMA_getEntries($data, $filter_ts_from, $filter_ts_to, $filter_users)
     }
 
     // Sort it
+    $ids = $timestamps = $usernames = $statements = array();
     foreach ($entries as $key => $row) {
         $ids[$key]        = $row['id'];
         $timestamps[$key] = $row['timestamp'];

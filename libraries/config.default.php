@@ -92,9 +92,9 @@ $cfg['TranslationWarningThreshold'] = 80;
 $cfg['AllowThirdPartyFraming'] = false;
 
 /**
- * The 'cookie' auth_type uses blowfish algorithm to encrypt the password. If
+ * The 'cookie' auth_type uses AES algorithm to encrypt the password. If
  * at least one server configuration uses 'cookie' auth_type, enter here a
- * pass phrase that will be used by blowfish. The maximum length seems to be 46
+ * pass phrase that will be used by AES. The maximum length seems to be 46
  * characters.
  *
  * @global string $cfg['blowfish_secret']
@@ -482,6 +482,14 @@ $cfg['Servers'][$i]['navigationhiding'] = '';
 $cfg['Servers'][$i]['savedsearches'] = '';
 
 /**
+ * table to store central list of columns per database
+ *   - leave blank to disable central list of columns feature
+ *     SUGGESTED: 'pma__central_columns'
+ *
+ * @global string $cfg['Servers'][$i]['central_columns']
+ */
+$cfg['Servers'][$i]['central_columns'] = '';
+/**
  * Maximum number of records saved in $cfg['Servers'][$i]['table_uiprefs'] table.
  *
  * In case where tables in databases is modified (e.g. dropped or renamed),
@@ -569,23 +577,6 @@ $cfg['Servers'][$i]['tracking_add_drop_table'] = true;
  */
 
 $cfg['Servers'][$i]['tracking_add_drop_database'] = true;
-
-/**
- * Enables caching of TABLE STATUS outputs for specific databases on this server
- * (in some cases TABLE STATUS can be very slow, so you may want to cache it).
- * APC is used (if the PHP extension is available, if not, this setting is ignored
- * silently). You have to provide StatusCacheLifetime.
- *
- * @global array $cfg['Servers'][$i]['StatusCacheDatabases']
- */
-$cfg['Servers'][$i]['StatusCacheDatabases'] = array();
-
-/**
- * Lifetime in seconds of the TABLE STATUS cache if StatusCacheDatabases is used
- *
- * @global integer $cfg['Servers'][$i]['StatusCacheLifetime']
- */
-$cfg['Servers'][$i]['StatusCacheLifetime'] = 0;
 
 /**
  * Default server (0 = no default server)
@@ -1089,13 +1080,6 @@ $cfg['MaxRows'] = 25;
  * @global string $cfg['Order']
  */
 $cfg['Order'] = 'SMART';
-
-/**
- * default for 'Show binary contents as HEX'
- *
- * @global string $cfg['DisplayBinaryAsHex']
- */
-$cfg['DisplayBinaryAsHex'] = true;
 
 /**
  * grid editing: save edited cell(s) in browse-mode at once
@@ -1936,9 +1920,9 @@ $cfg['Export']['sql_utc_time'] = true;
 /**
  *
  *
- * @global boolean $cfg['Export']['sql_hex_for_blob']
+ * @global boolean $cfg['Export']['sql_hex_for_binary']
  */
-$cfg['Export']['sql_hex_for_blob'] = true;
+$cfg['Export']['sql_hex_for_binary'] = true;
 
 /**
  * insert/update/replace

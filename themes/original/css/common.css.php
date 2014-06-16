@@ -828,13 +828,20 @@ div#tablestatistics table {
     white-space:        nowrap;
 }
 
-#goto_pagetop {
+#goto_pagetop, #lock_page_icon {
     position: fixed;
     padding: .1em .3em;
     top: 0;
-    <?php echo $right; ?>: 0;
     z-index: 900;
     background: white;
+}
+
+#goto_pagetop {
+    <?php echo $right; ?>: 0;
+}
+
+#lock_page_icon {
+    <?php echo $right; ?>: 2em;
 }
 
 #span_table_comment {
@@ -1039,10 +1046,15 @@ div#chartVariableSettings {
     margin-left:10px;
 }
 
+table#chartGrid td {
+    padding: 3px;
+    margin: 0;
+}
+
 table#chartGrid div.monitorChart {
     background: #EBEBEB;
-    width: 400px;
-    height: 300px;
+    overflow: hidden;
+    border: none;
 }
 
 div#serverstatus div.tabLinks {

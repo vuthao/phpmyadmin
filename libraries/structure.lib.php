@@ -152,13 +152,14 @@ function PMA_getTableDropQueryAndMessage($table_is_view, $current_table)
  * @param string  $create_time_all     create time
  * @param string  $update_time_all     update time
  * @param string  $check_time_all      check time
+ * @param boolean $approx_rows         whether any table has approx row count or not
  *
  * @return string $html_output
  */
 function PMA_getHtmlBodyForTableSummary($num_tables, $server_slave_status,
     $db_is_system_schema, $sum_entries, $db_collation, $is_show_stats,
     $sum_size, $overhead_size, $create_time_all, $update_time_all,
-    $check_time_all
+    $check_time_all, $approx_rows
 ) {
     $html_output = '<tbody id="tbl_summary_row">'
         . '<tr><th></th>';
@@ -172,11 +173,26 @@ function PMA_getHtmlBodyForTableSummary($num_tables, $server_slave_status,
     if ($server_slave_status) {
         $html_output .= '<th>' . __('Replication') . '</th>' . "\n";
     }
-    $html_output .= '<th colspan="' . ($db_is_system_schema ? 3 : 7) . '">'
+    $html_output .= '<th colspan="' . ($db_is_system_schema ? 4 : 7) . '">'
         . __('Sum')
         . '</th>';
+
+    $row_count_sum = PMA_Util::formatNumber($sum_entries, 0);
+    // If a table shows approximate rows count, display update-all-real-count anchor.
+    if (isset($approx_rows)) {
+        $row_sum_url = array(
+            'ajax_request'       => true,
+            'db'                 => $GLOBALS['db'],
+            'real_row_count'     => 'true',
+            'real_row_count_all' => 'true'
+        );
+    }
+    $cell_text = ($approx_rows)
+        ? '<a href="db_structure.php' . PMA_URL_getCommon($row_sum_url)
+        . '" class="ajax row_count_sum">' . '~' . $row_count_sum . '</a>'
+        : $row_count_sum;
     $html_output .= '<th class="value tbl_rows">'
-        . PMA_Util::formatNumber($sum_entries, 0)
+        . $cell_text
         . '</th>';
 
     if (!($GLOBALS['cfg']['PropertiesNumColumns'] > 1)) {
@@ -320,6 +336,14 @@ function PMA_getHtmlForCheckAllTables($pmaThemeImage, $text_dir,
             . __('Replace table prefix') . '</option>' . "\n";
         $html_output .= '<option value="copy_tbl_change_prefix" >'
             . __('Copy table with prefix') . '</option>' . "\n";
+        if ($GLOBALS['cfgRelation']['central_columnswork']) {
+            $html_output .= '<option value="sync_unique_columns_central_list" >'
+                . __('Add columns to central list') . '</option>' . "\n";
+            $html_output .= '<option value="delete_unique_columns_central_list" >'
+                . __('Remove columns from central list') . '</option>' . "\n";
+            $html_output .= '<option value="make_consistent_with_central_list" >'
+                . __('Make consistent with central list') . '</option>' . "\n";
+        }
     }
     $html_output .= '</select>'
         . implode("\n", $hidden_fields) . "\n";
@@ -440,7 +464,7 @@ function PMA_getTimeForCreateUpdateCheck($current_table, $time_label, $time_all)
  * @param boolean $do                    do
  * @param integer $colspan_for_structure colspan for structure
  *
- * @return array $html_output, $odd_row
+ * @return array $html_output, $odd_row, $approx_rows
  */
 function PMA_getHtmlForStructureTableRow(
     $curr, $odd_row, $table_is_view, $current_table,
@@ -499,15 +523,17 @@ function PMA_getHtmlForStructureTableRow(
     // - when it's a view
     //  so ensure that we'll display "in use" below for a table
     //  that needs to be repaired
+    $approx_rows = false;
     if (isset($current_table['TABLE_ROWS'])
         && ($current_table['ENGINE'] != null
         || $table_is_view)
     ) {
-        $html_output .= PMA_getHtmlForNotNullEngineViewTable(
+        list($html_view_table, $approx_rows) = PMA_getHtmlForNotNullEngineViewTable(
             $table_is_view, $current_table, $collation, $is_show_stats,
             $tbl_url_query, $formatted_size, $unit, $overhead, $create_time,
             $update_time, $check_time
         );
+        $html_output .= $html_view_table;
     } elseif ($table_is_view) {
         $html_output .= PMA_getHtmlForViewTable($is_show_stats);
     } else {
@@ -518,7 +544,7 @@ function PMA_getHtmlForStructureTableRow(
     } // end if (isset($current_table['TABLE_ROWS'])) else
     $html_output .= '</tr>';
 
-    return array($html_output, $odd_row);
+    return array($html_output, $odd_row, $approx_rows);
 }
 
 /**
@@ -668,11 +694,35 @@ function PMA_getHtmlForNotNullEngineViewTable($table_is_view, $current_table,
         $show_superscript = '';
     }
 
-    $html_output .= '<td class="value tbl_rows">'
-        . $row_count_pre . PMA_Util::formatNumber(
-            $current_table['TABLE_ROWS'], 0
-        )
-        . $show_superscript . '</td>';
+    // Set a flag if there are approximate row counts on page.
+    if (! empty($row_count_pre)) {
+        $approx_rows = true;
+    } else {
+        // this happens for information_schema, performance_schema,
+        // and in case there is no InnoDB table on this page
+        $approx_rows = false;
+    }
+    // Get the row count.
+    $row_count = $row_count_pre
+        . PMA_Util::formatNumber($current_table['TABLE_ROWS'], 0);
+    // URL parameters to fetch the real row count.
+    $real_count_url = array(
+        'ajax_request'   => true,
+        'db'             => $GLOBALS['db'],
+        'table'          => $current_table['TABLE_NAME'],
+        'real_row_count' => 'true'
+    );
+    // Content to be appended into 'tbl_rows' cell.
+    // If row count is approximate, display it as an anchor to get real count.
+    $cell_text = (! empty($row_count_pre))
+        ? '<a href="db_structure.php' . PMA_URL_getCommon($real_count_url)
+        . '" class="ajax real_row_count">' . $row_count . '</a>'
+        : $row_count;
+    $html_output .= '<td class="value tbl_rows" data-table="'
+        . $current_table['TABLE_NAME'] . '">'
+        . $cell_text
+        . $show_superscript
+        . '</td>';
 
     if (!($GLOBALS['cfg']['PropertiesNumColumns'] > 1)) {
         $html_output .= '<td class="nowrap">'
@@ -693,7 +743,7 @@ function PMA_getHtmlForNotNullEngineViewTable($table_is_view, $current_table,
         $create_time, $update_time, $check_time
     );
 
-    return $html_output;
+    return array($html_output, $approx_rows);
 }
 
 /**
@@ -747,7 +797,7 @@ function PMA_tableHeader($db_is_system_schema = false, $replication = false)
     $cnt = 0; // Let's count the columns...
 
     if ($db_is_system_schema) {
-        $action_colspan = 3;
+        $action_colspan = 4;
     } else {
         $action_colspan = 7;
     }
@@ -770,7 +820,10 @@ function PMA_tableHeader($db_is_system_schema = false, $replication = false)
         . '<th>' . PMA_sortableTableHeader(__('Rows'), 'records', 'DESC')
         . PMA_Util::showHint(
             PMA_sanitize(
-                __('May be approximate. See [doc@faq3-11]FAQ 3.11[/doc].')
+                __(
+                    'May be approximate. Click on the number to get the exact'
+                    . ' count. See [doc@faq3-11]FAQ 3.11[/doc].'
+                )
             )
         ) . "\n"
         . '</th>' . "\n";
@@ -1426,6 +1479,18 @@ function PMA_getHtmlForCheckAllTableColumn($pmaThemeImage, $text_dir,
                 __('Fulltext'), 'b_ftext.png', 'ftext'
             );
         }
+        if ($GLOBALS['cfgRelation']['central_columnswork']) {
+            $html_output .= PMA_Util::getButtonOrImage(
+                'submit_mult', 'mult_submit', 'submit_mult_central_columns_add',
+                __('Add to central columns'), 'centralColumns_add.png',
+                'add_to_central_columns'
+            );
+            $html_output .= PMA_Util::getButtonOrImage(
+                'submit_mult', 'mult_submit', 'submit_mult_central_columns_remove',
+                __('Remove from central columns'), 'centralColumns_delete.png',
+                'remove_from_central_columns'
+            );
+        }
     }
     return $html_output;
 }
@@ -1956,12 +2021,13 @@ function PMA_getHtmlForDistinctValueAction($url_query, $row, $titles)
  * @param string  $rownum                    row number
  * @param array   $hidden_titles             hidden titles
  * @param array   $columns_with_unique_index columns with unique index
+ * @param boolean $isInCentralColumns        set if column in central columns list
  *
  * @return string $html_output;
  */
 function PMA_getHtmlForActionsInTableStructure($type, $tbl_storage_engine,
     $primary, $field_name, $url_query, $titles, $row, $rownum, $hidden_titles,
-    $columns_with_unique_index
+    $columns_with_unique_index, $isInCentralColumns
 ) {
     $html_output = '<td><ul class="table-structure-actions resizable-menu">';
     $html_output .= PMA_getHtmlForActionRowInStructureTable(
@@ -2009,6 +2075,31 @@ function PMA_getHtmlForActionsInTableStructure($type, $tbl_storage_engine,
         );
     }
     $html_output .= PMA_getHtmlForDistinctValueAction($url_query, $row, $titles);
+    if ($GLOBALS['cfgRelation']['central_columnswork']) {
+        $html_output .= '<li class="browse nowrap">';
+        if ($isInCentralColumns) {
+            $html_output .=
+                '<a href="#" onclick=$("input:checkbox").removeAttr("checked");'
+                . '$("#checkbox_row_' . $rownum . '").attr("checked","checked");'
+                . '$("button[value=remove_from_central_columns]").click();>'
+            . PMA_Util::getIcon(
+                'centralColumns_delete.png',
+                __('Remove from central columns')
+            )
+            . '</a>';
+        } else {
+            $html_output .=
+                '<a href="#" onclick=$("input:checkbox").removeAttr("checked");'
+                . '$("#checkbox_row_' . $rownum . '").attr("checked","checked");'
+                . '$("button[value=add_to_central_columns]").click();>'
+            . PMA_Util::getIcon(
+                'centralColumns_add.png',
+                __('Add to central columns')
+            )
+            . '</a>';
+        }
+        $html_output .= '</li>';
+    }
     $html_output .= '<div class="clearfloat"></div></ul></td>';
     return $html_output;
 }
@@ -2259,6 +2350,7 @@ function PMA_displayHtmlForColumnChange($db, $table, $selected, $action)
     /**
      * @todo optimize in case of multiple fields to modify
      */
+    $fields_meta = array();
     for ($i = 0; $i < $selected_cnt; $i++) {
         $fields_meta[] = $GLOBALS['dbi']->getColumns(
             $db, $table, $selected[$i], true
@@ -2329,6 +2421,7 @@ function PMA_columnNeedsAlterTable($i)
         || $_REQUEST['field_name'][$i] != $_REQUEST['field_orig'][$i]
         || $_REQUEST['field_null'][$i] != $_REQUEST['field_null_orig'][$i]
         || $_REQUEST['field_type'][$i] != $_REQUEST['field_type_orig'][$i]
+        || ! empty($_REQUEST['field_move_to'][$i])
 ) {
         return true;
     } else {
@@ -2388,7 +2481,7 @@ function PMA_updateColumns($db, $table)
 
     $response = PMA_Response::getInstance();
 
-    if (count($changes) > 0) {
+    if (count($changes) > 0 || isset($_REQUEST['preview_sql'])) {
         // Builds the primary keys statements and updates the table
         $key_query = '';
         /**
@@ -2406,13 +2499,19 @@ function PMA_updateColumns($db, $table)
             PMA_Util::mysqlDie(
                 $GLOBALS['dbi']->getError(),
                 'USE ' . PMA_Util::backquote($db) . ';',
-                '',
+                false,
                 $err_url
             );
         }
         $sql_query = 'ALTER TABLE ' . PMA_Util::backquote($table) . ' ';
         $sql_query .= implode(', ', $changes) . $key_query;
         $sql_query .= ';';
+
+        // If there is a request for SQL previewing.
+        if (isset($_REQUEST['preview_sql'])) {
+            PMA_previewSQL(count($changes) > 0 ? $sql_query : '');
+        }
+
         $result    = $GLOBALS['dbi']->tryQuery($sql_query);
 
         if ($result !== false) {
@@ -2971,5 +3070,80 @@ function PMA_getShowCreate($db, $db_object, $type = 'table')
     $result = $GLOBALS['dbi']->fetchSingleRow($sql_query);
 
     return $result;
+}
+
+/**
+ * Returns the real row count for a table
+ *
+ * @param string $db    Database name
+ * @param string $table Table name
+ *
+ * @return number
+ */
+function PMA_getRealRowCountTable($db, $table)
+{
+    // SQL query to get row count for a table.
+    $sql_query = 'SELECT COUNT(*) AS ' . PMA_Util::backquote('row_count')
+        . ' FROM ' . PMA_Util::backquote($db) . '.'
+        . PMA_Util::backquote($table);
+    $result = $GLOBALS['dbi']->fetchSingleRow($sql_query);
+    $row_count = $result['row_count'];
+
+    return $row_count;
+}
+
+/**
+ * Returns the real row count for all tables of a DB
+ *
+ * @param string $db     Database name
+ * @param array  $tables Array containing table names.
+ *
+ * @return array
+ */
+function PMA_getRealRowCountDb($db, $tables)
+{
+    // Array to store the results.
+    $row_count_all = array();
+    // Iterate over each table and fetch real row count.
+    foreach ($tables as $key => $table) {
+        $row_count = PMA_getRealRowCountTable($db, $table['TABLE_NAME']);
+        array_push(
+            $row_count_all,
+            array('table' => $table['TABLE_NAME'], 'row_count' => $row_count)
+        );
+    }
+
+    return $row_count_all;
+}
+
+/**
+ * Handles request for real row count on database level view page.
+ *
+ * @return boolean true
+ */
+function PMA_handleRealRowCountRequest()
+{
+    $ajax_response = PMA_Response::getInstance();
+    // If there is a request to update all table's row count.
+    if (isset($_REQUEST['real_row_count_all'])) {
+        $real_row_count_all = PMA_getRealRowCountDb(
+            $GLOBALS['db'],
+            $GLOBALS['tables']
+        );
+        $ajax_response->addJSON(
+            'real_row_count_all',
+            json_encode($real_row_count_all)
+        );
+        return true;
+    }
+    // Get the real row count for the table.
+    $real_row_count = PMA_getRealRowCountTable(
+        $GLOBALS['db'],
+        $_REQUEST['table']
+    );
+    // Format the number.
+    $real_row_count = PMA_Util::formatNumber($real_row_count, 0);
+    $ajax_response->addJSON('real_row_count', $real_row_count);
+    return true;
 }
 ?>

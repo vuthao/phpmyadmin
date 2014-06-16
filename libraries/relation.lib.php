@@ -85,6 +85,7 @@ function PMA_getRelationsParamDiagnostic($cfgRelation)
 {
     $retval = '';
 
+    $messages = array();
     $messages['error'] = '<font color="red"><strong>'
         . __('not OK')
         . '</strong></font>'
@@ -291,6 +292,17 @@ function PMA_getRelationsParamDiagnostic($cfgRelation)
             'savedsearcheswork',
             $messages
         );
+        $retval .= PMA_getDiagMessageForParameter(
+            'central_columns',
+            isset($cfgRelation['central_columns']),
+            $messages,
+            'central_columns'
+        );
+        $retval .= PMA_getDiagMessageForFeature(
+            __('Managing Central list of columns'),
+            'central_columnswork',
+            $messages
+        );
         $retval .= '</table>' . "\n";
 
         $retval .= '<p>' . __('Quick steps to setup advanced features:') . '</p>';
@@ -407,12 +419,15 @@ function PMA_checkRelationsParam()
     $cfgRelation['navwork']        = false;
     $cfgRelation['allworks']       = false;
     $cfgRelation['savedsearcheswork'] = false;
+    $cfgRelation['central_columnswork'] = false;
     $cfgRelation['user']           = null;
     $cfgRelation['db']             = null;
 
     if ($GLOBALS['server'] == 0
         || empty($GLOBALS['cfg']['Server']['pmadb'])
-        || ! $GLOBALS['dbi']->selectDb($GLOBALS['cfg']['Server']['pmadb'], $GLOBALS['controllink'])
+        || ! $GLOBALS['dbi']->selectDb(
+            $GLOBALS['cfg']['Server']['pmadb'], $GLOBALS['controllink']
+        )
     ) {
         // No server selected -> no bookmark table
         // we return the array with the falses in it,
@@ -420,7 +435,6 @@ function PMA_checkRelationsParam()
         $GLOBALS['cfg']['Server']['pmadb'] = false;
         return $cfgRelation;
     }
-
 
     $cfgRelation['user']  = $GLOBALS['cfg']['Server']['user'];
     $cfgRelation['db']    = $GLOBALS['cfg']['Server']['pmadb'];
@@ -477,6 +491,8 @@ function PMA_checkRelationsParam()
             $cfgRelation['navigationhiding']      = $curr_table[0];
         } elseif ($curr_table[0] == $GLOBALS['cfg']['Server']['savedsearches']) {
             $cfgRelation['savedsearches']    = $curr_table[0];
+        } elseif ($curr_table[0] == $GLOBALS['cfg']['Server']['central_columns']) {
+            $cfgRelation['central_columns']    = $curr_table[0];
         }
     } // end while
     $GLOBALS['dbi']->freeResult($tab_rs);
@@ -539,6 +555,10 @@ function PMA_checkRelationsParam()
         $cfgRelation['savedsearcheswork']      = true;
     }
 
+    if (isset($cfgRelation['central_columns'])) {
+        $cfgRelation['central_columnswork']      = true;
+    }
+
     if ($cfgRelation['relwork'] && $cfgRelation['displaywork']
         && $cfgRelation['pdfwork'] && $cfgRelation['commwork']
         && $cfgRelation['mimework'] && $cfgRelation['historywork']
@@ -546,7 +566,7 @@ function PMA_checkRelationsParam()
         && $cfgRelation['trackingwork'] && $cfgRelation['userconfigwork']
         && $cfgRelation['bookmarkwork'] && $cfgRelation['designerwork']
         && $cfgRelation['menuswork'] && $cfgRelation['navwork']
-        && $cfgRelation['savedsearcheswork']
+        && $cfgRelation['savedsearcheswork'] && $cfgRelation['central_columnswork']
     ) {
         $cfgRelation['allworks'] = true;
     }
@@ -1006,7 +1026,9 @@ function PMA_purgeHistory($username)
        ORDER BY `timevalue` DESC
           LIMIT ' . $GLOBALS['cfg']['QueryHistoryMax'] . ', 1';
 
-    if ($max_time = $GLOBALS['dbi']->fetchValue($search_query, 0, 0, $GLOBALS['controllink'])) {
+    if ($max_time = $GLOBALS['dbi']->fetchValue(
+        $search_query, 0, 0, $GLOBALS['controllink']
+    )) {
         PMA_queryAsControlUser(
             'DELETE FROM '
             . PMA_Util::backquote($cfgRelation['db']) . '.'
@@ -1233,13 +1255,10 @@ function PMA_getForeignData(
             $f_query_limit = isset($foreign_limit) ? $foreign_limit : '';
 
             if (!empty($foreign_filter)) {
-                $res = $GLOBALS['dbi']->query(
+                $the_total = $GLOBALS['dbi']->fetchValue(
                     'SELECT COUNT(*)' . $f_query_from . $f_query_filter
                 );
-                if ($res) {
-                    $the_total = $GLOBALS['dbi']->fetchValue($res);
-                    @$GLOBALS['dbi']->freeResult($res);
-                } else {
+                if ($the_total === false) {
                     $the_total = 0;
                 }
             }
@@ -1265,6 +1284,7 @@ function PMA_getForeignData(
         }
     }  // end if $foreigners
 
+    $foreignData = array();
     $foreignData['foreign_link'] = $foreign_link;
     $foreignData['the_total'] = isset($the_total) ? $the_total : null;
     $foreignData['foreign_display'] = (
@@ -1293,6 +1313,7 @@ function PMA_getRelatives($all_tables, $master)
     $remaining_tables = $all_tables;
     unset($remaining_tables[$master]);
     // The list of allready connected tables
+    $known_tables = array();
     $known_tables[$master] = $master;
     $run = 0;
     while (count($remaining_tables) > 0) {
@@ -1583,7 +1604,9 @@ function PMA_checkChildForeignReferences($db, $table, $column)
     $foreigners = PMA_getForeigners($db, $table, $column);
     $child_references = PMA_getChildReferences($db, $table, $column);
 
-    if (sizeof($child_references, 0) > 0 || sizeof($foreigners[$column], 0) > 0) {
+    if (sizeof($child_references, 0) > 0
+        || (! empty($foreigners[$column]) && sizeof($foreigners[$column], 0) > 0)
+    ) {
         if (sizeof($child_references, 0) > 0) {
             $column_status['isReferenced'] = true;
             foreach ($child_references as $row => $columns) {

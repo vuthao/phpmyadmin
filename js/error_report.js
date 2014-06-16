@@ -21,10 +21,11 @@ var ErrorReport = {
         ErrorReport._last_exception = exception;
         $.get("error_report.php", {
             ajax_request: true,
+            server: PMA_commonParams.get('server'),
             token: PMA_commonParams.get('token'),
             get_settings: true
         }, function (data) {
-            if (!data.success === true) {
+            if (data.success !== true) {
                 PMA_ajaxShowMessage(data.error, false);
                 return;
             }
@@ -229,7 +230,7 @@ var ErrorReport = {
             "microhistory": ErrorReport._get_microhistory()
         };
         if (typeof AJAX.cache.pages[AJAX.cache.current - 1] !== 'undefined') {
-           report_data.scripts = AJAX.cache.pages[AJAX.cache.current - 1].scripts.map(
+            report_data.scripts = AJAX.cache.pages[AJAX.cache.current - 1].scripts.map(
                 function (script) {
                     return script.name;
                 }

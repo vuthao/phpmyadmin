@@ -13,11 +13,11 @@ if (! defined('PHPMYADMIN')) {
 /**
  * Retrieve form parameters for insert/edit form
  *
- * @param string $db                 name of the database
- * @param string $table              name of the table
- * @param array  $where_clauses      where clauses
- * @param array  $where_clause_array array of where clauses
- * @param string $err_url            error url
+ * @param string     $db                 name of the database
+ * @param string     $table              name of the table
+ * @param array|null $where_clauses      where clauses
+ * @param array      $where_clause_array array of where clauses
+ * @param string     $err_url            error url
  *
  * @return array $_form_params array of insert/edit form parameters
  */
@@ -45,7 +45,7 @@ function PMA_getFormParametersForInsertForm($db, $table, $where_clauses,
 /**
  * Creates array of where clauses
  *
- * @param array $where_clause where clause
+ * @param array|string|null $where_clause where clause
  *
  * @return array|void whereClauseArray array of where clauses
  */
@@ -454,9 +454,12 @@ function PMA_getFunctionColumn($column, $is_upload, $column_name_appendix,
     $tabindex, $idindex, $insert_mode
 ) {
     $html_output = '';
-    if (($GLOBALS['cfg']['ProtectBinary'] && $column['is_blob'] && ! $is_upload)
-        || ($GLOBALS['cfg']['ProtectBinary'] === 'all' && $column['is_binary'])
-        || ($GLOBALS['cfg']['ProtectBinary'] === 'noblob' && ! $column['is_blob'])
+    if (($GLOBALS['cfg']['ProtectBinary'] === 'blob'
+        && $column['is_blob'] && !$is_upload)
+        || ($GLOBALS['cfg']['ProtectBinary'] === 'all'
+        && $column['is_binary'])
+        || ($GLOBALS['cfg']['ProtectBinary'] === 'noblob'
+        && $column['is_binary'])
     ) {
         $html_output .= '<td class="center">' . __('Binary') . '</td>' . "\n";
     } elseif (strstr($column['True_Type'], 'enum')
@@ -484,11 +487,11 @@ function PMA_getFunctionColumn($column, $is_upload, $column_name_appendix,
  *
  * @param array   $column               description of column in given table
  * @param string  $column_name_appendix the name atttibute
- * @param array   $real_null_value      is column value null or not null
+ * @param boolean $real_null_value      is column value null or not null
  * @param integer $tabindex             tab index
  * @param integer $tabindex_for_null    +6000
  * @param integer $idindex              id index
- * @param array   $vkey                 [multi_edit]['row_id']
+ * @param string  $vkey                 [multi_edit]['row_id']
  * @param array   $foreigners           keys into foreign fields
  * @param array   $foreignData          data about the foreign keys
  *
@@ -590,7 +593,7 @@ function PMA_getNullifyCodeForNullColumn($column, $foreigners, $foreignData)
  * @param array   $titles                An HTML IMG tag for a particular icon from
  *                                       a theme, which may be an actual file or
  *                                       an icon from a sprite
- * @param array   $text_dir              text direction
+ * @param string  $text_dir              text direction
  * @param string  $special_chars_encoded replaced char if the string starts
  *                                       with a \r\n pair (0x0d0a) add an extra \n
  * @param string  $vkey                  [multi_edit]['row_id']
@@ -732,10 +735,7 @@ function PMA_getForeignLink($column, $backup_field, $column_name_appendix,
         . 'id="field_' . ($idindex) . '_3" '
         . 'value="' . htmlspecialchars($data) . '" />';
 
-    $html_output .= '<a class="foreign_values_anchor" target="_blank" '
-        . 'onclick="window.open(this.href,\'foreigners\', \'width=640,height=240,'
-        . 'scrollbars=yes,resizable=yes\'); return false;" '
-        . 'href="browse_foreigners.php'
+    $html_output .= '<a class="ajax browse_foreign" href="browse_foreigners.php'
         . PMA_URL_getCommon(
             array(
                 'db' => $db,
@@ -798,8 +798,8 @@ function PMA_dispRowForeignData($backup_field, $column_name_appendix,
  * @param integer $tabindex              tab index
  * @param integer $tabindex_for_value    offset for the values tabindex
  * @param integer $idindex               id index
- * @param array   $text_dir              text direction
- * @param array   $special_chars_encoded replaced char if the string starts
+ * @param string  $text_dir              text direction
+ * @param string  $special_chars_encoded replaced char if the string starts
  *                                       with a \r\n pair (0x0d0a) add an extra \n
  *
  * @return string                       an html snippet
@@ -847,7 +847,7 @@ function PMA_getTextarea($column, $backup_field, $column_name_appendix,
 /**
  * Get HTML for enum type
  *
- * @param string  $column               description of column in given table
+ * @param array   $column               description of column in given table
  * @param string  $backup_field         hidden input field
  * @param string  $column_name_appendix the name atttibute
  * @param array   $extracted_columnspec associative array containing type,
@@ -923,7 +923,7 @@ function PMA_getColumnEnumValues($column, $extracted_columnspec)
  * @param integer $tabindex             tab index
  * @param integer $tabindex_for_value   offset for the values tabindex
  * @param integer $idindex              id index
- * @param array   $data                 data to edit
+ * @param string  $data                 data to edit
  * @param array   $column_enum_values   $column['values']
  *
  * @return string                       an html snippet
@@ -1098,9 +1098,14 @@ function PMA_getBinaryAndBlobColumn(
     $vkey, $is_upload
 ) {
     $html_output = '';
-    if (($GLOBALS['cfg']['ProtectBinary'] && $column['is_blob'])
-        || ($GLOBALS['cfg']['ProtectBinary'] == 'all' && $column['is_binary'])
-        || ($GLOBALS['cfg']['ProtectBinary'] == 'noblob' && !$column['is_blob'])
+    // Add field type : Protected or Hexadecimal
+    $fields_type_html = '<input type="hidden" name="fields_type'
+        . $column_name_appendix . '" value="%s" />';
+    // Default value : hex
+    $fields_type_val = 'hex';
+    if (($GLOBALS['cfg']['ProtectBinary'] === 'blob' && $column['is_blob'])
+        || ($GLOBALS['cfg']['ProtectBinary'] === 'all')
+        || ($GLOBALS['cfg']['ProtectBinary'] === 'noblob' && !$column['is_blob'])
     ) {
         $html_output .= __('Binary - do not edit');
         if (isset($data)) {
@@ -1110,9 +1115,8 @@ function PMA_getBinaryAndBlobColumn(
             $html_output .= ' (' . $data_size[0] . ' ' . $data_size[1] . ')';
             unset($data_size);
         }
-        $html_output .= '<input type="hidden" name="fields_type'
-            . $column_name_appendix . '" value="protected" />'
-            . '<input type="hidden" name="fields'
+        $fields_type_val = 'protected';
+        $html_output .= '<input type="hidden" name="fields'
             . $column_name_appendix . '" value="" />';
     } elseif ($column['is_blob']
         || ($column['len'] > $GLOBALS['cfg']['LimitChars'])
@@ -1130,6 +1134,7 @@ function PMA_getBinaryAndBlobColumn(
             $unnullify_trigger, $tabindex, $tabindex_for_value, $idindex
         );
     }
+    $html_output .= sprintf($fields_type_html, $fields_type_val);
 
     if ($is_upload && $column['is_blob']) {
         $html_output .= '<br />'
@@ -1183,17 +1188,19 @@ function PMA_getHTMLinput($column, $column_name_appendix, $special_chars,
         $the_class .= ' datetimefield';
     }
     $input_min_max = false;
-    if (in_array(
-        $column['True_Type'],
-        $GLOBALS['PMA_Types']->getIntegerTypes()
-    )) {
-        $input_type = 'number';
-        $is_unsigned = substr($column['pma_type'], -9) === ' unsigned';
-        $min_max_values = $GLOBALS['PMA_Types']->getIntegerRange(
-            $column['True_Type'], ! $is_unsigned
-        );
-        $input_min_max = 'min="' . $min_max_values[0] . '" '
-            . 'max="' . $min_max_values[1] . '" ';
+    if (!$GLOBALS['cfg']['ShowFunctionFields']) {
+        if (in_array(
+            $column['True_Type'],
+            $GLOBALS['PMA_Types']->getIntegerTypes()
+        )) {
+            $input_type = 'number';
+            $is_unsigned = substr($column['pma_type'], -9) === ' unsigned';
+            $min_max_values = $GLOBALS['PMA_Types']->getIntegerRange(
+                $column['True_Type'], ! $is_unsigned
+            );
+            $input_min_max = 'min="' . $min_max_values[0] . '" '
+                . 'max="' . $min_max_values[1] . '" ';
+        }
     }
     return '<input type="' . $input_type . '"'
         . ' name="fields' . $column_name_appendix . '"'
@@ -1235,6 +1242,8 @@ function PMA_getSelectOptionForUpload($vkey, $column)
             . $files
             . '</select>' . "\n";
     }
+
+    return null;
 }
 
 /**
@@ -1291,7 +1300,7 @@ function PMA_getMaxUploadSize($column, $biggest_max_file_size)
  * @param integer $tabindex_for_value    offset for the values tabindex
  * @param integer $idindex               id index
  * @param string  $text_dir              text direction
- * @param array   $special_chars_encoded replaced char if the string starts
+ * @param string  $special_chars_encoded replaced char if the string starts
  *                                       with a \r\n pair (0x0d0a) add an extra \n
  * @param string  $data                  data to edit
  * @param array   $extracted_columnspec  associative array containing type,
@@ -1594,8 +1603,10 @@ function PMA_getSumbitAndResetButtonForActionsPanel($tabindex, $tabindex_for_val
     . '<td colspan="3" class="right vmiddle">'
     . '<input type="submit" class="control_at_footer" value="' . __('Go') . '"'
     . ' tabindex="' . ($tabindex + $tabindex_for_value + 6) . '" id="buttonYes" />'
-    . '<input type="reset" class="control_at_footer" value="' . __('Reset') . '"'
+    . '<input type="button" class="preview_sql" value="' . __('Preview SQL') . '"'
     . ' tabindex="' . ($tabindex + $tabindex_for_value + 7) . '" />'
+    . '<input type="reset" class="control_at_footer" value="' . __('Reset') . '"'
+    . ' tabindex="' . ($tabindex + $tabindex_for_value + 8) . '" />'
     . '</td>';
 }
 
@@ -1683,21 +1694,11 @@ function PMA_getSpecialCharsAndBackupFieldForExistingRow(
     } else {
         // special binary "characters"
         if ($column['is_binary']
-            || ($column['is_blob'] && ! $GLOBALS['cfg']['ProtectBinary'])
+            || ($column['is_blob'] && $GLOBALS['cfg']['ProtectBinary'] !== 'all')
         ) {
-            if ($_SESSION['tmpval']['display_binary_as_hex']
-                && $GLOBALS['cfg']['ShowFunctionFields']
-            ) {
-                $current_row[$column['Field']] = bin2hex(
-                    $current_row[$column['Field']]
-                );
-                $column['display_binary_as_hex'] = true;
-            } else {
+            $current_row[$column['Field']] = bin2hex(
                 $current_row[$column['Field']]
-                    = PMA_Util::replaceBinaryContents(
-                        $current_row[$column['Field']]
-                    );
-            }
+            );
         } // end if
         $special_chars = htmlspecialchars($current_row[$column['Field']]);
 
@@ -1769,15 +1770,6 @@ function PMA_getSpecialCharsAndBackupFieldForInsertingMode(
     }
     $backup_field = '';
     $special_chars_encoded = PMA_Util::duplicateFirstNewline($special_chars);
-    // this will select the UNHEX function while inserting
-    if (($column['is_binary']
-        || ($column['is_blob'] && ! $GLOBALS['cfg']['ProtectBinary']))
-        && (isset($_SESSION['tmpval']['display_binary_as_hex'])
-        && $_SESSION['tmpval']['display_binary_as_hex'])
-        && $GLOBALS['cfg']['ShowFunctionFields']
-    ) {
-        $column['display_binary_as_hex'] = true;
-    }
     return array(
         $real_null_value, $data, $special_chars,
         $backup_field, $special_chars_encoded
@@ -1927,7 +1919,7 @@ function PMA_getErrorUrl($url_params)
  * @param array   $query_fields    column names array
  * @param array   $value_sets      array of query values
  *
- * @return string a query
+ * @return array of query
  */
 function PMA_buildSqlQuery($is_insertignore, $query_fields, $value_sets)
 {
@@ -1936,11 +1928,13 @@ function PMA_buildSqlQuery($is_insertignore, $query_fields, $value_sets)
     } else {
         $insert_command = 'INSERT ';
     }
-    $query[] = $insert_command . 'INTO '
+    $query = array(
+        $insert_command . 'INTO '
         . PMA_Util::backquote($GLOBALS['db']) . '.'
         . PMA_Util::backquote($GLOBALS['table'])
         . ' (' . implode(', ', $query_fields) . ') VALUES ('
-        . implode('), (', $value_sets) . ')';
+        . implode('), (', $value_sets) . ')'
+    );
     unset($insert_command, $query_fields);
     return $query;
 }
@@ -2278,7 +2272,8 @@ function PMA_getQueryValuesForInsertAndUpdateInMultipleEdit($multi_edit_columns_
             . ' = ' . $current_value_as_an_array;
     } elseif (empty($multi_edit_funcs[$key])
         && isset($multi_edit_columns_prev[$key])
-        && ("'" . PMA_Util::sqlAddSlashes($multi_edit_columns_prev[$key]) . "'" == $current_value)
+        && (("'" . PMA_Util::sqlAddSlashes($multi_edit_columns_prev[$key]) . "'" === $current_value)
+        || ('0x' . $multi_edit_columns_prev[$key] === $current_value))
     ) {
         // No change for this column and no MySQL function is used -> next column
     } elseif (! empty($current_value)) {
@@ -2375,6 +2370,8 @@ function PMA_getCurrentValueForDifferentTypes($possibly_uploaded_val, $key,
             } else {
                 $current_value = '';
             }
+        } elseif ($type === 'hex') {
+            $current_value = '0x' . $current_value;
         } elseif ($type == 'bit') {
             $current_value = preg_replace('/[^01]/', '0', $current_value);
             $current_value = "b'" . PMA_Util::sqlAddSlashes($current_value) . "'";
@@ -2657,11 +2654,11 @@ function PMA_getHtmlForInsertEditColumnType($column)
  */
 function PMA_getHtmlForInsertEditFormHeader($has_blob_field, $is_upload)
 {
-    $html_output ='<form id="insertForm" ';
+    $html_output ='<form id="insertForm" class="lock-page ';
     if ($has_blob_field && $is_upload) {
-        $html_output .='class="disableAjax" ';
+        $html_output .='disableAjax';
     }
-    $html_output .='method="post" action="tbl_replace.php" name="insertForm" ';
+    $html_output .='" method="post" action="tbl_replace.php" name="insertForm" ';
     if ($is_upload) {
         $html_output .= ' enctype="multipart/form-data"';
     }

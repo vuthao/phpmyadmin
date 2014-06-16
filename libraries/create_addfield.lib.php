@@ -95,7 +95,6 @@ function PMA_buildColumnCreationStatement(
                     $field_primary
                 );
 
-
         $definition .= PMA_setColumnCreationStatementSuffix($i, $is_create_tbl);
         $definitions[] = $definition;
     } // end for
@@ -321,7 +320,7 @@ function PMA_tryColumnCreationQuery($db, $table, $err_url)
     $GLOBALS['dbi']->selectDb($db)
         or PMA_Util::mysqlDie(
             $GLOBALS['dbi']->getError(),
-            'USE ' . PMA_Util::backquote($db), '',
+            'USE ' . PMA_Util::backquote($db), false,
             $err_url
         );
     $sql_query    = 'ALTER TABLE ' .
